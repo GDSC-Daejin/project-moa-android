@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">GiftMoaApplication</string>
+    <string name="kakao_app_key">kakao${nativeappkey}</string>
+</resources>
