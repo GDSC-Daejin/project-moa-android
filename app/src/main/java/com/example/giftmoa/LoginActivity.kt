@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import com.example.giftmoa.Data.SaveSharedPreference
 import com.example.giftmoa.databinding.ActivityLoginBinding
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.KakaoSdk
@@ -15,7 +16,7 @@ import com.kakao.sdk.user.UserApiClient
 class LoginActivity : AppCompatActivity() {
     private lateinit var mBinding : ActivityLoginBinding
     private val kakaoAppKey = BuildConfig.kakao_app_key
-
+    private val sharedPreference = SaveSharedPreference()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding = ActivityLoginBinding.inflate(layoutInflater)
@@ -23,7 +24,15 @@ class LoginActivity : AppCompatActivity() {
         setContentView(mBinding.root)
         KakaoSdk.init(this, kakaoAppKey)
         mBinding.loginBtn.setOnClickListener {
-            kakaoLogin() //로그인
+            if (sharedPreference.getToken(this@LoginActivity) != null) {
+                val intent = Intent(this@LoginActivity, MainActivity::class.java).apply {
+
+                }
+                startActivity(intent)
+                finish()
+            } else {
+                kakaoLogin() //로그인
+            }
         }
 
         /* KakaoSdk.init(this, kakaoAppKey)
@@ -51,11 +60,16 @@ class LoginActivity : AppCompatActivity() {
                     UserApiClient.instance.me { user, error ->
                         TextMsg(this, "카카오계정으로 로그인 성공 \n\n " +
                                 "token: ${token.accessToken} \n\n " +
-                                "me: ${user}")
+                                "me: ${user!!.kakaoAccount!!.name}")
+
+                        val sharedPreference = SaveSharedPreference()
+                        sharedPreference.setToken(this@LoginActivity, token.idToken!!)
+                        sharedPreference.setName(this@LoginActivity, user.kakaoAccount!!.name)
 
                         Log.e("TEST", "${token.idToken}")
                     }
                 }
+
 
                 /*//TODO: 최종적으로 카카오로그인 및 유저정보 가져온 결과
                 UserApiClient.instance.me { user, error ->
