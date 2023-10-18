@@ -9,15 +9,22 @@
         app:showAsAction="always"
         />
     <item
+        android:id="@+id/navigation_coupon"
+        android:icon="@drawable/coupon_menu_icon"
+        android:title="공유방"
+        android:enabled="true"
+        app:showAsAction="always"
+        />
+    <item
         android:id="@+id/navigation_share_room"
-        android:icon="@drawable/baseline_share_24"
+        android:icon="@drawable/share_room_menu_icon"
         android:title="공유방"
         android:enabled="true"
         app:showAsAction="always"
         />
     <item
         android:id="@+id/navigation_account"
-        android:icon="@drawable/account_menu"
+        android:icon="@drawable/account_menu_icon"
         android:title="마이페이지"
         android:enabled="true"
         app:showAsAction="always"

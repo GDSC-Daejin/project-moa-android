@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.giftmoa.BottomMenu.AccountFragment
+import com.example.giftmoa.BottomMenu.CouponFragment
 import com.example.giftmoa.BottomMenu.HomeFragment
 import com.example.giftmoa.BottomMenu.ShareRoomFragment
 import com.example.giftmoa.databinding.ActivityMainBinding
@@ -15,6 +16,7 @@ class MainActivity : AppCompatActivity() {
     private val TAG_HOME = "home_fragment"
     private val TAG_SHAREROOM = "shareroom_fragment"
     private val TAG_ACCOUNT = "account_fragment"
+    private val TAG_COUPON = "coupon_fragment"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +38,10 @@ class MainActivity : AppCompatActivity() {
 
                 }
 
+                R.id.navigation_coupon -> {
+                    setFragment(TAG_COUPON, CouponFragment())
+                }
+
                 R.id.navigation_share_room -> {
 
                     //setToolbarView(TAG_HOME, oldTAG)
@@ -47,7 +53,6 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_account -> {
                     setFragment(TAG_ACCOUNT, AccountFragment())
                 }
-
 
                 else -> {
                     setFragment(TAG_HOME, HomeFragment())
@@ -71,6 +76,7 @@ class MainActivity : AppCompatActivity() {
         val home = manager.findFragmentByTag(TAG_HOME)
         val shareRoom = manager.findFragmentByTag(TAG_SHAREROOM)
         val account = manager.findFragmentByTag(TAG_ACCOUNT)
+        val coupon = manager.findFragmentByTag(TAG_COUPON)
 
         if (home != null) {
             bt.hide(home)
@@ -80,6 +86,9 @@ class MainActivity : AppCompatActivity() {
         }
         if (account != null) {
             bt.hide(account)
+        }
+        if (coupon != null) {
+            bt.hide(coupon)
         }
 
 
@@ -91,6 +100,11 @@ class MainActivity : AppCompatActivity() {
         else if (tag == TAG_SHAREROOM) {
             if (shareRoom != null) {
                 bt.show(shareRoom)
+            }
+        }
+        else if (tag == TAG_COUPON) {
+            if (coupon != null) {
+                bt.show(coupon)
             }
         }
         else if (tag == TAG_ACCOUNT) {

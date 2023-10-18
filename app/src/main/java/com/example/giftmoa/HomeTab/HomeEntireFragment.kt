@@ -1,13 +1,17 @@
 package com.example.giftmoa.HomeTab
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.giftmoa.Adapter.HomeGiftAdapter
+import com.example.giftmoa.BottomSheetFragment.BottomSheetFragment
+import com.example.giftmoa.CouponTab.CouponAutoAddActivity
 import com.example.giftmoa.Data.GiftData
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.FragmentHomeEntireBinding
@@ -31,6 +35,7 @@ class HomeEntireFragment : Fragment() {
     private var giftAdapter : HomeGiftAdapter? = null
     private var giftAllData = ArrayList<GiftData>()
     private var gridManager = GridLayoutManager(activity, 2)
+    private var getBottomSheetData = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +51,32 @@ class HomeEntireFragment : Fragment() {
     ): View {
         binding = FragmentHomeEntireBinding.inflate(inflater, container, false)
         initHomeRecyclerView()
+
+        binding.giftAdd.setOnClickListener {
+            val bottomSheet = BottomSheetFragment()
+            bottomSheet.show(requireActivity().supportFragmentManager, bottomSheet.tag)
+            bottomSheet.apply {
+                setCallback(object : BottomSheetFragment.OnSendFromBottomSheetDialog{
+                    override fun sendValue(value: String) {
+                        Log.d("test", "BottomSheetDialog -> 액티비티로 전달된 값 : $value")
+                        getBottomSheetData = value
+                        //myViewModel.postCheckSearchFilter(getBottomSheetData)
+                        when (value) {
+                            "자동 등록" -> {
+                                val intent = Intent(requireActivity(), CouponAutoAddActivity::class.java)
+                                startActivity(intent)
+                            }
+
+                            "수동 등록" -> {
+
+                            }
+                        }
+                    }
+                })
+            }
+        }
+
+
         return binding.root
     }
 

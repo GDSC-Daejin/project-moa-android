@@ -30,4 +30,18 @@
         <!-- Dialog가 센터에 나오도록 -->
         <item name="android:windowIsFloating">true</item>
     </style>
+
+    <style name="BottomSheetDialogTheme" parent="Theme.Design.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
+    </style>
+
+    <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="background">@android:color/transparent</item>
+        <item name="android:textColor">@color/moa_gray_900</item>
+    </style>
+
+    <style name="customSwitchCompat">
+        <item name="colorControlActivated">@color/moa_carrot_700</item>
+    </style>
+
 </resources>

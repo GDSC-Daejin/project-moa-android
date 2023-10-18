@@ -66,7 +66,7 @@ class ShareRoomFragment : Fragment() {
         })
 
 
-        sBinding.shareCreateBtn.setOnClickListener {
+       sBinding.shareCreateBtn.setOnClickListener {
             val layoutInflater = LayoutInflater.from(activity)
             val view = layoutInflater.inflate(R.layout.dialog_layout, null)
             val alertDialog = AlertDialog.Builder(activity, R.style.CustomAlertDialog)
@@ -90,6 +90,7 @@ class ShareRoomFragment : Fragment() {
             alertDialog.show()
         }
 
+        /*
         sBinding.shareEntranceCodeBtn.setOnClickListener {
             //사용할 곳
             val layoutInflater = LayoutInflater.from(activity)
@@ -106,7 +107,7 @@ class ShareRoomFragment : Fragment() {
             }
 
             alertDialog.show()
-        }
+        }*/
 
         return sBinding.root
     }

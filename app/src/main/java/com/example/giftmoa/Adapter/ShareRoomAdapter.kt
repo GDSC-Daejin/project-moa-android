@@ -37,17 +37,17 @@ class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(
         private var position : Int? = null
         private var shareTitle = binding.shareTitle
         private var shareNOP = binding.shareNumberOfPeople
-        private var shareMaster = binding.shareMaster
-        private var shareCouponCnt = binding.shareCouponCnt
+        /*private var shareMaster = binding.shareMaster
+        private var shareCouponCnt = binding.shareCouponCnt*/
 
 
         fun bind(itemData: ShareRoomData, position : Int) {
             this.position = position
 
             shareTitle.text = itemData.title
-            shareCouponCnt.text = "공유중인 쿠폰 : ${itemData.shareCouponCount.toString()}"
-            shareNOP.text = "방 인원 수 : ${itemData.numberOfPeople.toString()}"
-            shareMaster.text = "방장 : ${itemData.master}"
+            //shareCouponCnt.text = "공유중인 쿠폰 : ${itemData.shareCouponCount.toString()}"
+            shareNOP.text = "+${itemData.numberOfPeople.toString()}"
+            //shareMaster.text = "방장 : ${itemData.master}"
 
         }
     }
@@ -65,11 +65,11 @@ class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(
             itemClickListener.onClick(it, holder.adapterPosition, shareRoomItemData[holder.adapterPosition].title)
         }
 
-        binding.shareDeleteBtn.setOnClickListener {
+        /*binding.shareDeleteBtn.setOnClickListener {
             removeData(holder.adapterPosition)
-        }
+        }*/
 
-        binding.shareInviteBtn.setOnClickListener {
+        /*binding.shareInviteBtn.setOnClickListener {
             val charSet = ('0'..'9') + ('a'..'z') + ('A'..'Z')
             val rangeRandom = List(10) {charSet.random()}.joinToString("")
             inviteCode = rangeRandom.toString()
@@ -102,7 +102,7 @@ class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(
             }
 
             alertDialog.show()
-        }
+        }*/
     }
 
     override fun getItemCount(): Int {
