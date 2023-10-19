@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:colorPrimary">@color/white</item>
+        <item name="android:colorPrimaryDark">@color/white</item>
+        <item name="android:colorAccent">@color/white</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColorSecondary">@color/black</item>
+        <item name="android:buttonStyle">@style/CustomButtonStyle</item>
+        <item name="android:switchStyle">@style/CustomSwitchStyle</item>
+    </style>
+
+    <style name="CustomButtonStyle" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/background_enabled_button</item>
+    </style>
+
+    <style name="CustomSwitchStyle" parent="Widget.AppCompat.CompoundButton.Switch">
+        <item name="android:thumb">@drawable/switch_thumb</item>
+    </style>
+
+    <style name="CustomChipStyle" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipStrokeColor">@color/stroke_color_category_state</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipBackgroundColor">@color/background_category_state</item>
+        <item name="android:textColor">@color/text_color_category_state</item>
+        <item name="android:textStyle">bold</item>
+        <item name="textStartPadding">8dp</item>
+        <item name="textEndPadding">8dp</item>
+        <item name="chipIconVisible">false</item>
+        <!--<item name="chipIconTint">@color/icon_tint_category_state</item>
+        <item name="chipIconSize">12dp</item>
+        <item name="iconStartPadding">6dp</item>-->
+        <item name="chipEndPadding">3dp</item>
+        <item name="android:theme">@style/ChipOverlayTheme</item>
+    </style>
+
+    <style name="ChipOverlayTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Any other customization for this theme overlay -->
+    </style>
+
+    <style name="RoundCornerBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/RoundCornerBottomSheetStyle</item>
+    </style>
+
+    <style name="RoundCornerBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/background_bottom_sheet_round_border</item>
+    </style>
+
+</resources>

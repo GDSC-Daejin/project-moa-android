@@ -1,11 +1,16 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.gms.google-services'
+    id 'kotlin-parcelize'
 }
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 def kakao_sdk_key = properties.getProperty('kakao_app_key')
+def NCP_OCR_URL = properties.getProperty('NCP_OCR_URL')
+def NCP_OCR_URL_PARAMS = properties.getProperty('NCP_OCR_URL_PARAMS')
+def X_OCR_SECRET_KEY = properties.getProperty('NCP_OCR_SECRET_KEY')
 
 
 android {
@@ -22,6 +27,9 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         manifestPlaceholders = [kakao_app_key: kakao_sdk_key]
+        buildConfigField 'String', 'NCP_OCR_URL', '"' + NCP_OCR_URL + '"'
+        buildConfigField 'String', 'NCP_OCR_URL_PARAMS', '"' + NCP_OCR_URL_PARAMS + '"'
+        buildConfigField 'String', 'X_OCR_SECRET_KEY', '"' + X_OCR_SECRET_KEY + '"'
     }
 
     buildTypes {
@@ -32,7 +40,10 @@ android {
         debug {
             // ...
             buildConfigField "String", "kakao_app_key", properties['kakao_app_key']
-
+            // ...
+            buildConfigField "String", "NCP_OCR_URL", properties['NCP_OCR_URL']
+            buildConfigField "String", "NCP_OCR_URL_PARAMS", properties['NCP_OCR_URL_PARAMS']
+            buildConfigField "String", "X_OCR_SECRET_KEY", properties['X_OCR_SECRET_KEY']
         }
     }
     compileOptions {
@@ -66,8 +77,24 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.squareup.okhttp3:logging-interceptor")
 
+    // firebase
+    implementation platform('com.google.firebase:firebase-bom:32.3.1')
+    implementation("com.google.firebase:firebase-storage-ktx")
 
-    implementation 'androidx.core:core-ktx:1.7.0'
+    // circleimageview
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    // glide
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+
+    // timber
+    implementation 'com.jakewharton.timber:timber:5.0.1'
+
+    // gson
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+
+    implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'

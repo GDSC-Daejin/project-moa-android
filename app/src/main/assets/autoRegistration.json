@@ -1,0 +1,99 @@
+{
+  "gifticons": [
+    {
+      "name": "디지털상품권 5천원권",
+      "image": "https://firebasestorage.googleapis.com/v0/b/gift-moa.appspot.com/o/images%2F1696957354800_image.jpeg?alt=media&token=aae582a7-76a2-4f2d-97d2-dd489402a4a9",
+      "barcode_number": "8591265875343357",
+      "exchange_place": "메가MGC커피",
+      "due_date": "2021-12-31",
+      "order_number": "1969302141",
+      "amount": 5000
+    },
+    {
+      "name": "디지털상품권 5천원권",
+      "image": "https://firebasestorage.googleapis.com/v0/b/gift-moa.appspot.com/o/images%2F1696957354800_image.jpeg?alt=media&token=aae582a7-76a2-4f2d-97d2-dd489402a4a9",
+      "barcode_number": "8591265875343357",
+      "exchange_place": "메가MGC커피",
+      "due_date": "2021-12-31",
+      "order_number": "1969302141",
+      "amount": 5000
+    }
+  ],
+  "categories": [
+    {
+      "id": 0,
+      "category_name": "스타벅스"
+    },
+    {
+      "id": 1,
+      "category_name": "올리브영"
+    },
+    {
+      "id": 2,
+      "category_name": "편의점"
+    }
+  ],
+  "share_rooms": [
+    {
+      "team_id": 0,
+      "team_name": "우리 가족방",
+      "team_thumbnail_image_url": "https://img.freepik.com/free-vector/hand-drawn-illustration-for-korean-parents-day-celebration_23-2150288350.jpg?size=626&ext=jpg&ga=GA1.1.980875505.1697390731&semt=ais",
+      "team_members": [
+        {
+          "user_id": 0,
+          "user_name": "Judy",
+          "profile_image_url": "https://ca.slack-edge.com/T02BE2ERU5A-U052X10G0SZ-g2ffb49c81e1-512"
+        },
+        {
+          "user_id": 1,
+          "user_name": "Purang",
+          "profile_image_url": "https://ca.slack-edge.com/T02BE2ERU5A-U030E9L5VB8-d202c97a72ac-512"
+        },
+        {
+          "user_id": 2,
+          "user_name": "Nox",
+          "profile_image_url": "https://ca.slack-edge.com/T02BE2ERU5A-U02TLNR15PE-b14a81ec08cb-512"
+        },
+        {
+          "user_id": 3,
+          "user_name": "Peony",
+          "profile_image_url": "https://ca.slack-edge.com/T02BE2ERU5A-U02TWSK3RQU-8e9ce1f41d82-512"
+        },
+        {
+          "user_id": 4,
+          "user_name": "Jade",
+          "profile_image_url": "https://ca.slack-edge.com/T02BE2ERU5A-U02CPD32N3D-g0beff217a80-512"
+        }
+      ]
+    },
+    {
+      "team_id": 1,
+      "team_name": "거지방",
+      "team_thumbnail_image_url": "https://i.namu.wiki/i/VpoSGhJeW5GTVpafIwFZ0x1uVw7h80i5JlcZYJBTEu8VeZ3vwxX_Ikm7iZF2eJjAHa2uxraULXdIzJvDJ4CrhIIOx9UdRX-J3J-2J6ZZBIUJstOkn0PzNgfrP95e8DDrBZHpTJGRpCD-qZicELCVrg.webp",
+      "team_members": [
+        {
+          "user_id": 2,
+          "user_name": "Nox",
+          "profile_image_url": "https://ca.slack-edge.com/T02BE2ERU5A-U02TLNR15PE-b14a81ec08cb-512"
+        },
+        {
+          "user_id": 3,
+          "user_name": "Peony",
+          "profile_image_url": "https://ca.slack-edge.com/T02BE2ERU5A-U02TWSK3RQU-8e9ce1f41d82-512"
+        }
+      ]
+    },
+    {
+      "team_id": 2,
+      "team_name": "고등학교",
+      "team_thumbnail_image_url": "https://joo7114.cafe24.com/web/upload/NNEditor/20160530/%EA%B3%A0%EC%96%91%EB%8F%99%EC%82%B0%EA%B3%A0%EA%B5%90%ED%9B%88%EC%84%9D5_shop1_132918.jpg",
+      "team_members": [
+        {
+          "user_id": 4,
+          "user_name": "Jade",
+          "profile_image_url": "https://ca.slack-edge.com/T02BE2ERU5A-U02CPD32N3D-g0beff217a80-512"
+        }
+      ]
+    }
+  ]
+}

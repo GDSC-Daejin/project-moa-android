@@ -13,6 +13,7 @@ import com.example.giftmoa.Adapter.HomeGiftAdapter
 import com.example.giftmoa.BottomSheetFragment.BottomSheetFragment
 import com.example.giftmoa.CouponTab.CouponAutoAddActivity
 import com.example.giftmoa.Data.GiftData
+import com.example.giftmoa.GifticonRegistrationActivity
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.FragmentHomeEntireBinding
 
@@ -63,7 +64,8 @@ class HomeEntireFragment : Fragment() {
                         //myViewModel.postCheckSearchFilter(getBottomSheetData)
                         when (value) {
                             "자동 등록" -> {
-                                val intent = Intent(requireActivity(), CouponAutoAddActivity::class.java)
+                                //val intent = Intent(requireActivity(), CouponAutoAddActivity::class.java)
+                                val intent = Intent(requireActivity(), GifticonRegistrationActivity::class.java)
                                 startActivity(intent)
                             }
 

@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        tools:layout_editor_absoluteX="-106dp"
+        tools:layout_editor_absoluteY="0dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tv_add_coupon"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:gravity="center"
+                android:text="쿠폰 추가"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/view_divider_title"
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:background="#f8f8f8"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_add_coupon" />
+
+            <LinearLayout
+                android:id="@+id/ll_register_coupon_image"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_divider_title">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:text="쿠폰"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_marginEnd="4dp"
+                    android:src="@drawable/icon_add_orange" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:gravity="end"
+                    android:text="이미지 추가하기"
+                    android:textColor="#c4320a"
+                    android:textSize="16sp" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_register_coupon"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ll_register_coupon_image">
+
+                <CheckBox
+                    android:id="@+id/checkbox"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:background="@drawable/selector_checkbox"
+                    android:button="@android:color/transparent"
+                    android:checked="false"
+                    android:padding="0dp" />
+
+
+                <TextView
+                    android:id="@+id/tv_coupon_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="22dp"
+                    android:layout_marginStart="14dp"
+                    android:text="스타벅스 5만원권"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <ImageView
+                    android:id="@+id/iv_coupon_image"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginEnd="4dp"
+                    android:src="@drawable/asset_gifticon_starbucks" />
+
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/view_divider_coupon"
+                android:layout_width="0dp"
+                android:layout_height="6dp"
+                android:background="#f8f8f8"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ll_register_coupon" />
+
+            <LinearLayout
+                android:id="@+id/ll_coupon_expiration_date"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_divider_coupon">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:text="유효기간"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:gravity="end"
+                    android:text="2024년 10월 16일"
+                    android:textColor="@color/moa_gray_400"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/view_divider_category"
+                android:layout_width="0dp"
+                android:layout_height="6dp"
+                android:background="#f8f8f8"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ll_coupon_expiration_date" />
+
+            <TextView
+                android:id="@+id/tv_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:text="카테고리"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_divider_category" />
+
+            <!--<LinearLayout
+                android:id="@+id/ll_category"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="14dp"
+                android:layout_marginBottom="20dp"
+                android:gravity="center_vertical"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_category">
+
+
+                &lt;!&ndash;<androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:itemCount="3" />&ndash;&gt;
+
+                <HorizontalScrollView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_group_category"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:singleSelection="true" />
+
+                <ImageView
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/background_chip_add"
+                    android:src="@drawable/icon_add_gray"
+                    app:layout_constraintStart_toEndOf="@id/chip_group_category"
+                    app:layout_constraintTop_toTopOf="@id/chip_group_category" />
+
+            </LinearLayout>-->
+
+            <EditText
+                android:id="@+id/et_category"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:hint="카테고리"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_category"
+                app:layout_constraintStart_toEndOf="@+id/tv_category" />
+
+            <HorizontalScrollView
+                android:id="@+id/sv_category"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:scrollbars="none"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_category">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_group_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:visibility="visible"
+                    app:chipSpacingHorizontal="11dp"
+                    app:chipSpacingVertical="6dp"
+                    app:singleLine="true"
+                    app:singleSelection="true"
+                    tools:visibility="visible">
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/CustomChipStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="스타벅스"
+                        android:textAlignment="center"
+                        android:translationY="-2dp" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/CustomChipStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="올리브영"
+                        android:textAlignment="center"
+                        android:translationY="-2dp" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/CustomChipStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="편의점"
+                        android:textAlignment="center"
+                        android:translationY="-2dp" />
+
+                    <!--<androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_category"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:itemCount="2" />-->
+
+                    <ImageView
+                        android:id="@+id/iv_add_category"
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
+                        android:background="@drawable/background_chip_add"
+                        android:src="@drawable/icon_add_gray" />
+
+
+                </com.google.android.material.chip.ChipGroup>
+
+            </HorizontalScrollView>
+
+
+            <TextView
+                android:id="@+id/tv_share_room"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="22dp"
+                android:text="공유방"
+                android:textSize="16sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/sv_category" />
+
+            <HorizontalScrollView
+                android:id="@+id/sv_share_room"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:scrollbars="none"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_share_room">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@id/tv_share_room">
+
+                    <View
+                        android:layout_width="20dp"
+                        android:layout_height="1dp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_share_room"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_share_room"
+                        tools:itemCount="3" />
+
+                    <View
+                        android:layout_width="8dp"
+                        android:layout_height="1dp" />
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+            <View
+                android:id="@+id/view_divider_share_room"
+                android:layout_width="0dp"
+                android:layout_height="6dp"
+                android:layout_marginTop="30dp"
+                android:background="#f8f8f8"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/sv_share_room" />
+
+
+            <LinearLayout
+                android:id="@+id/ll_set_coupon_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_divider_share_room">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:text="금액"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+
+                <Switch
+                    android:id="@+id/switch_coupon_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:thumb="@drawable/switch_thumb"
+                    android:track="@drawable/switch_track_ex"
+                    tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/et_coupon_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="40dp"
+                android:background="@drawable/background_edit_text"
+                android:gravity="end"
+                android:inputType="number"
+                android:paddingStart="20dp"
+                android:paddingTop="13dp"
+                android:paddingEnd="44dp"
+                android:paddingBottom="19dp"
+                android:textColor="@color/moa_gray_400"
+                android:textColorHint="#b7b7b7"
+                android:textSize="16sp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toTopOf="@+id/ll_button"
+                app:layout_constraintTop_toBottomOf="@id/ll_set_coupon_amount"
+                app:layout_constraintVertical_bias="0.0"
+                tools:layout_editor_absoluteX="20dp"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/tv_coupon_amount_unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:paddingEnd="20dp"
+                android:text="원"
+                android:textColor="@color/moa_gray_400"
+                android:textSize="16sp"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="@+id/et_coupon_amount"
+                app:layout_constraintTop_toTopOf="@+id/et_coupon_amount"
+                tools:visibility="visible" />
+
+            <LinearLayout
+                android:id="@+id/ll_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="40dp"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_cancel"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/background_disabled_button"
+                    android:text="취소"
+                    android:textColor="#b7b7b7"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="1dp" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_confirm"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/background_disabled_button"
+                    android:text="확인"
+                    android:textColor="@color/moa_gray_400"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
