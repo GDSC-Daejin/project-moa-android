@@ -5,17 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
+import com.example.giftmoa.AutoRegistrationActivity
 import com.example.giftmoa.Data.CustomCropTransformation
 import com.example.giftmoa.Data.ParsedGifticon
+import com.example.giftmoa.GifticonInfoListener
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.LayoutGifticonInfoBottomSheetBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-class GifticonInfoBottomSheet(gifticon: ParsedGifticon) : BottomSheetDialogFragment() {
+class GifticonInfoBottomSheet(gifticon: ParsedGifticon, private val listener: GifticonInfoListener) : BottomSheetDialogFragment() {
     private var gifticon = gifticon
 
     private val TAG = "GifticonInfoBottomSheet"
     private lateinit var binding: LayoutGifticonInfoBottomSheetBinding
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,6 +63,8 @@ class GifticonInfoBottomSheet(gifticon: ParsedGifticon) : BottomSheetDialogFragm
                 gifticon.dueDate
             }
         }
+        // gifticon.amount 50000 -> 50,000
+        val formattedAmount = gifticon.amount?.let { String.format("%,d", it) }
 
         Glide.with(binding.ivGifticon.context)
             .load(gifticon.image)
@@ -68,9 +73,16 @@ class GifticonInfoBottomSheet(gifticon: ParsedGifticon) : BottomSheetDialogFragm
         binding.etCouponName.setText(gifticon.name)
         binding.etBarcodeNumber.setText(gifticon.barcodeNumber)
         binding.etExchangePlace.setText(gifticon.exchangePlace)
-        binding.etDueDate.setText("$formattedDueDate   ${gifticon.amount}원")
+        binding.etDueDate.setText("$formattedDueDate   ${formattedAmount}원")
 
         binding.btnConfirm.setOnClickListener {
+            // 쿠폰 정보 업데이트
+            val updatedGifticon = gifticon.copy(
+                name = binding.etCouponName.text.toString(),
+                barcodeNumber = binding.etBarcodeNumber.text.toString(),
+                dueDate = formattedDueDate,
+            )
+            listener.onGifticonInfoUpdated(updatedGifticon)
             dismiss()
         }
         binding.btnCancel.setOnClickListener {

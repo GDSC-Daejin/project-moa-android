@@ -85,6 +85,8 @@
                 android:orientation="horizontal"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
+                android:visibility="gone"
+                tools:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ll_register_coupon_image">
@@ -98,20 +100,17 @@
                     android:checked="false"
                     android:padding="0dp" />
 
-
                 <TextView
                     android:id="@+id/tv_coupon_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="22dp"
+                    android:layout_weight="1"
                     android:layout_marginStart="14dp"
-                    android:text="스타벅스 5만원권"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:text="카페 아메리카노T 2잔+부드러운 생크림 카스테라"
                     android:textSize="16sp"
                     android:textStyle="bold" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
 
                 <ImageView
                     android:id="@+id/iv_coupon_image"
@@ -119,7 +118,6 @@
                     android:layout_height="36dp"
                     android:layout_marginEnd="4dp"
                     android:src="@drawable/asset_gifticon_starbucks" />
-
 
             </LinearLayout>
 
@@ -133,11 +131,13 @@
                 app:layout_constraintTop_toBottomOf="@id/ll_register_coupon" />
 
             <LinearLayout
-                android:id="@+id/ll_coupon_expiration_date"
+                android:id="@+id/ll_coupon_due_date"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
+                android:visibility="gone"
+                tools:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/view_divider_coupon">
@@ -155,6 +155,7 @@
                     android:layout_weight="1" />
 
                 <TextView
+                    android:id="@+id/tv_coupon_due_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
@@ -174,7 +175,7 @@
                 android:background="#f8f8f8"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ll_coupon_expiration_date" />
+                app:layout_constraintTop_toBottomOf="@id/ll_coupon_due_date" />
 
             <TextView
                 android:id="@+id/tv_category"
@@ -261,7 +262,7 @@
                     app:singleSelection="true"
                     tools:visibility="visible">
 
-                    <com.google.android.material.chip.Chip
+                    <!--<com.google.android.material.chip.Chip
                         style="@style/CustomChipStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -283,7 +284,7 @@
                         android:layout_height="wrap_content"
                         android:text="편의점"
                         android:textAlignment="center"
-                        android:translationY="-2dp" />
+                        android:translationY="-2dp" />-->
 
                     <!--<androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_category"
@@ -396,7 +397,9 @@
                     android:layout_marginEnd="20dp"
                     android:thumb="@drawable/switch_thumb"
                     android:track="@drawable/switch_track_ex"
-                    tools:ignore="UseSwitchCompatOrMaterialXml" />
+                    tools:ignore="UseSwitchCompatOrMaterialXml"
+                    android:clickable="false"
+                    />
 
 
             </LinearLayout>
@@ -416,7 +419,7 @@
                 android:paddingTop="13dp"
                 android:paddingEnd="44dp"
                 android:paddingBottom="19dp"
-                android:textColor="@color/moa_gray_400"
+                android:textColor="@color/moa_gray_600"
                 android:textColorHint="#b7b7b7"
                 android:textSize="16sp"
                 android:visibility="invisible"

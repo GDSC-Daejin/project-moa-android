@@ -190,7 +190,7 @@ class GifticonRegistrationActivity : AppCompatActivity() {
             .getJSONObject(0)
             .getJSONArray("fields")
 
-        val name = filterInferTextByCoordinates(fields, 0.0, 600.0, 750.0, 1000.0).joinToString(" ")
+        val name = filterInferTextByCoordinates(fields, 0.0, 634.0, 780.0, 1050.0).joinToString(" ")
         val barcodeNumber = filterInferTextByCoordinates(fields, 0.0, 710.0, 1000.0, 1200.0).joinToString(" ")
         val dueDate = filterInferTextByCoordinates(fields, 400.0, 710.0, 1250.0, 1360.0).joinToString(" ")
 
