@@ -26,7 +26,7 @@
         <item name="chipStrokeWidth">1dp</item>
         <item name="chipBackgroundColor">@color/background_category_state</item>
         <item name="android:textColor">@color/text_color_category_state</item>
-        <item name="android:textStyle">bold</item>
+        <item name="fontFamily">@font/pretendard_medium</item>
         <item name="textStartPadding">8dp</item>
         <item name="textEndPadding">8dp</item>
         <item name="chipIconVisible">false</item>

@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/moa_gray_100"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/pretendard_bold"
+            android:text="스타벅스"
+            android:textColor="@color/moa_gray_900"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/pretendard_medium"
+            android:text="완료"
+            android:textColor="@color/moa_carrot_700"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:src="@drawable/baseline_edit_24" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <View
+        android:id="@+id/view_divider_title"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="@color/moa_gray_100"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/view_divider_title"
+        tools:layout_editor_absoluteX="0dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="180dp">
+
+            <ImageView
+                android:id="@+id/iv_coupon_image"
+                android:layout_width="94dp"
+                android:layout_height="94dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="30dp"
+                android:background="#c4c4c4"
+                android:contentDescription="기프티콘 이미지"
+                android:src="@drawable/asset_gifticon_starbucks"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_coupon_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/pretendard_medium"
+                android:text="스타벅스 5만원권"
+                android:textColor="@color/moa_gray_900"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/iv_coupon_image" />
+
+            <ImageView
+                android:id="@+id/iv_barcode_image"
+                android:layout_width="0dp"
+                android:layout_height="81dp"
+                android:layout_marginTop="13dp"
+                android:contentDescription="바코드 이미지"
+                android:src="@drawable/asset_barcode_image"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_coupon_name" />
+
+            <TextView
+                android:id="@+id/tv_barcode_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/pretendard_medium"
+                android:text="1234 1234 1234"
+                android:textColor="@color/moa_gray_900"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/iv_barcode_image" />
+
+            <View
+                android:id="@+id/view_divider_barcode"
+                android:layout_width="0dp"
+                android:layout_height="6dp"
+                android:layout_marginTop="23dp"
+                android:background="#f8f8f8"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_barcode_number" />
+
+            <LinearLayout
+                android:id="@+id/ll_coupon_due_date"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_divider_barcode"
+                tools:visibility="visible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:text="유효기간"
+                    android:textColor="@color/moa_gray_900"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/tv_coupon_due_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:gravity="end"
+                    android:text="2024년 10월 16일"
+                    android:textColor="@color/moa_gray_400"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/view_divider_due_date"
+                android:layout_width="0dp"
+                android:layout_height="6dp"
+                android:background="#f8f8f8"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ll_coupon_due_date" />
+
+            <LinearLayout
+                android:id="@+id/ll_coupon_exchange_place"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_divider_due_date"
+                tools:visibility="visible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:text="교환처"
+                    android:textColor="@color/moa_gray_900"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/tv_coupon_exchange_place"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:gravity="end"
+                    android:text="스타벅스"
+                    android:textColor="@color/moa_gray_400"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/view_divider_exchange_place"
+                android:layout_width="0dp"
+                android:layout_height="6dp"
+                android:background="#f8f8f8"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ll_coupon_exchange_place" />
+
+            <TextView
+                android:id="@+id/tv_coupon_used_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/pretendard_medium"
+                android:text="사용한 금액"
+                android:textColor="@color/moa_gray_900"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_divider_exchange_place" />
+
+            <EditText
+                android:id="@+id/et_coupon_used_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/background_edit_text"
+                android:fontFamily="@font/pretendard_medium"
+                android:gravity="end"
+                android:inputType="number"
+                android:paddingStart="20dp"
+                android:paddingTop="13dp"
+                android:paddingEnd="44dp"
+                android:paddingBottom="19dp"
+                android:textColor="@color/moa_gray_700"
+                android:textColorHint="#b7b7b7"
+                android:textSize="16sp"
+                app:layout_constraintTop_toBottomOf="@id/tv_coupon_used_amount"
+                app:layout_constraintVertical_bias="0.0"
+                tools:layout_editor_absoluteX="20dp" />
+
+            <TextView
+                android:id="@+id/tv_coupon_amount_unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:fontFamily="@font/pretendard_medium"
+                android:paddingEnd="20dp"
+                android:text="원"
+                android:textColor="@color/moa_gray_400"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="@+id/et_coupon_used_amount"
+                app:layout_constraintTop_toTopOf="@+id/et_coupon_used_amount" />
+
+            <TextView
+                android:id="@+id/tv_coupon_remain_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="14dp"
+                android:fontFamily="@font/pretendard_medium"
+                android:text="남은 금액"
+                android:textColor="@color/moa_gray_900"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/et_coupon_used_amount" />
+
+            <EditText
+                android:id="@+id/et_coupon_remain_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/background_gray_edit_text"
+                android:fontFamily="@font/pretendard_medium"
+                android:gravity="end"
+                android:inputType="number"
+                android:paddingStart="20dp"
+                android:paddingTop="13dp"
+                android:paddingEnd="44dp"
+                android:paddingBottom="19dp"
+                android:textColor="@color/moa_gray_700"
+                android:textColorHint="#b7b7b7"
+                android:textSize="16sp"
+                app:layout_constraintTop_toBottomOf="@id/tv_coupon_remain_amount"
+                app:layout_constraintVertical_bias="0.0"
+                tools:layout_editor_absoluteX="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:fontFamily="@font/pretendard_medium"
+                android:paddingEnd="20dp"
+                android:text="원"
+                android:textColor="@color/moa_gray_400"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="@+id/et_coupon_remain_amount"
+                app:layout_constraintTop_toTopOf="@+id/et_coupon_remain_amount" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_coupon_usage_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/et_coupon_remain_amount"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_gifticon_usage_history" />
+
+            <View
+                android:id="@+id/view_divider_usage_history"
+                android:layout_width="0dp"
+                android:layout_height="6dp"
+                android:layout_marginTop="4dp"
+                android:background="#f8f8f8"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rv_coupon_usage_history" />
+
+            <LinearLayout
+                android:id="@+id/ll_coupon_share_room"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_divider_usage_history">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:text="공유"
+                    android:textColor="@color/moa_gray_900"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <Switch
+                    android:id="@+id/switch_coupon_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:clickable="false"
+                    android:thumb="@drawable/switch_thumb"
+                    android:track="@drawable/switch_track_ex"
+                    tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="156dp"
+                android:layout_height="130dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="15dp"
+                android:clipChildren="true"
+                app:cardCornerRadius="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ll_coupon_share_room">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/iv_share_room_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/background_share_room_item"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/asset_share_room01"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:alpha="0.5"
+                        android:background="@drawable/background_share_room_item_alpha"
+                        app:layout_constraintBottom_toBottomOf="@id/iv_share_room_image"
+                        app:layout_constraintEnd_toEndOf="@id/iv_share_room_image"
+                        app:layout_constraintStart_toStartOf="@id/iv_share_room_image"
+                        app:layout_constraintTop_toTopOf="@id/iv_share_room_image" />
+
+                    <TextView
+                        android:id="@+id/tv_share_room_name"
+                        android:layout_width="46dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="14dp"
+                        android:layout_marginBottom="14dp"
+                        android:text="우리 가족방"
+                        android:textColor="@color/moa_gray_300"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@id/iv_share_room_image"
+                        app:layout_constraintStart_toStartOf="@id/iv_share_room_image" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="14dp"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_share_room_name"
+                        app:layout_constraintEnd_toEndOf="@id/iv_share_room_image">
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/iv_share_room_user_image_01"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginEnd="4dp"
+                            android:background="@android:color/transparent"
+                            android:src="@drawable/profile_cat" />
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/iv_share_room_user_image_02"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginEnd="4dp"
+                            android:background="@android:color/transparent"
+                            android:src="@drawable/profile_cat"
+                            android:visibility="invisible"
+                            tools:visibility="visible" />
+
+                        <TextView
+                            android:id="@+id/tv_share_room_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="+2"
+                            android:textColor="@color/moa_gray_300"
+                            android:textSize="14sp"
+                            android:visibility="invisible"
+                            tools:visibility="visible" />
+
+                    </LinearLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/ll_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/moa_gray_white"
+        android:orientation="horizontal"
+        android:paddingTop="10dp"
+        android:paddingBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_cancel"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="20dp"
+            android:layout_weight="1"
+            android:background="@drawable/background_enabled_button"
+            android:fontFamily="@font/pretendard_medium"
+            android:text="사용 완료"
+            android:textColor="@color/moa_gray_white"
+            android:textSize="16sp" />
+
+        <View
+            android:layout_width="10dp"
+            android:layout_height="1dp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_confirm"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="20dp"
+            android:layout_weight="1"
+            android:background="@drawable/background_enabled_button"
+            android:fontFamily="@font/pretendard_medium"
+            android:text="공유하기"
+            android:textColor="@color/moa_gray_white"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
