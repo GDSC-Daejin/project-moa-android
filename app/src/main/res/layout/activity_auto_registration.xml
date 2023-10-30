@@ -20,10 +20,11 @@
                 android:id="@+id/tv_add_coupon"
                 android:layout_width="wrap_content"
                 android:layout_height="56dp"
+                android:fontFamily="@font/pretendard_bold"
                 android:gravity="center"
                 android:text="쿠폰 추가"
+                android:textColor="@color/moa_gray_900"
                 android:textSize="16sp"
-                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -32,7 +33,7 @@
                 android:id="@+id/view_divider_title"
                 android:layout_width="0dp"
                 android:layout_height="2dp"
-                android:background="#f8f8f8"
+                android:background="@color/moa_gray_100"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_add_coupon" />
@@ -51,7 +52,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
+                    android:fontFamily="@font/pretendard_medium"
                     android:text="쿠폰"
+                    android:textColor="@color/moa_gray_900"
                     android:textSize="16sp" />
 
                 <View
@@ -86,10 +89,10 @@
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
                 android:visibility="gone"
-                tools:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ll_register_coupon_image">
+                app:layout_constraintTop_toBottomOf="@+id/ll_register_coupon_image"
+                tools:visibility="visible">
 
                 <CheckBox
                     android:id="@+id/checkbox"
@@ -104,11 +107,13 @@
                     android:id="@+id/tv_coupon_name"
                     android:layout_width="0dp"
                     android:layout_height="22dp"
-                    android:layout_weight="1"
                     android:layout_marginStart="14dp"
-                    android:maxLines="1"
+                    android:layout_weight="1"
                     android:ellipsize="end"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:maxLines="1"
                     android:text="카페 아메리카노T 2잔+부드러운 생크림 카스테라"
+                    android:textColor="@color/moa_gray_900"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -137,16 +142,18 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:visibility="gone"
-                tools:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/view_divider_coupon">
+                app:layout_constraintTop_toBottomOf="@id/view_divider_coupon"
+                tools:visibility="visible">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
+                    android:fontFamily="@font/pretendard_medium"
                     android:text="유효기간"
+                    android:textColor="@color/moa_gray_900"
                     android:textSize="16sp" />
 
                 <View
@@ -159,11 +166,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
+                    android:fontFamily="@font/pretendard_medium"
                     android:gravity="end"
                     android:text="2024년 10월 16일"
                     android:textColor="@color/moa_gray_400"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textSize="16sp" />
 
 
             </LinearLayout>
@@ -183,7 +190,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
+                android:fontFamily="@font/pretendard_medium"
                 android:text="카테고리"
+                android:textColor="@color/moa_gray_900"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/view_divider_category" />
@@ -381,7 +390,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
+                    android:fontFamily="@font/pretendard_medium"
                     android:text="금액"
+                    android:textColor="@color/moa_gray_900"
                     android:textSize="16sp" />
 
                 <View
@@ -395,11 +406,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
+                    android:clickable="false"
                     android:thumb="@drawable/switch_thumb"
                     android:track="@drawable/switch_track_ex"
-                    tools:ignore="UseSwitchCompatOrMaterialXml"
-                    android:clickable="false"
-                    />
+                    tools:ignore="UseSwitchCompatOrMaterialXml" />
 
 
             </LinearLayout>
@@ -413,6 +423,7 @@
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="40dp"
                 android:background="@drawable/background_edit_text"
+                android:fontFamily="@font/pretendard_medium"
                 android:gravity="end"
                 android:inputType="number"
                 android:paddingStart="20dp"
@@ -433,7 +444,8 @@
                 android:id="@+id/tv_coupon_amount_unit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="13dp"
+                android:layout_marginTop="15dp"
+                android:fontFamily="@font/pretendard_medium"
                 android:paddingEnd="20dp"
                 android:text="원"
                 android:textColor="@color/moa_gray_400"
@@ -459,6 +471,7 @@
                     android:layout_marginStart="20dp"
                     android:layout_weight="1"
                     android:background="@drawable/background_disabled_button"
+                    android:fontFamily="@font/pretendard_medium"
                     android:text="취소"
                     android:textColor="#b7b7b7"
                     android:textSize="16sp" />
@@ -475,12 +488,12 @@
                     android:layout_marginEnd="20dp"
                     android:layout_weight="1"
                     android:background="@drawable/background_disabled_button"
+                    android:fontFamily="@font/pretendard_medium"
                     android:text="확인"
                     android:textColor="@color/moa_gray_400"
                     android:textSize="16sp" />
 
             </LinearLayout>
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

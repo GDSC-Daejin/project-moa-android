@@ -65,6 +65,7 @@
         <activity android:name=".AutoRegistrationActivity" />
         <activity android:name=".ManualRegistrationActivity" />
         <activity android:name=".SplashActivity" />
+        <activity android:name=".GifticonDetailActivity" />
     </application>
 
 </manifest>
