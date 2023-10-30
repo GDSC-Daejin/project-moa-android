@@ -323,6 +323,9 @@
                 android:text="공유방"
                 android:textSize="16sp"
                 android:visibility="gone"
+                android:fontFamily="@font/pretendard_medium"
+                android:textColor="@color/moa_gray_900"
+                tools:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/sv_category" />
 
