@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
         android:name=".GlobalApplication"
@@ -16,6 +18,12 @@
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize"
         tools:targetApi="31">
+        <activity
+            android:name=".ShareRoomMenu.ShareRoomEditActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ShareRoomMenu.ShareRoomReadActivity"
+            android:exported="false" />
         <activity
             android:name=".CouponTab.CouponAutoAddActivity"
             android:exported="false" />
@@ -35,28 +43,25 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+
+
+        <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <!-- Redirect URI: "kakao{NATIVE_APP_KEY}://oauth" -->
-                <!-- scheme-ex: "kakao{NATIVE_APP_KEY}" -->
-                <data
-                    android:host="oauth"
-                    android:scheme="kakao${kakao_app_key}" />
+                <!-- Redirect URI: "kakao${kakaoAppKey}://oauth" -->
+                <data android:host="oauth" android:scheme="kakao${kakaoAppKey}" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" />
-
         <meta-data
             android:name="com.kakao.sdk.AppKey"
-            android:value="${kakao_app_key}" />
+            android:value="${kakaoAppKey}" />
     </application>
 
 </manifest>

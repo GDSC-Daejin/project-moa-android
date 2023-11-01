@@ -110,8 +110,8 @@ class HomeFragment : Fragment() {
         giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
         giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
         giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-
     }
+
     companion object {
         /**
          * Use this factory method to create a new instance of

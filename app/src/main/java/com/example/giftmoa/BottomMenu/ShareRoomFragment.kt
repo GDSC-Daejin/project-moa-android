@@ -1,6 +1,7 @@
 package com.example.giftmoa.BottomMenu
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,13 +9,20 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.giftmoa.Adapter.ShareRoomAdapter
 import com.example.giftmoa.Data.SaveSharedPreference
 import com.example.giftmoa.Data.ShareRoomData
 import com.example.giftmoa.R
+import com.example.giftmoa.ShareRoomMenu.ShareRoomEditActivity
+import com.example.giftmoa.ShareRoomMenu.ShareRoomReadActivity
 import com.example.giftmoa.databinding.FragmentShareRoomBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -61,7 +69,13 @@ class ShareRoomFragment : Fragment() {
 
         sAdapter!!.setItemClickListener(object : ShareRoomAdapter.ItemClickListener{
             override fun onClick(view: View, position: Int, itemId: String) {
+                val temp = shareRoomAllData[position]
 
+                val intent = Intent(activity, ShareRoomReadActivity::class.java).apply {
+                    putExtra("type", "READ")
+                    putExtra("data", temp)
+                }
+                startActivity(intent)
             }
         })
 
@@ -73,19 +87,22 @@ class ShareRoomFragment : Fragment() {
                 .setView(view)
                 .create()
 
-            val dialogTitle = view.findViewById<TextView>(R.id.dialog_title)
-            val dialogBtn = view.findViewById<Button>(R.id.dialog_entrance_btn)
-            val dialogET = view.findViewById<EditText>(R.id.dialog_et)
+           val dialogCreate = view.findViewById<TextView>(R.id.dialog_create)
+            val dialogEntrance = view.findViewById<TextView>(R.id.dialog_entrance)
 
-            dialogTitle.text = "방 이름 설정하기"
-            dialogBtn.text = "생성하기"
+           dialogCreate.setOnClickListener {
+               val intent = Intent(requireActivity(), ShareRoomEditActivity::class.java).apply {
+                   putExtra("type", "ADD")
+               }
+               requestActivity.launch(intent)
+               alertDialog.dismiss()
+           }
 
-            dialogBtn.setOnClickListener {
-                shareRoomAllData.add(ShareRoomData(dialogET.text.toString(), 1, 0, "손민성")) //identification
-                println(shareRoomAllData)
-                sAdapter!!.notifyDataSetChanged()
-                alertDialog.dismiss()
-            }
+           dialogEntrance.setOnClickListener {
+
+           }
+
+
 
             alertDialog.show()
         }
@@ -123,6 +140,48 @@ class ShareRoomFragment : Fragment() {
 
     private fun setRoomData() {
 
+    }
+
+
+    private val requestActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { it ->
+        when (it.resultCode) {
+            AppCompatActivity.RESULT_OK -> {
+                val shareRoomData = it.data?.getSerializableExtra("data") as ShareRoomData
+
+                when(it.data?.getIntExtra("flag", -1)) {
+                    //add
+                    0 -> {
+                        println("addaadaddadaadadadad")
+                        shareRoomAllData.add(shareRoomData)
+                        sAdapter!!.notifyDataSetChanged()
+
+                        /*CoroutineScope(Dispatchers.Main).launch {
+                            requireActivity().supportFragmentManager.beginTransaction()
+                                .replace(R.id.fragment_content, ShareRoomFragment())
+                                .commit()
+                        }*/
+
+                        //finish()
+                    }
+                    //수정 테스트 해보기 todo//edit
+                    1 -> {
+                        /*oldFragment = HomeFragment()
+                        oldTAG = TAG_HOME
+                        //setToolbarView(TAG_HOME, oldTAG)
+                        setFragment(TAG_HOME, HomeFragment())
+
+                        mBinding.bottomNavigationView.selectedItemId = R.id.navigation_home
+
+                        CoroutineScope(Dispatchers.Main).launch {
+                            supportFragmentManager.beginTransaction()
+                                .replace(R.id.fragment_content, HomeFragment())
+                                .commit()*/
+                        }
+
+                        //finish()
+                    }
+            }
+        }
     }
 
     companion object {
