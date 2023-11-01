@@ -16,7 +16,7 @@ class LockerActivity : AppCompatActivity() {
         setContentView(lBinding.root)
 
 
-        lBinding.viewpager.adapter = HomeTabAdapter(this@LockerActivity)
+        //lBinding.viewpager.adapter = HomeTabAdapter(this@LockerActivity)
 
         TabLayoutMediator(lBinding.categoryTabLayout, lBinding.viewpager) { tab, pos ->
             tab.text = tabTextList[pos]

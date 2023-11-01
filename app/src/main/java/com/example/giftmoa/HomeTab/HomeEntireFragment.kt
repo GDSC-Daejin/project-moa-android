@@ -1,6 +1,7 @@
 package com.example.giftmoa.HomeTab
 
 import android.content.Intent
+import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -9,11 +10,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.giftmoa.Adapter.GifticonListAdapter
 import com.example.giftmoa.Adapter.HomeGiftAdapter
 import com.example.giftmoa.BottomSheetFragment.BottomSheetFragment
 import com.example.giftmoa.CouponTab.CouponAutoAddActivity
 import com.example.giftmoa.Data.GiftData
+import com.example.giftmoa.GifticonDetailActivity
 import com.example.giftmoa.GifticonRegistrationActivity
+import com.example.giftmoa.GridSpacingItemDecoration
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.FragmentHomeEntireBinding
 
@@ -33,9 +37,9 @@ class HomeEntireFragment : Fragment() {
     private var param2: String? = null
 
     private lateinit var binding : FragmentHomeEntireBinding
-    private var giftAdapter : HomeGiftAdapter? = null
+    private var giftAdapter : GifticonListAdapter? = null
     private var giftAllData = ArrayList<GiftData>()
-    private var gridManager = GridLayoutManager(activity, 2)
+    private var gridManager = GridLayoutManager(activity, 2, GridLayoutManager.VERTICAL, false)
     private var getBottomSheetData = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,9 +55,8 @@ class HomeEntireFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentHomeEntireBinding.inflate(inflater, container, false)
-        initHomeRecyclerView()
 
-        binding.giftAdd.setOnClickListener {
+        /*binding.giftAdd.setOnClickListener {
             val bottomSheet = BottomSheetFragment()
             bottomSheet.show(requireActivity().supportFragmentManager, bottomSheet.tag)
             bottomSheet.apply {
@@ -76,7 +79,15 @@ class HomeEntireFragment : Fragment() {
                     }
                 })
             }
+        }*/
+
+        giftAdapter = GifticonListAdapter { gifticon ->
+            val intent = Intent(requireActivity(), GifticonDetailActivity::class.java)
+            intent.putExtra("gifticon", gifticon)
+            startActivity(intent)
         }
+
+        initHomeRecyclerView()
 
 
         return binding.root
@@ -85,16 +96,30 @@ class HomeEntireFragment : Fragment() {
     private fun initHomeRecyclerView() {
         setGiftData()
 
-        giftAdapter = HomeGiftAdapter()
+        /*giftAdapter = GifticonListAdapter()
         giftAdapter!!.giftItemData = giftAllData
         binding.giftRv.adapter = giftAdapter
         //레이아웃 뒤집기 안씀
         //manager.reverseLayout = true
-        //manager.stackFromEnd = true
-        binding.giftRv.setHasFixedSize(true)
+        //manager.stackFromEnd = true*/
+        binding.giftRv.apply {
+            adapter = giftAdapter
+            layoutManager = gridManager
+            binding.giftRv.addItemDecoration(
+                GridSpacingItemDecoration(spanCount = 2, spacing = 10f.fromDpToPx())
+            )
+        }
+
+        /*binding.giftRv.setHasFixedSize(true)
         binding.giftRv.layoutManager = gridManager
+        binding.giftRv.addItemDecoration(
+            GridSpacingItemDecoration(spanCount = 2, spacing = 10f.fromDpToPx())
+        )*/
 
     }
+
+    private fun Float.fromDpToPx(): Int =
+        (this * Resources.getSystem().displayMetrics.density).toInt()
 
     private fun setGiftData() {
         giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
@@ -107,6 +132,7 @@ class HomeEntireFragment : Fragment() {
         giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
         giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
 
+        giftAdapter!!.submitList(giftAllData)
     }
 
     companion object {

@@ -9,5 +9,5 @@ data class UploadGifticonItem(
     val orderNumber: String? = null,
     val gifticonType: String? = null,
     val categoryId: Long? = null,
-    //val amount: Long? = null,
+    val amount: Long? = null,
 )

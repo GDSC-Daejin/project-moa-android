@@ -127,20 +127,15 @@
                     android:src="@drawable/home_locker_move_icon" />
             </LinearLayout>
 
-            <LinearLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/gift_rv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="20dp"
-                android:orientation="vertical">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/gift_rv"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="visible"
-                    tools:listitem="@layout/home_item" />
-            </LinearLayout>
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="7dp"
+                android:visibility="visible"
+                tools:listitem="@layout/item_gifticon" />
 
 
         </LinearLayout>

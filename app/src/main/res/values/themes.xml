@@ -13,6 +13,8 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
         <item name="windowNoTitle">true</item>
+        <!--기본 배경 색상-->
+        <item name="android:windowBackground">@color/moa_gray_white</item>
     </style>
 
     <style name="CustomAlertDialog">
