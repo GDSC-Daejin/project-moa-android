@@ -1,11 +1,18 @@
 package com.example.giftmoa.BottomMenu
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.giftmoa.Adapter.HomeTabAdapter
+import com.example.giftmoa.BottomSheetFragment.BottomSheetFragment
+import com.example.giftmoa.GifticonRegistrationActivity
 import com.example.giftmoa.R
+import com.example.giftmoa.databinding.FragmentCouponBinding
+import com.google.android.material.tabs.TabLayoutMediator
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -22,6 +29,14 @@ class CouponFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private var _binding: FragmentCouponBinding? = null
+    private val binding get() = _binding!!
+
+    private val TAG = "CouponFragment"
+    private val tabTextList = listOf("전체", "사용가능", "사용완료")
+
+    private var getBottomSheetData = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -34,8 +49,51 @@ class CouponFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_coupon, container, false)
+        _binding = FragmentCouponBinding.inflate(inflater, container, false)
+        val root: View = binding.root
+        val tabLayout = binding.tabLayout
+        val viewPager = binding.viewpager
+
+        val homeTabAdapter = HomeTabAdapter(this)
+        viewPager.adapter = homeTabAdapter
+
+        TabLayoutMediator(tabLayout, viewPager) { tab, pos ->
+            tab.text = tabTextList[pos]
+            //val typeface = resources.getFont(com.example.mio.R.font.pretendard_medium)
+            //tab.setIcon(tabIconList[pos])
+        }.attach()
+
+        binding.btnAddCoupon.setOnClickListener {
+            val bottomSheet = BottomSheetFragment()
+            bottomSheet.show(requireActivity().supportFragmentManager, bottomSheet.tag)
+            bottomSheet.apply {
+                setCallback(object : BottomSheetFragment.OnSendFromBottomSheetDialog{
+                    override fun sendValue(value: String) {
+                        Log.d("test", "BottomSheetDialog -> 액티비티로 전달된 값 : $value")
+                        getBottomSheetData = value
+                        //myViewModel.postCheckSearchFilter(getBottomSheetData)
+                        when (value) {
+                            "자동 등록" -> {
+                                //val intent = Intent(requireActivity(), CouponAutoAddActivity::class.java)
+                                val intent = Intent(requireActivity(), GifticonRegistrationActivity::class.java)
+                                startActivity(intent)
+                            }
+
+                            "수동 등록" -> {
+
+                            }
+                        }
+                    }
+                })
+            }
+        }
+
+        return root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {

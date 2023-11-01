@@ -1,6 +1,7 @@
 package com.example.giftmoa.HomeTab
 
 import android.content.Intent
+import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +15,7 @@ import com.example.giftmoa.BottomSheetFragment.BottomSheetFragment
 import com.example.giftmoa.CouponTab.CouponAutoAddActivity
 import com.example.giftmoa.Data.GiftData
 import com.example.giftmoa.GifticonRegistrationActivity
+import com.example.giftmoa.GridSpacingItemDecoration
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.FragmentHomeEntireBinding
 
@@ -35,7 +37,7 @@ class HomeEntireFragment : Fragment() {
     private lateinit var binding : FragmentHomeEntireBinding
     private var giftAdapter : HomeGiftAdapter? = null
     private var giftAllData = ArrayList<GiftData>()
-    private var gridManager = GridLayoutManager(activity, 2)
+    private var gridManager = GridLayoutManager(activity, 2, GridLayoutManager.VERTICAL, false)
     private var getBottomSheetData = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +55,7 @@ class HomeEntireFragment : Fragment() {
         binding = FragmentHomeEntireBinding.inflate(inflater, container, false)
         initHomeRecyclerView()
 
-        binding.giftAdd.setOnClickListener {
+        /*binding.giftAdd.setOnClickListener {
             val bottomSheet = BottomSheetFragment()
             bottomSheet.show(requireActivity().supportFragmentManager, bottomSheet.tag)
             bottomSheet.apply {
@@ -76,7 +78,7 @@ class HomeEntireFragment : Fragment() {
                     }
                 })
             }
-        }
+        }*/
 
 
         return binding.root
@@ -93,8 +95,14 @@ class HomeEntireFragment : Fragment() {
         //manager.stackFromEnd = true
         binding.giftRv.setHasFixedSize(true)
         binding.giftRv.layoutManager = gridManager
+        binding.giftRv.addItemDecoration(
+            GridSpacingItemDecoration(spanCount = 2, spacing = 10f.fromDpToPx())
+        )
 
     }
+
+    private fun Float.fromDpToPx(): Int =
+        (this * Resources.getSystem().displayMetrics.density).toInt()
 
     private fun setGiftData() {
         giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))

@@ -8,11 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.giftmoa.Data.GiftData
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.HomeItemBinding
+import com.example.giftmoa.databinding.ItemGifticonBinding
 import com.kakao.sdk.common.util.SdkLogLevel
 
 
 class HomeGiftAdapter : RecyclerView.Adapter<HomeGiftAdapter.HomeGiftViewHolder>(){
-    private lateinit var binding : HomeItemBinding
+    private lateinit var binding : ItemGifticonBinding
     var giftItemData = ArrayList<GiftData>()
     private lateinit var context : Context
 
@@ -20,12 +21,12 @@ class HomeGiftAdapter : RecyclerView.Adapter<HomeGiftAdapter.HomeGiftViewHolder>
         setHasStableIds(true)
     }
 
-    inner class HomeGiftViewHolder(private val binding : HomeItemBinding ) : RecyclerView.ViewHolder(binding.root) {
+    inner class HomeGiftViewHolder(private val binding : ItemGifticonBinding ) : RecyclerView.ViewHolder(binding.root) {
         private var position : Int? = null
-        private var giftBrand = binding.giftBrand
-        private var giftName = binding.giftName
-        private var giftImg = binding.giftImg
-        private var giftRemainingDay = binding.giftRemainingDay
+        private var giftBrand = binding.tvCategoryName
+        private var giftName = binding.tvCouponName
+        private var giftImg = binding.ivShareRoomImage
+        private var giftRemainingDay = binding.tvDDay
 
 
         fun bind(itemData: GiftData, position : Int) {
@@ -36,7 +37,7 @@ class HomeGiftAdapter : RecyclerView.Adapter<HomeGiftAdapter.HomeGiftViewHolder>
             if (itemData.giftImg != null) {
                 giftImg.setImageURI(itemData.giftImg)
             } else {
-                giftImg.setImageResource(R.drawable.image)
+                giftImg.setImageResource(R.drawable.asset_gifticon_coffee)
             }
             giftRemainingDay.text = "D+${itemData.remainingDay}"
 
@@ -45,7 +46,7 @@ class HomeGiftAdapter : RecyclerView.Adapter<HomeGiftAdapter.HomeGiftViewHolder>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeGiftViewHolder {
         context = parent.context
-        binding = HomeItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        binding = ItemGifticonBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return HomeGiftViewHolder(binding)
     }
 
