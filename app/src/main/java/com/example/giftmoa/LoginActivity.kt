@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import com.example.giftmoa.Data.KakaoLoginUserData
 import com.example.giftmoa.Data.SaveSharedPreference
 import com.example.giftmoa.databinding.ActivityLoginBinding
 import com.kakao.sdk.auth.model.OAuthToken
@@ -12,27 +13,36 @@ import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var mBinding : ActivityLoginBinding
     private val kakaoAppKey = BuildConfig.kakao_app_key
     private val sharedPreference = SaveSharedPreference()
+
+    private val SERVER_URL = BuildConfig.server_URL
+    private val retrofit = Retrofit.Builder().baseUrl(SERVER_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    val service: MoaInterface = retrofit.create(MoaInterface::class.java)
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding = ActivityLoginBinding.inflate(layoutInflater)
 
         setContentView(mBinding.root)
-        KakaoSdk.init(this, kakaoAppKey)
         mBinding.loginBtn.setOnClickListener {
-            if (sharedPreference.getToken(this@LoginActivity) != null) {
-                val intent = Intent(this@LoginActivity, MainActivity::class.java).apply {
-
-                }
-                startActivity(intent)
-                finish()
-            } else {
-                kakaoLogin() //로그인
-            }
+            kakaoLogin() //로그인
         }
 
         /* KakaoSdk.init(this, kakaoAppKey)
@@ -70,6 +80,33 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
 
+                CoroutineScope(Dispatchers.IO).launch {
+                    service.kakaoLogin(token.accessToken).enqueue(object : retrofit2.Callback<KakaoLoginUserData> {
+                        override fun onResponse(
+                            call: retrofit2.Call<KakaoLoginUserData>,
+                            response: retrofit2.Response<KakaoLoginUserData?>
+                        ) {
+                            if (response.isSuccessful) {
+                                val builder =  OkHttpClient.Builder()
+                                    .connectTimeout(1, TimeUnit.SECONDS)
+                                    .readTimeout(30, TimeUnit.SECONDS)
+                                    .writeTimeout(15, TimeUnit.SECONDS)
+                                    .addInterceptor(HeaderInterceptor(response.body()!!.data.accessToken))
+                                builder.build()
+
+
+                            } else {
+                                println("faafa")
+                                Log.d("test", response.errorBody()?.string()!!)
+                                Log.d("message", call.request().toString())
+                                println(response.code())
+                            }
+                        }
+                        override fun onFailure(call: retrofit2.Call<KakaoLoginUserData>, t: Throwable) {
+                            println("실패" + t.message.toString())
+                        }
+                    })
+                }
 
                 /*//TODO: 최종적으로 카카오로그인 및 유저정보 가져온 결과
                 UserApiClient.instance.me { user, error ->
@@ -79,6 +116,9 @@ class LoginActivity : AppCompatActivity() {
 
                     Log.e("TEST", "${token.idToken}")
                 }*/
+                val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                startActivity(intent)
+                this.finish()
             }
         }
 
@@ -112,6 +152,18 @@ class LoginActivity : AppCompatActivity() {
 
     private fun TextMsg(act: Activity, msg : String){
         mBinding.tv.text = msg
+    }
+
+    class HeaderInterceptor constructor(private val token: String) : Interceptor {
+
+        @Throws(IOException::class)
+        override fun intercept(chain: Interceptor.Chain): Response {
+            val token = "Bearer $token"
+            val newRequest = chain.request().newBuilder()
+                .addHeader("Authorization", token)
+                .build()
+            return chain.proceed(newRequest)
+        }
     }
 
     /*private fun kakaoLogout(){
