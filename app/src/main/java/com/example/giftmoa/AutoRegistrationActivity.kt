@@ -200,11 +200,7 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener {
             binding.switchCouponAmount.isChecked = false
         }
 
-        val updatedGifticon = gifticon.copy(
-            amount = binding.etCouponAmount.text.toString().toLongOrNull(),
-        )
-
-        uploadGifticonToServer(updatedGifticon)
+        uploadGifticonToServer(gifticon)
     }
 
     private fun uploadGifticonToServer(gifticon: ParsedGifticon) {
@@ -242,6 +238,8 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener {
                 "MONEY"
             }
 
+            Log.d(TAG, "gifticon.amount: $gifticon.amount")
+
             // 클릭된 카테고리 chip의 text를 가져옴
             val selectedCategory = binding.chipGroupCategory.findViewById<Chip>(binding.chipGroupCategory.checkedChipId)
             val categoryName = selectedCategory?.text
@@ -259,12 +257,14 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener {
                 if (categoryId != null) {
                     val newGifticon = UploadGifticonItem(
                         name = gifticon.name,
-                        barcodeNumber = gifticon.barcodeNumber,
+                        barcodeNumber = gifticon.barcodeNumber?.trim(),
                         image = imageUrl,
                         exchangePlace = gifticon.exchangePlace,
-                        dueDate = gifticon.dueDate,
+                        dueDate = formattedDate,
+                        orderNumber = gifticon.orderNumber,
                         gifticonType = gifticonType,
                         categoryId = categoryId,
+                        amount = gifticon.amount
                     )
                     Log.d(TAG, "onCreate: $newGifticon")
                     //Toast.makeText(this, "쿠폰이 등록되었습니다.", Toast.LENGTH_SHORT).show()

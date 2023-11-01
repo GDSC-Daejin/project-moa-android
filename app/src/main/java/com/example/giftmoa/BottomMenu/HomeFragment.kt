@@ -1,17 +1,22 @@
 package com.example.giftmoa.BottomMenu
 
 import android.content.Intent
+import android.content.res.Resources
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.giftmoa.Adapter.GifticonListAdapter
 import com.example.giftmoa.Adapter.HomeGiftAdapter
 import com.example.giftmoa.Adapter.HomeTabAdapter
 import com.example.giftmoa.Adapter.HomeUsedGiftAdapter
 import com.example.giftmoa.Data.GiftData
 import com.example.giftmoa.Data.UsedGiftData
+import com.example.giftmoa.GifticonDetailActivity
+import com.example.giftmoa.GridSpacingItemDecoration
+import com.example.giftmoa.HomeTab.HomeEntireFragment
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.FragmentHomeBinding
 import com.google.android.material.tabs.TabLayoutMediator
@@ -32,7 +37,7 @@ class HomeFragment : Fragment() {
     private var param2: String? = null
 
     private lateinit var hBinding : FragmentHomeBinding
-    private var giftAdapter : HomeGiftAdapter? = null
+    private lateinit var giftAdapter : GifticonListAdapter
     private var giftAllData = ArrayList<GiftData>()
     private var gridManager = GridLayoutManager(activity, 2)
     //private val tabTextList = listOf("전체", "사용가능", "사용완료")
@@ -54,12 +59,20 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         hBinding = FragmentHomeBinding.inflate(inflater, container, false)
+
+        giftAdapter = GifticonListAdapter { gifticon ->
+            val intent = Intent(requireActivity(), GifticonDetailActivity::class.java)
+            intent.putExtra("gifticon", gifticon)
+            startActivity(intent)
+        }
+
         initUsedRecyclerView()
         initHomeRecyclerView()
 
         hBinding.homeMoveIv.setOnClickListener {
-            val intent = Intent(requireActivity(), LockerActivity::class.java)
-            startActivity(intent)
+            val bottomNavigationView = requireActivity().findViewById<View>(R.id.bottom_navigation_view)
+            // 바텀 네비게이션의 다른 메뉴를 선택하도록 설정
+            bottomNavigationView.findViewById<View>(R.id.navigation_coupon).performClick()
         }
         /*hBinding.viewpager.adapter = HomeTabAdapter(requireActivity())
 
@@ -79,19 +92,19 @@ class HomeFragment : Fragment() {
         hBinding.usedRv.adapter = usedGiftAdapter
         hBinding.usedRv.setHasFixedSize(true)
     }
+    private fun Float.fromDpToPx(): Int =
+        (this * Resources.getSystem().displayMetrics.density).toInt()
 
     private fun initHomeRecyclerView() {
         setGiftData()
 
-        giftAdapter = HomeGiftAdapter()
-        giftAdapter!!.giftItemData = giftAllData
-        hBinding.giftRv.adapter = giftAdapter
-        //레이아웃 뒤집기 안씀
-        //manager.reverseLayout = true
-        //manager.stackFromEnd = true
-        hBinding.giftRv.setHasFixedSize(true)
-        hBinding.giftRv.layoutManager = gridManager
-
+        hBinding.giftRv.apply {
+            adapter = giftAdapter
+            layoutManager = gridManager
+            hBinding.giftRv.addItemDecoration(
+                GridSpacingItemDecoration(spanCount = 2, spacing = 10f.fromDpToPx())
+            )
+        }
     }
 
     private fun setUsedGiftData() {
@@ -111,6 +124,7 @@ class HomeFragment : Fragment() {
         giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
         giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
 
+        giftAdapter.submitList(giftAllData)
     }
     companion object {
         /**

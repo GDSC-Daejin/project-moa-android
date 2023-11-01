@@ -38,47 +38,18 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_add_coupon" />
 
-            <LinearLayout
-                android:id="@+id/ll_register_coupon_image"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
+            <TextView
+                android:id="@+id/tv_coupon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/pretendard_medium"
+                android:text="쿠폰"
+                android:textColor="@color/moa_gray_900"
+                app:layout_constraintTop_toTopOf="@id/view_divider_title"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/view_divider_title">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:fontFamily="@font/pretendard_medium"
-                    android:text="쿠폰"
-                    android:textColor="@color/moa_gray_900"
-                    android:textSize="16sp" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
-
-                <ImageView
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:layout_marginEnd="4dp"
-                    android:src="@drawable/icon_add_orange" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="20dp"
-                    android:gravity="end"
-                    android:text="이미지 추가하기"
-                    android:textColor="#c4320a"
-                    android:textSize="16sp" />
-
-
-            </LinearLayout>
+                android:textSize="16sp" />
 
             <LinearLayout
                 android:id="@+id/ll_register_coupon"
@@ -91,7 +62,7 @@
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ll_register_coupon_image"
+                app:layout_constraintTop_toBottomOf="@+id/tv_coupon"
                 tools:visibility="visible">
 
                 <CheckBox
@@ -430,7 +401,7 @@
                 android:gravity="end"
                 android:inputType="number"
                 android:paddingStart="20dp"
-                android:paddingTop="13dp"
+                android:paddingTop="15dp"
                 android:paddingEnd="44dp"
                 android:paddingBottom="19dp"
                 android:textColor="@color/moa_gray_600"
