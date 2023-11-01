@@ -25,7 +25,7 @@ class HomeGiftAdapter : RecyclerView.Adapter<HomeGiftAdapter.HomeGiftViewHolder>
         private var position : Int? = null
         private var giftBrand = binding.tvCategoryName
         private var giftName = binding.tvCouponName
-        private var giftImg = binding.ivShareRoomImage
+        private var giftImg = binding.ivCouponImage
         private var giftRemainingDay = binding.tvDDay
 
 
