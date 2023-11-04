@@ -23,6 +23,7 @@ import com.example.giftmoa.Data.ParsedGifticon
 import com.example.giftmoa.Data.ShareRoomItem
 import com.example.giftmoa.Data.UploadGifticonItem
 import com.example.giftmoa.databinding.ActivityAutoRegistrationBinding
+import com.example.giftmoa.util.FormatUtil
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.storage.FirebaseStorage
@@ -204,32 +205,7 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener {
     }
 
     private fun uploadGifticonToServer(gifticon: ParsedGifticon) {
-        val inputFormat = SimpleDateFormat("yyyy년 MM월 dd일", Locale.KOREA)
-        val outputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.KOREA)
-        val utcTimeZone = TimeZone.getTimeZone("UTC")
-        inputFormat.timeZone = utcTimeZone
-        outputFormat.timeZone = utcTimeZone
-
-        var formattedDate: String? = null
-
-        try {
-            val date = inputFormat.parse(gifticon.dueDate)
-            if (date != null) {
-                val calendar = Calendar.getInstance(utcTimeZone)
-                calendar.time = date
-                calendar.add(Calendar.DATE, 1)  // 하루 늘리기
-
-                formattedDate = outputFormat.format(calendar.time)
-                // 이제 formattedDate 변수에 변환된 날짜가 저장되어 있음
-            } else {
-                // 날짜 파싱 실패
-                Log.d(TAG, "uploadGifticonToServer: 날짜 파싱 실패")
-            }
-        } catch (e: Exception) {
-            // 날짜 파싱 중 예외가 발생한 경우
-            Log.e(TAG, "uploadGifticonToServer: 날짜 파싱 중 예외 발생", e)
-        }
-
+        val formattedDate = FormatUtil().StringToDate(gifticon.dueDate.toString(), TAG)
 
         binding.btnConfirm.setOnClickListener {
             val gifticonType = if (gifticon.amount == null) {
@@ -254,26 +230,22 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener {
             }
 
             if (!isUploading) {
-                if (categoryId != null) {
-                    val newGifticon = UploadGifticonItem(
-                        name = gifticon.name,
-                        barcodeNumber = gifticon.barcodeNumber?.trim(),
-                        image = imageUrl,
-                        exchangePlace = gifticon.exchangePlace,
-                        dueDate = formattedDate,
-                        orderNumber = gifticon.orderNumber,
-                        gifticonType = gifticonType,
-                        categoryId = categoryId,
-                        amount = gifticon.amount
-                    )
-                    Log.d(TAG, "onCreate: $newGifticon")
-                    //Toast.makeText(this, "쿠폰이 등록되었습니다.", Toast.LENGTH_SHORT).show()
-                    //finish()
-                    if (formattedDate != null) {
-                        Log.d(TAG, "date: $formattedDate")
-                    }
-                } else {
-                    Snackbar.make(binding.root, "카테고리를 선택해주세요.", Snackbar.LENGTH_SHORT).show()
+                val newGifticon = UploadGifticonItem(
+                    name = gifticon.name,
+                    barcodeNumber = gifticon.barcodeNumber,
+                    image = imageUrl,
+                    exchangePlace = gifticon.exchangePlace,
+                    dueDate = formattedDate,
+                    orderNumber = gifticon.orderNumber,
+                    gifticonType = gifticonType,
+                    categoryId = categoryId,
+                    amount = gifticon.amount
+                )
+                Log.d(TAG, "onCreate: $newGifticon")
+                //Toast.makeText(this, "쿠폰이 등록되었습니다.", Toast.LENGTH_SHORT).show()
+                //finish()
+                if (formattedDate != null) {
+                    Log.d(TAG, "date: $formattedDate")
                 }
             } else {
                 Snackbar.make(binding.root, "체크박스를 체크해주세요.", Snackbar.LENGTH_SHORT).show()

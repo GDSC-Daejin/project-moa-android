@@ -27,6 +27,7 @@
             android:textSize="16sp" />
 
         <TextView
+            android:id="@+id/tv_toolbar_confirm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
@@ -222,41 +223,70 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/view_divider_exchange_place" />
 
-            <EditText
-                android:id="@+id/et_coupon_used_amount"
+            <LinearLayout
+                android:id="@+id/ll_coupon_used_amount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
                 android:layout_marginTop="12dp"
-                android:layout_marginEnd="20dp"
-                android:background="@drawable/background_edit_text"
-                android:fontFamily="@font/pretendard_medium"
-                android:gravity="end"
-                android:hint="0"
-                android:inputType="number"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:paddingStart="20dp"
-                android:paddingTop="15dp"
-                android:paddingEnd="44dp"
-                android:paddingBottom="19dp"
-                android:textColor="@color/moa_gray_700"
-                android:textColorHint="#b7b7b7"
-                android:textSize="16sp"
-                app:layout_constraintTop_toBottomOf="@id/tv_coupon_used_amount"
-                app:layout_constraintVertical_bias="0.0"
-                tools:layout_editor_absoluteX="20dp" />
-
-            <TextView
-                android:id="@+id/tv_coupon_amount_unit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:fontFamily="@font/pretendard_medium"
                 android:paddingEnd="20dp"
-                android:text="원"
-                android:textColor="@color/moa_gray_400"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="@+id/et_coupon_used_amount"
-                app:layout_constraintTop_toTopOf="@+id/et_coupon_used_amount" />
+                app:layout_constraintTop_toBottomOf="@id/tv_coupon_used_amount">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <EditText
+                        android:id="@+id/et_coupon_used_amount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/background_edit_text"
+                        android:fontFamily="@font/pretendard_medium"
+                        android:gravity="end"
+                        android:hint="0"
+                        android:inputType="number"
+                        android:paddingStart="20dp"
+                        android:paddingTop="15dp"
+                        android:paddingEnd="44dp"
+                        android:paddingBottom="19dp"
+                        android:textColor="@color/moa_gray_700"
+                        android:textColorHint="#b7b7b7"
+                        android:textSize="16sp"
+                        app:layout_constraintTop_toBottomOf="@id/tv_coupon_used_amount"
+                        app:layout_constraintVertical_bias="0.0"
+                        tools:layout_editor_absoluteX="20dp" />
+
+                    <TextView
+                        android:id="@+id/tv_coupon_amount_unit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:fontFamily="@font/pretendard_medium"
+                        android:paddingEnd="20dp"
+                        android:text="원"
+                        android:textColor="@color/moa_gray_400"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toEndOf="@+id/et_coupon_used_amount"
+                        app:layout_constraintTop_toTopOf="@+id/et_coupon_used_amount" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <TextView
+                    android:id="@+id/tv_enter_coupon_used_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/background_enabled_button"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:padding="16dp"
+                    android:text="입력"
+                    android:textColor="@color/moa_gray_white"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tv_coupon_remain_amount"
@@ -269,7 +299,7 @@
                 android:textColor="@color/moa_gray_900"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/et_coupon_used_amount" />
+                app:layout_constraintTop_toBottomOf="@id/ll_coupon_used_amount" />
 
             <EditText
                 android:id="@+id/et_coupon_remain_amount"
@@ -278,8 +308,8 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginEnd="20dp"
-                android:clickable="false"
                 android:background="@drawable/background_gray_edit_text"
+                android:clickable="false"
                 android:fontFamily="@font/pretendard_medium"
                 android:gravity="end"
                 android:inputType="number"
@@ -323,13 +353,13 @@
                 android:id="@+id/rv_coupon_usage_history"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginTop="12dp"
+                android:layout_weight="1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_coupon_usage_history"
-                tools:listitem="@layout/item_gifticon_usage_history"
-                tools:itemCount="3" />
+                tools:itemCount="3"
+                tools:listitem="@layout/item_gifticon_usage_history" />
 
             <View
                 android:id="@+id/view_divider_usage_history"

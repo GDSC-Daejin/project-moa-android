@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="316dp"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="20dp"
+    android:layout_marginBottom="4dp"
+    android:background="@drawable/background_home_shared_gifticon"
+    android:elevation="5dp"
+    android:padding="20dp">
+
+    <ImageView
+        android:id="@+id/iv_coupon_image"
+        android:layout_width="118dp"
+        android:layout_height="118dp"
+        android:background="@drawable/background_home_shared_gifticon_image"
+        android:clipToOutline="true"
+        android:src="@drawable/asset_gifticon_coffee"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_d_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:fontFamily="@font/pretendard_regular"
+        android:text="마감까지 D-3"
+        android:textColor="@color/moa_carrot_700"
+        android:textSize="12sp"
+        app:layout_constraintStart_toEndOf="@id/iv_coupon_image"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_coupon_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:fontFamily="@font/pretendard_bold"
+        android:text="아이스 아메리카노"
+        android:textColor="@color/moa_gray_900"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="@id/tv_d_day"
+        app:layout_constraintTop_toBottomOf="@id/tv_d_day" />
+
+    <TextView
+        android:id="@+id/tv_coupon_exchange_place"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pretendard_medium"
+        android:text="스타벅스"
+        android:textColor="@color/moa_gray_400"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@id/tv_d_day"
+        app:layout_constraintTop_toBottomOf="@id/tv_coupon_name" />
+
+    <ImageView
+        android:id="@+id/iv_barcode_image"
+        android:layout_width="wrap_content"
+        android:layout_height="39dp"
+        android:scaleType="fitStart"
+        android:src="@drawable/asset_barcode_image"
+        app:layout_constraintBottom_toBottomOf="@id/iv_coupon_image"
+        app:layout_constraintStart_toStartOf="@id/tv_d_day" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,21 +1,22 @@
 package com.example.giftmoa.Adapter
 
+import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.giftmoa.Data.GiftData
 import com.example.giftmoa.Data.GifticonDetailItem
-import com.example.giftmoa.Data.ShareRoomItem
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.ItemGifticonBinding
-import com.example.giftmoa.databinding.ItemShareRoomBinding
+import com.example.giftmoa.databinding.ItemHomeSharedGifticonBinding
+import com.example.giftmoa.util.ImageUtil
 import java.text.SimpleDateFormat
 import java.util.Date
 
-class GifticonListAdapter(private val onClick: (GifticonDetailItem) -> Unit): ListAdapter<GifticonDetailItem, GifticonListAdapter.ViewHolder>(diffUtil) {
+class HomeSharedGifticonAdapter(private val onClick: (GifticonDetailItem) -> Unit, private val context: Context): ListAdapter<GifticonDetailItem, HomeSharedGifticonAdapter.ViewHolder>(diffUtil) {
 
     interface OnItemClickListener {
         fun onItemClick(position: Int) {}
@@ -23,12 +24,13 @@ class GifticonListAdapter(private val onClick: (GifticonDetailItem) -> Unit): Li
 
     var itemClickListener: OnItemClickListener? = null
 
-    inner class ViewHolder(private val binding: ItemGifticonBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemHomeSharedGifticonBinding): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(gifticon: GifticonDetailItem) {
             if (gifticon.gifticonImagePath != null) {
                 Glide.with(binding.ivCouponImage.context)
                     .load(gifticon.gifticonImagePath)
+                    .centerCrop()
                     .into(binding.ivCouponImage)
             } else {
                 binding.ivCouponImage.setImageResource(R.drawable.asset_gifticon_coffee)
@@ -56,6 +58,10 @@ class GifticonListAdapter(private val onClick: (GifticonDetailItem) -> Unit): Li
                 binding.tvDDay.text = "날짜 형식 오류"
             }
 
+            val barcode = ImageUtil(context).createBarcode(gifticon.barcodeNumber.toString().trim())
+            binding.ivBarcodeImage.setImageBitmap(barcode)
+
+
             binding.root.setOnClickListener {
                 onClick(gifticon)
             }
@@ -63,7 +69,7 @@ class GifticonListAdapter(private val onClick: (GifticonDetailItem) -> Unit): Li
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(ItemGifticonBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return ViewHolder(ItemHomeSharedGifticonBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

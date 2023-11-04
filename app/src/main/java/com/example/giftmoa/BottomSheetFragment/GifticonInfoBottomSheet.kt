@@ -11,6 +11,7 @@ import com.example.giftmoa.Data.ParsedGifticon
 import com.example.giftmoa.GifticonInfoListener
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.LayoutGifticonInfoBottomSheetBinding
+import com.example.giftmoa.util.FormatUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 class GifticonInfoBottomSheet(private var gifticon: ParsedGifticon, private val listener: GifticonInfoListener) : BottomSheetDialogFragment() {
@@ -32,35 +33,8 @@ class GifticonInfoBottomSheet(private var gifticon: ParsedGifticon, private val 
         val behavior = BottomSheetBehavior.from(view.parent as View)
         behavior.peekHeight = resources.getDimensionPixelSize(R.dimen.bottom_sheet_peek_height)
 
-        var formattedDueDate: String? = null
-        if (gifticon.dueDate?.contains("년") == true) {
-            val regex = Regex("(\\d+\\s*년)\\s*(\\d+\\s*월)\\s*(\\d+\\s*일)")
-            val matchResult = gifticon.dueDate?.let { regex.find(it) }
+        val formattedDueDate = gifticon.dueDate?.let { FormatUtil().ParsedDateToString(it) }
 
-            formattedDueDate = if (matchResult != null) {
-                val year = matchResult.groups[1]?.value?.trim() ?: ""
-                val month = matchResult.groups[2]?.value?.trim() ?: ""
-                val day = matchResult.groups[3]?.value?.trim() ?: ""
-
-                "$year $month $day"
-            } else {
-                gifticon.dueDate
-            }
-        } else {
-            // 2021.12.31 -> 2021년 12월 31일
-            val regex = Regex("(\\d+)\\.(\\d+)\\.(\\d+)")
-            val matchResult = gifticon.dueDate?.let { regex.find(it) }
-
-            formattedDueDate = if (matchResult != null) {
-                val year = matchResult.groups[1]?.value?.trim() ?: ""
-                val month = matchResult.groups[2]?.value?.trim() ?: ""
-                val day = matchResult.groups[3]?.value?.trim() ?: ""
-
-                "${year}년 ${month}월 ${day}일"
-            } else {
-                gifticon.dueDate
-            }
-        }
         // gifticon.amount 50000 -> 50,000
         val formattedAmount = gifticon.amount?.let { String.format("%,d", it) }
 
