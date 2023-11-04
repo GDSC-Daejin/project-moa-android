@@ -97,7 +97,12 @@ class HomeUsedFragment : Fragment() {
                 gifticonList.add(gifticon)
             }
 
-            giftAdapter!!.submitList(gifticonList)
+            if (gifticonList.size == 0) {
+                binding.tvNoGifticon.visibility = View.VISIBLE
+            } else {
+                binding.tvNoGifticon.visibility = View.GONE
+                giftAdapter.submitList(gifticonList)
+            }
         }
     }
 

@@ -1,5 +1,9 @@
 package com.example.giftmoa.Data
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class GifticonDetailItem(
     val id: Long? = null,
     val name: String? = null,
@@ -15,15 +19,17 @@ data class GifticonDetailItem(
     val category: Category?,
     val amount: Long? = null,
     val usageHistories: List<UsageHistoryItem>? = null,
-)
+): Parcelable
 
+@Parcelize
 data class Author(
     val id: Long? = null,
     val nickname: String? = null,
     val profileImageUrl: String? = null,
-)
+): Parcelable
 
+@Parcelize
 data class Category(
     val id: Long? = null,
     val categoryName: String? = null,
-)
+): Parcelable

@@ -16,6 +16,7 @@ import com.example.giftmoa.Adapter.HomeGiftAdapter
 import com.example.giftmoa.AssetLoader
 import com.example.giftmoa.BottomSheetFragment.BottomSheetFragment
 import com.example.giftmoa.BottomSheetFragment.CategoryBottomSheet
+import com.example.giftmoa.BottomSheetFragment.GifticonEditDeleteBottomSheet
 import com.example.giftmoa.CouponTab.CouponAutoAddActivity
 import com.example.giftmoa.Data.CategoryItem
 import com.example.giftmoa.Data.GiftData
@@ -24,6 +25,7 @@ import com.example.giftmoa.Data.StorageData
 import com.example.giftmoa.GifticonDetailActivity
 import com.example.giftmoa.GifticonRegistrationActivity
 import com.example.giftmoa.GridSpacingItemDecoration
+import com.example.giftmoa.ManualRegistrationActivity
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.FragmentHomeEntireBinding
 import com.google.android.material.chip.Chip
@@ -75,6 +77,38 @@ class HomeEntireFragment : Fragment() {
             startActivity(intent)
         }
 
+        giftAdapter.itemLongClickListener = object : GifticonListAdapter.OnItemLongClickListener {
+            override fun onItemLongClick(position: Int) {
+                // 길게 클릭한 아이템에 대한 처리 로직을 여기에 작성
+                val gifticon = giftAdapter.currentList[position]
+
+                val bottomSheet = GifticonEditDeleteBottomSheet()
+                bottomSheet.show(requireActivity().supportFragmentManager, bottomSheet.tag)
+                bottomSheet.apply {
+                    setCallback(object : GifticonEditDeleteBottomSheet.OnSendFromBottomSheetDialog{
+                        override fun sendValue(value: String) {
+                            Log.d("test", "BottomSheetDialog -> 액티비티로 전달된 값 : $value")
+                            getBottomSheetData = value
+                            //myViewModel.postCheckSearchFilter(getBottomSheetData)
+                            when (value) {
+                                "수정하기" -> {
+                                    val intent = Intent(requireActivity(), ManualRegistrationActivity::class.java)
+                                    intent.putExtra("gifticon", gifticon)
+                                    startActivity(intent)
+                                }
+
+                                "삭제하기" -> {
+
+                                }
+                            }
+                        }
+                    })
+                }
+            }
+        }
+
+
+
         getJsonData()
 
         initHomeRecyclerView()
@@ -109,7 +143,12 @@ class HomeEntireFragment : Fragment() {
                 gifticonList.add(gifticon)
             }
 
-            giftAdapter.submitList(gifticonList)
+            if (gifticonList.size == 0) {
+                binding.tvNoGifticon.visibility = View.VISIBLE
+            } else {
+                binding.tvNoGifticon.visibility = View.GONE
+                giftAdapter.submitList(gifticonList)
+            }
         }
     }
 

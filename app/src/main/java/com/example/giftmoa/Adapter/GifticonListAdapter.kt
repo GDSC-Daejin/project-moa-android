@@ -17,13 +17,20 @@ import java.util.Date
 
 class GifticonListAdapter(private val onClick: (GifticonDetailItem) -> Unit): ListAdapter<GifticonDetailItem, GifticonListAdapter.ViewHolder>(diffUtil) {
 
-    interface OnItemClickListener {
-        fun onItemClick(position: Int) {}
+    interface OnItemLongClickListener {
+        fun onItemLongClick(position: Int)
     }
 
-    var itemClickListener: OnItemClickListener? = null
+    var itemLongClickListener: OnItemLongClickListener? = null
 
     inner class ViewHolder(private val binding: ItemGifticonBinding): RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            binding.ivCouponImage.setOnLongClickListener {
+                itemLongClickListener?.onItemLongClick(adapterPosition)
+                return@setOnLongClickListener true
+            }
+        }
 
         fun bind(gifticon: GifticonDetailItem) {
             if (gifticon.gifticonImagePath != null) {
@@ -56,7 +63,8 @@ class GifticonListAdapter(private val onClick: (GifticonDetailItem) -> Unit): Li
                 binding.tvDDay.text = "날짜 형식 오류"
             }
 
-            binding.root.setOnClickListener {
+
+            binding.ivCouponImage.setOnClickListener {
                 onClick(gifticon)
             }
         }
@@ -70,8 +78,12 @@ class GifticonListAdapter(private val onClick: (GifticonDetailItem) -> Unit): Li
         holder.bind(currentList[position])
     }
 
+    /*fun setOnItemLongClickListener(listener: OnItemLongClickListener) {
+        this.itemLongClickListener = listener
+    }*/
+
     companion object {
-        val diffUtil = object: DiffUtil.ItemCallback<GifticonDetailItem>() {
+        val diffUtil = object : DiffUtil.ItemCallback<GifticonDetailItem>() {
             override fun areItemsTheSame(oldItem: GifticonDetailItem, newItem: GifticonDetailItem): Boolean {
                 return oldItem.name == newItem.name
             }
