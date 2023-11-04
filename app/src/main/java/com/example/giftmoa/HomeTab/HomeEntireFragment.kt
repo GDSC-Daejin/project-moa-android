@@ -9,17 +9,25 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.giftmoa.Adapter.GifticonListAdapter
 import com.example.giftmoa.Adapter.HomeGiftAdapter
+import com.example.giftmoa.AssetLoader
 import com.example.giftmoa.BottomSheetFragment.BottomSheetFragment
+import com.example.giftmoa.BottomSheetFragment.CategoryBottomSheet
 import com.example.giftmoa.CouponTab.CouponAutoAddActivity
+import com.example.giftmoa.Data.CategoryItem
 import com.example.giftmoa.Data.GiftData
+import com.example.giftmoa.Data.GifticonDetailItem
+import com.example.giftmoa.Data.StorageData
 import com.example.giftmoa.GifticonDetailActivity
 import com.example.giftmoa.GifticonRegistrationActivity
 import com.example.giftmoa.GridSpacingItemDecoration
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.FragmentHomeEntireBinding
+import com.google.android.material.chip.Chip
+import com.google.gson.Gson
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -37,7 +45,12 @@ class HomeEntireFragment : Fragment() {
     private var param2: String? = null
 
     private lateinit var binding : FragmentHomeEntireBinding
+    private val TAG = "HomeEntireFragment"
+
     private var giftAdapter : GifticonListAdapter? = null
+
+    private var gifticonList = mutableListOf<GifticonDetailItem>()
+
     private var giftAllData = ArrayList<GiftData>()
     private var gridManager = GridLayoutManager(activity, 2, GridLayoutManager.VERTICAL, false)
     private var getBottomSheetData = ""
@@ -83,9 +96,11 @@ class HomeEntireFragment : Fragment() {
 
         giftAdapter = GifticonListAdapter { gifticon ->
             val intent = Intent(requireActivity(), GifticonDetailActivity::class.java)
-            intent.putExtra("gifticon", gifticon)
+            intent.putExtra("gifticonId", gifticon.id)
             startActivity(intent)
         }
+
+        getJsonData()
 
         initHomeRecyclerView()
 
@@ -115,7 +130,6 @@ class HomeEntireFragment : Fragment() {
         binding.giftRv.addItemDecoration(
             GridSpacingItemDecoration(spanCount = 2, spacing = 10f.fromDpToPx())
         )*/
-
     }
 
     private fun Float.fromDpToPx(): Int =
@@ -132,7 +146,23 @@ class HomeEntireFragment : Fragment() {
         giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
         giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
 
-        giftAdapter!!.submitList(giftAllData)
+        //giftAdapter!!.submitList(giftAllData)
+    }
+
+    private fun getJsonData() {
+        val assetLoader = AssetLoader()
+        val storageJsonString = assetLoader.getJsonString(requireActivity(), "storage.json")
+
+        if (!storageJsonString.isNullOrEmpty()) {
+            val gson = Gson()
+            val storageData = gson.fromJson(storageJsonString, StorageData::class.java)
+
+            for (gifticon in storageData.gifticons) {
+                gifticonList.add(gifticon)
+            }
+
+            giftAdapter!!.submitList(gifticonList)
+        }
     }
 
     companion object {

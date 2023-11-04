@@ -162,7 +162,7 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener {
     private fun createNewChip(text: String): Chip {
         val chip = layoutInflater.inflate(R.layout.category_chip_layout, null, false) as Chip
         chip.text = text
-        chip.isCloseIconVisible = false
+        //chip.isCloseIconVisible = false
         chip.setOnCloseIconClickListener {
             // 닫기 아이콘 클릭 시 Chip 제거
             (it.parent as? ViewGroup)?.removeView(it)

@@ -13,9 +13,7 @@ import com.example.giftmoa.R
 import com.example.giftmoa.databinding.LayoutGifticonInfoBottomSheetBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-class GifticonInfoBottomSheet(gifticon: ParsedGifticon, private val listener: GifticonInfoListener) : BottomSheetDialogFragment() {
-    private var gifticon = gifticon
-
+class GifticonInfoBottomSheet(private var gifticon: ParsedGifticon, private val listener: GifticonInfoListener) : BottomSheetDialogFragment() {
     private val TAG = "GifticonInfoBottomSheet"
     private lateinit var binding: LayoutGifticonInfoBottomSheetBinding
 

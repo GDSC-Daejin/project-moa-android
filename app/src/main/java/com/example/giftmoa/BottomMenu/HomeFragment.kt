@@ -7,19 +7,25 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.giftmoa.Adapter.GifticonListAdapter
-import com.example.giftmoa.Adapter.HomeGiftAdapter
-import com.example.giftmoa.Adapter.HomeTabAdapter
 import com.example.giftmoa.Adapter.HomeUsedGiftAdapter
+import com.example.giftmoa.AssetLoader
+import com.example.giftmoa.BottomSheetFragment.CategoryBottomSheet
+import com.example.giftmoa.Data.AutoRegistrationData
+import com.example.giftmoa.Data.CategoryItem
 import com.example.giftmoa.Data.GiftData
+import com.example.giftmoa.Data.GifticonDetailItem
+import com.example.giftmoa.Data.HomeData
+import com.example.giftmoa.Data.StorageData
 import com.example.giftmoa.Data.UsedGiftData
 import com.example.giftmoa.GifticonDetailActivity
 import com.example.giftmoa.GridSpacingItemDecoration
-import com.example.giftmoa.HomeTab.HomeEntireFragment
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.FragmentHomeBinding
-import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.chip.Chip
+import com.google.gson.Gson
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -31,6 +37,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [HomeFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+
 class HomeFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -38,11 +45,14 @@ class HomeFragment : Fragment() {
 
     private lateinit var hBinding : FragmentHomeBinding
     private lateinit var giftAdapter : GifticonListAdapter
+
     private var giftAllData = ArrayList<GiftData>()
     private var gridManager = GridLayoutManager(activity, 2)
     //private val tabTextList = listOf("전체", "사용가능", "사용완료")
+    private var gifticonList = mutableListOf<GifticonDetailItem>()
 
     private var usedGiftAdapter : HomeUsedGiftAdapter? = null
+
     private var usedGiftAllData = ArrayList<UsedGiftData>()
 
 
@@ -62,9 +72,11 @@ class HomeFragment : Fragment() {
 
         giftAdapter = GifticonListAdapter { gifticon ->
             val intent = Intent(requireActivity(), GifticonDetailActivity::class.java)
-            intent.putExtra("gifticon", gifticon)
+            intent.putExtra("gifticonId", gifticon.id)
             startActivity(intent)
         }
+
+        getJsonData()
 
         initUsedRecyclerView()
         initHomeRecyclerView()
@@ -107,6 +119,23 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun getJsonData() {
+        val assetLoader = AssetLoader()
+        val homeJsonString = assetLoader.getJsonString(requireActivity(), "home.json")
+        //Log.d(TAG, autoRegistrationJsonString ?: "null")
+
+        if (!homeJsonString.isNullOrEmpty()) {
+            val gson = Gson()
+            val homeData = gson.fromJson(homeJsonString, HomeData::class.java)
+
+            for (gifticon in homeData.gifticons) {
+                gifticonList.add(gifticon)
+            }
+
+            giftAdapter.submitList(gifticonList)
+        }
+    }
+
     private fun setUsedGiftData() {
         usedGiftAllData.add(UsedGiftData(12, "스타벅스", "아이스 아메리카노", 0, "그지1", null))
         usedGiftAllData.add(UsedGiftData(13, "스타벅스", "아이스 아메리카노", 0, "그지1", null))
@@ -124,7 +153,7 @@ class HomeFragment : Fragment() {
         giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
         giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
 
-        giftAdapter.submitList(giftAllData)
+        //giftAdapter.submitList(giftAllData)
     }
     companion object {
         /**
