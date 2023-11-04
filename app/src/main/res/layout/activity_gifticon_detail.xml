@@ -36,12 +36,6 @@
             android:textColor="@color/moa_carrot_700"
             android:textSize="16sp" />
 
-        <!--<ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:src="@drawable/baseline_edit_24" />-->
-
     </androidx.appcompat.widget.Toolbar>
 
     <View

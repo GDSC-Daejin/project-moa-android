@@ -14,17 +14,28 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
+import com.example.giftmoa.Adapter.GifticonListAdapter
 import com.example.giftmoa.Adapter.HomeTabAdapter
+import com.example.giftmoa.AssetLoader
 import com.example.giftmoa.AutoRegistrationActivity
 import com.example.giftmoa.BottomSheetFragment.BottomSheetFragment
+import com.example.giftmoa.BottomSheetFragment.CategoryBottomSheet
 import com.example.giftmoa.BuildConfig
 import com.example.giftmoa.Data.BoundingBox
+import com.example.giftmoa.Data.CategoryItem
+import com.example.giftmoa.Data.GifticonDetailItem
 import com.example.giftmoa.Data.ParsedGifticon
+import com.example.giftmoa.Data.StorageData
+import com.example.giftmoa.GifticonDetailActivity
+import com.example.giftmoa.GifticonInfoListener
 import com.example.giftmoa.GifticonRegistrationActivity
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.FragmentCouponBinding
+import com.google.android.material.chip.Chip
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -53,7 +64,13 @@ private const val ARG_PARAM2 = "param2"
  * Use the [CouponFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class CouponFragment : Fragment() {
+
+interface CategoryListener {
+    fun onCategoryUpdated(category: String)
+    fun onCategoryDeleted(category: String)
+}
+
+class CouponFragment : Fragment(), CategoryListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -63,6 +80,11 @@ class CouponFragment : Fragment() {
 
     private val TAG = "CouponFragment"
     private val tabTextList = listOf("전체", "사용가능", "사용완료")
+
+    private var categoryList = mutableListOf<CategoryItem>()
+    private var gifticonList = mutableListOf<GifticonDetailItem>()
+
+    private lateinit var gifticonListAdapter: GifticonListAdapter
 
     private var getBottomSheetData = ""
 
@@ -112,6 +134,14 @@ class CouponFragment : Fragment() {
         val homeTabAdapter = HomeTabAdapter(this)
         viewPager.adapter = homeTabAdapter
 
+        /*gifticonListAdapter = GifticonListAdapter { gifticon ->
+            val intent = Intent(requireActivity(), GifticonDetailActivity::class.java)
+            intent.putExtra("gifticonId", gifticon.id)
+            startActivity(intent)
+        }*/
+
+        getJsonData()
+
         TabLayoutMediator(tabLayout, viewPager) { tab, pos ->
             tab.text = tabTextList[pos]
             //val typeface = resources.getFont(com.example.mio.R.font.pretendard_medium)
@@ -143,6 +173,11 @@ class CouponFragment : Fragment() {
                 })
             }
         }
+
+        binding.ivAddCategory.setOnClickListener {
+            showCategoryBottomSheet(categoryList)
+        }
+
         return root
     }
 
@@ -332,6 +367,65 @@ class CouponFragment : Fragment() {
         return BoundingBox(minX, maxX, minY, maxY)
     }
 
+    private fun showCategoryBottomSheet(cateogoryList: List<CategoryItem>) {
+        val categoryBottomSheet = CategoryBottomSheet(categoryList, this)
+        categoryBottomSheet.setStyle(DialogFragment.STYLE_NORMAL, R.style.RoundCornerBottomSheetDialogTheme)
+        categoryBottomSheet.show(requireActivity().supportFragmentManager, categoryBottomSheet.tag)
+    }
+
+    private fun getJsonData() {
+        val assetLoader = AssetLoader()
+        val storageJsonString = assetLoader.getJsonString(requireActivity(), "storage.json")
+
+        if (!storageJsonString.isNullOrEmpty()) {
+            val gson = Gson()
+            val storageData = gson.fromJson(storageJsonString, StorageData::class.java)
+
+            for (category in storageData.categories) {
+                category.categoryName?.let { createNewChip(it.trim()) }
+                categoryList.add(category)
+                val chip = category.categoryName?.let { createNewChip(it) }
+
+                // 마지막 Chip 뷰의 인덱스를 계산
+                val lastChildIndex = binding.chipGroupCategory.childCount - 1
+
+                // 마지막 Chip 뷰의 인덱스가 0보다 큰 경우에만
+                // 현재 Chip을 바로 그 앞에 추가
+                if (lastChildIndex >= 0) {
+                    binding.chipGroupCategory.addView(chip, lastChildIndex)
+                } else {
+                    // ChipGroup에 자식이 없는 경우, 그냥 추가
+                    binding.chipGroupCategory.addView(chip)
+                }
+            }
+        }
+    }
+
+    private fun createNewChip(text: String): Chip {
+        val chip = layoutInflater.inflate(R.layout.category_chip_layout, null, false) as Chip
+        chip.text = text
+        //chip.isCloseIconVisible = false
+        chip.setOnCloseIconClickListener {
+            // 닫기 아이콘 클릭 시 Chip 제거
+            (it.parent as? ViewGroup)?.removeView(it)
+        }
+        return chip
+    }
+
+    private fun deleteChip(text: String) {
+        for (i in 0 until binding.chipGroupCategory.childCount) {
+            val childView = binding.chipGroupCategory.getChildAt(i)
+            if (childView is Chip) {
+                val chip = childView as Chip
+                if (chip.text == text) {
+                    binding.chipGroupCategory.removeView(chip)
+                    break
+                }
+            }
+        }
+    }
+
+
     override fun onStop() {
         super.onStop()
         Log.d(TAG, "onStop: ")
@@ -365,4 +459,31 @@ class CouponFragment : Fragment() {
 
         private const val REQUEST_READ_EXTERNAL_STORAGE = 100
     }
+
+    override fun onCategoryUpdated(categoryName: String) {
+        Log.d(TAG, "onCategoryUpdated: $categoryName")
+        val chip = createNewChip(categoryName)
+        val positionToInsert = binding.chipGroupCategory.childCount - 1
+        binding.chipGroupCategory.addView(chip, positionToInsert)
+        // categoryList에 추가
+        categoryList.add(CategoryItem(0, categoryName))
+    }
+
+    override fun onCategoryDeleted(categoryName: String) {
+        var categoryId: Long? = null
+        Log.d(TAG, "onCategoryDeleted: $categoryName")
+        for (category in categoryList) {
+            if (categoryName == category.categoryName) {
+                // categoryList에서 해당 카테고리의 id 값 가져오기
+                categoryId = category.id
+                // categoryList에서 해당 카테고리 삭제
+                categoryList.remove(category)
+                deleteChip(categoryName)
+                Log.d(TAG, "onCategoryDeleted: $categoryId")
+                Log.d(TAG, "onCategoryDeleted: $categoryList")
+                break
+            }
+        }
+    }
+
 }

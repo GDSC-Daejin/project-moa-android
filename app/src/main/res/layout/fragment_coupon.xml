@@ -38,6 +38,60 @@
         app:layout_constraintTop_toBottomOf="@+id/home_top_ll"
         app:tabIndicatorColor="@color/moa_carrot_700" />
 
+    <HorizontalScrollView
+        android:id="@+id/sv_category"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="23dp"
+        android:scrollbars="none"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tabLayout">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:visibility="visible"
+            app:chipSpacingHorizontal="11dp"
+            app:chipSpacingVertical="6dp"
+            app:singleLine="true"
+            app:singleSelection="true"
+            app:selectionRequired="true"
+            app:checkedChip="@id/chip_all"
+            tools:visibility="visible">
+
+            <ImageView
+                android:id="@+id/iv_add_category"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:background="@drawable/background_chip_add"
+                android:src="@drawable/icon_add_gray" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_all"
+                style="@style/CustomChipStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="전체"
+                android:textAlignment="center"
+                android:translationY="-2dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_unclassified"
+                style="@style/CustomChipStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="미분류"
+                android:textAlignment="center"
+                android:translationY="-2dp" />
+
+        </com.google.android.material.chip.ChipGroup>
+
+    </HorizontalScrollView>
+
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
@@ -45,7 +99,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tabLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/sv_category" />
 
     <TextView
         android:id="@+id/tv_add_coupon"
