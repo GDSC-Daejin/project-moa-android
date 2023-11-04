@@ -3,26 +3,32 @@ package com.example.giftmoa.BottomMenu
 import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
+import android.util.Log
+import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.giftmoa.Adapter.GifticonListAdapter
+import com.example.giftmoa.Adapter.HomeShareRoomNameAdapter
+import com.example.giftmoa.Adapter.HomeSharedGifticonAdapter
 import com.example.giftmoa.Adapter.HomeUsedGiftAdapter
 import com.example.giftmoa.AssetLoader
-import com.example.giftmoa.BottomSheetFragment.CategoryBottomSheet
-import com.example.giftmoa.Data.AutoRegistrationData
-import com.example.giftmoa.Data.CategoryItem
 import com.example.giftmoa.Data.GiftData
 import com.example.giftmoa.Data.GifticonDetailItem
 import com.example.giftmoa.Data.HomeData
+import com.example.giftmoa.Data.ShareRoomDetailItem
+import com.example.giftmoa.Data.ShareRoomItem
 import com.example.giftmoa.Data.StorageData
 import com.example.giftmoa.Data.UsedGiftData
 import com.example.giftmoa.GifticonDetailActivity
 import com.example.giftmoa.GridSpacingItemDecoration
+import com.example.giftmoa.LeftMarginItemDecoration
 import com.example.giftmoa.R
+import com.example.giftmoa.RightMarginItemDecoration
 import com.example.giftmoa.databinding.FragmentHomeBinding
 import com.google.android.material.chip.Chip
 import com.google.gson.Gson
@@ -50,8 +56,11 @@ class HomeFragment : Fragment() {
     private var gridManager = GridLayoutManager(activity, 2)
     //private val tabTextList = listOf("전체", "사용가능", "사용완료")
     private var gifticonList = mutableListOf<GifticonDetailItem>()
+    private var shareRoomDetailList = mutableListOf<ShareRoomDetailItem>()
 
     private var usedGiftAdapter : HomeUsedGiftAdapter? = null
+    private lateinit var homeSharedGifticonAdapter: HomeSharedGifticonAdapter
+    private lateinit var homeShareRoomNameAdapter: HomeShareRoomNameAdapter
 
     private var usedGiftAllData = ArrayList<UsedGiftData>()
 
@@ -75,10 +84,23 @@ class HomeFragment : Fragment() {
             intent.putExtra("gifticonId", gifticon.id)
             startActivity(intent)
         }
+        homeShareRoomNameAdapter = HomeShareRoomNameAdapter { shareRoom ->
+            // shareRoomDetailList에서 shareRoom의 teamId와 같은 teamId를 가진 ShareRoomDetailItem을 찾기
+            val shareRoomDetail = shareRoomDetailList.find { it.teamId == shareRoom.teamId }
+            Glide.with(requireActivity())
+                .load(shareRoomDetail?.teamThumbnailImage)
+                .into(hBinding.ivShareRoomImage)
+        }
+        homeSharedGifticonAdapter = HomeSharedGifticonAdapter({ gifticon ->
+            val intent = Intent(requireActivity(), GifticonDetailActivity::class.java)
+            intent.putExtra("gifticonId", gifticon.id)
+            startActivity(intent)
+        }, requireActivity())
 
         getJsonData()
 
-        initUsedRecyclerView()
+        initHomeShareRoomNameRecyclerView()
+        initHomeSharedGifticonRecyclerView()
         initHomeRecyclerView()
 
         hBinding.homeMoveIv.setOnClickListener {
@@ -86,30 +108,31 @@ class HomeFragment : Fragment() {
             // 바텀 네비게이션의 다른 메뉴를 선택하도록 설정
             bottomNavigationView.findViewById<View>(R.id.navigation_coupon).performClick()
         }
-        /*hBinding.viewpager.adapter = HomeTabAdapter(requireActivity())
-
-        TabLayoutMediator(hBinding.categoryTabLayout, hBinding.viewpager) { tab, pos ->
-            tab.text = tabTextList[pos]
-            //val typeface = resources.getFont(com.example.mio.R.font.pretendard_medium)
-            //tab.setIcon(tabIconList[pos])
-        }.attach()*/
 
         return hBinding.root
     }
 
-    private fun initUsedRecyclerView() {
+    /*private fun initUsedRecyclerView() {
         setUsedGiftData()
         usedGiftAdapter = HomeUsedGiftAdapter()
         usedGiftAdapter!!.usedGiftItemData = usedGiftAllData
         hBinding.usedRv.adapter = usedGiftAdapter
         hBinding.usedRv.setHasFixedSize(true)
+    }*/
+
+    private fun initHomeSharedGifticonRecyclerView() {
+        val dp20 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20f, resources.displayMetrics).toInt()
+        hBinding.usedRv.apply {
+            adapter = homeSharedGifticonAdapter
+            layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
+            addItemDecoration(LeftMarginItemDecoration(dp20))
+        }
     }
+
     private fun Float.fromDpToPx(): Int =
         (this * Resources.getSystem().displayMetrics.density).toInt()
 
     private fun initHomeRecyclerView() {
-        setGiftData()
-
         hBinding.giftRv.apply {
             adapter = giftAdapter
             layoutManager = gridManager
@@ -117,6 +140,15 @@ class HomeFragment : Fragment() {
                 GridSpacingItemDecoration(spanCount = 2, spacing = 10f.fromDpToPx())
             )
         }
+    }
+
+    private fun initHomeShareRoomNameRecyclerView() {
+        hBinding.rvShareRoomName?.apply {
+            adapter = homeShareRoomNameAdapter
+            layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
+        }
+
+        homeShareRoomNameAdapter.submitList(shareRoomDetailList)
     }
 
     private fun getJsonData() {
@@ -128,33 +160,21 @@ class HomeFragment : Fragment() {
             val gson = Gson()
             val homeData = gson.fromJson(homeJsonString, HomeData::class.java)
 
+            for (shareRoom in homeData.shareRooms) {
+                shareRoomDetailList.add(shareRoom)
+            }
+
+
             for (gifticon in homeData.gifticons) {
                 gifticonList.add(gifticon)
             }
 
             giftAdapter.submitList(gifticonList)
+            homeSharedGifticonAdapter.submitList(gifticonList)
+            homeShareRoomNameAdapter.submitList(shareRoomDetailList)
         }
     }
 
-    private fun setUsedGiftData() {
-        usedGiftAllData.add(UsedGiftData(12, "스타벅스", "아이스 아메리카노", 0, "그지1", null))
-        usedGiftAllData.add(UsedGiftData(13, "스타벅스", "아이스 아메리카노", 0, "그지1", null))
-        usedGiftAllData.add(UsedGiftData(14, "스타벅스", "아이스 아메리카노", 0, "그지1", null))
-    }
-
-    private fun setGiftData() {
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-
-        //giftAdapter.submitList(giftAllData)
-    }
     companion object {
         /**
          * Use this factory method to create a new instance of

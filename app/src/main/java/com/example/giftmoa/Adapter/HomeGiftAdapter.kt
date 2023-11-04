@@ -23,7 +23,7 @@ class HomeGiftAdapter : RecyclerView.Adapter<HomeGiftAdapter.HomeGiftViewHolder>
 
     inner class HomeGiftViewHolder(private val binding : ItemGifticonBinding ) : RecyclerView.ViewHolder(binding.root) {
         private var position : Int? = null
-        private var giftBrand = binding.tvCategoryName
+        private var giftBrand = binding.tvCouponExchangePlace
         private var giftName = binding.tvCouponName
         private var giftImg = binding.ivCouponImage
         private var giftRemainingDay = binding.tvDDay

@@ -11,6 +11,9 @@ import com.example.giftmoa.Adapter.UsageHistoryAdapter
 import com.example.giftmoa.Data.GifticonDetailItem
 import com.example.giftmoa.Data.UsageHistoryItem
 import com.example.giftmoa.databinding.ActivityGifticonDetailBinding
+import com.example.giftmoa.util.FormatUtil
+import com.example.giftmoa.util.ImageUtil
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
@@ -33,7 +36,10 @@ class GifticonDetailActivity: AppCompatActivity() {
         setContentView(binding.root)
 
         usageHistoryAdapter = UsageHistoryAdapter()
+
         getJsonData()
+
+        initRecyclerView()
 
         if (gifticonDetail != null) {
             binding.tvCouponName.text = gifticonDetail?.name
@@ -44,14 +50,33 @@ class GifticonDetailActivity: AppCompatActivity() {
 
             binding.tvBarcodeNumber.text = gifticonDetail?.barcodeNumber
             binding.tvCouponExchangePlace.text = gifticonDetail?.exchangePlace
-            binding.tvCouponDueDate.text = gifticonDetail?.dueDate
+            binding.tvCouponDueDate.text = FormatUtil().DateToString(gifticonDetail?.dueDate.toString())
             binding.etCouponRemainAmount.setText(gifticonDetail?.amount.toString())
 
-            val barcode = createBarcode(gifticonDetail?.barcodeNumber.toString())
+            val barcode = ImageUtil(this).createBarcode(gifticonDetail?.barcodeNumber.toString().trim())
             binding.ivBarcodeImage.setImageBitmap(barcode)
         }
 
-        initRecyclerView()
+        binding.tvEnterCouponUsedAmount.setOnClickListener {
+            val usedAmount = binding.etCouponUsedAmount.text.toString().toInt()
+            var remainAmount = binding.etCouponRemainAmount.text.toString().toInt()
+
+            if (usedAmount > remainAmount) {
+                binding.etCouponUsedAmount.setText("")
+                Snackbar.make(binding.root, "사용금액이 남은 금액보다 많습니다.", Snackbar.LENGTH_SHORT).show()
+            } else {
+                remainAmount -= usedAmount
+                binding.etCouponRemainAmount.setText(remainAmount.toString())
+                binding.etCouponUsedAmount.setText("")
+                usageHistoryList.add(UsageHistoryItem(4, "Jade", "https://ca.slack-edge.com/T02BE2ERU5A-U02CPD32N3D-g0beff217a80-512", FormatUtil().DateToString("2023-12-26T00:00:00.000Z"), usedAmount.toLong()))
+                usageHistoryAdapter.submitList(usageHistoryList)
+                usageHistoryAdapter.notifyDataSetChanged()
+            }
+        }
+
+        binding.tvToolbarConfirm.setOnClickListener {
+            finish()
+        }
     }
 
     private fun initRecyclerView() {
@@ -82,33 +107,5 @@ class GifticonDetailActivity: AppCompatActivity() {
             Log.d(TAG, "getJsonData: $usageHistoryList")
             usageHistoryAdapter.submitList(usageHistoryList)
         }
-    }
-
-    fun createBarcode(code: String): Bitmap {
-        val widthPx = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, 390f,
-            resources.displayMetrics
-        )
-        val heightPx = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, 111f,
-            resources.displayMetrics
-        )
-        val format: BarcodeFormat = BarcodeFormat.CODE_128
-        val matrix: BitMatrix =
-            MultiFormatWriter().encode(code, format, widthPx.toInt(), heightPx.toInt())
-        return createBitmap(matrix)
-    }
-
-    private fun createBitmap(matrix: BitMatrix): Bitmap {
-        val width = matrix.width
-        val height = matrix.height
-        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-
-        for (x in 0 until width) {
-            for (y in 0 until height) {
-                bitmap.setPixel(x, y, if (matrix.get(x, y)) BLACK else WHITE)
-            }
-        }
-        return bitmap
     }
 }
