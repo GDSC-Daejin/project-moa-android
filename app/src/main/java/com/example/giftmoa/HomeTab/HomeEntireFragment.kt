@@ -47,7 +47,7 @@ class HomeEntireFragment : Fragment() {
     private lateinit var binding : FragmentHomeEntireBinding
     private val TAG = "HomeEntireFragment"
 
-    private var giftAdapter : GifticonListAdapter? = null
+    private lateinit var giftAdapter : GifticonListAdapter
 
     private var gifticonList = mutableListOf<GifticonDetailItem>()
 
@@ -69,31 +69,6 @@ class HomeEntireFragment : Fragment() {
     ): View {
         binding = FragmentHomeEntireBinding.inflate(inflater, container, false)
 
-        /*binding.giftAdd.setOnClickListener {
-            val bottomSheet = BottomSheetFragment()
-            bottomSheet.show(requireActivity().supportFragmentManager, bottomSheet.tag)
-            bottomSheet.apply {
-                setCallback(object : BottomSheetFragment.OnSendFromBottomSheetDialog{
-                    override fun sendValue(value: String) {
-                        Log.d("test", "BottomSheetDialog -> 액티비티로 전달된 값 : $value")
-                        getBottomSheetData = value
-                        //myViewModel.postCheckSearchFilter(getBottomSheetData)
-                        when (value) {
-                            "자동 등록" -> {
-                                //val intent = Intent(requireActivity(), CouponAutoAddActivity::class.java)
-                                val intent = Intent(requireActivity(), GifticonRegistrationActivity::class.java)
-                                startActivity(intent)
-                            }
-
-                            "수동 등록" -> {
-
-                            }
-                        }
-                    }
-                })
-            }
-        }*/
-
         giftAdapter = GifticonListAdapter { gifticon ->
             val intent = Intent(requireActivity(), GifticonDetailActivity::class.java)
             intent.putExtra("gifticonId", gifticon.id)
@@ -109,14 +84,6 @@ class HomeEntireFragment : Fragment() {
     }
 
     private fun initHomeRecyclerView() {
-        setGiftData()
-
-        /*giftAdapter = GifticonListAdapter()
-        giftAdapter!!.giftItemData = giftAllData
-        binding.giftRv.adapter = giftAdapter
-        //레이아웃 뒤집기 안씀
-        //manager.reverseLayout = true
-        //manager.stackFromEnd = true*/
         binding.giftRv.apply {
             adapter = giftAdapter
             layoutManager = gridManager
@@ -124,30 +91,11 @@ class HomeEntireFragment : Fragment() {
                 GridSpacingItemDecoration(spanCount = 2, spacing = 10f.fromDpToPx())
             )
         }
-
-        /*binding.giftRv.setHasFixedSize(true)
-        binding.giftRv.layoutManager = gridManager
-        binding.giftRv.addItemDecoration(
-            GridSpacingItemDecoration(spanCount = 2, spacing = 10f.fromDpToPx())
-        )*/
     }
 
     private fun Float.fromDpToPx(): Int =
         (this * Resources.getSystem().displayMetrics.density).toInt()
 
-    private fun setGiftData() {
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-
-        //giftAdapter!!.submitList(giftAllData)
-    }
 
     private fun getJsonData() {
         val assetLoader = AssetLoader()
@@ -161,7 +109,7 @@ class HomeEntireFragment : Fragment() {
                 gifticonList.add(gifticon)
             }
 
-            giftAdapter!!.submitList(gifticonList)
+            giftAdapter.submitList(gifticonList)
         }
     }
 
