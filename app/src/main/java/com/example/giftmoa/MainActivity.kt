@@ -3,6 +3,9 @@ package com.example.giftmoa
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.giftmoa.BottomMenu.AccountFragment
@@ -16,7 +19,9 @@ class MainActivity : AppCompatActivity() {
     private val TAG_HOME = "home_fragment"
     private val TAG_SHAREROOM = "shareroom_fragment"
     private val TAG_ACCOUNT = "account_fragment"
-    private val TAG_COUPON = "coupon_fragment"
+    val TAG_COUPON = "coupon_fragment"
+
+    private var backPressedTime: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,7 +96,6 @@ class MainActivity : AppCompatActivity() {
             bt.hide(coupon)
         }
 
-
         if (tag == TAG_HOME) {
             if (home != null) {
                 bt.show(home)
@@ -114,5 +118,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         bt.commitAllowingStateLoss()
+    }
+
+    override fun onBackPressed() {
+        if(System.currentTimeMillis() - backPressedTime >= 2000) {
+            backPressedTime = System.currentTimeMillis()
+            Toast.makeText(this, "한번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show()
+        } else {
+            finish()
+        }
     }
 }

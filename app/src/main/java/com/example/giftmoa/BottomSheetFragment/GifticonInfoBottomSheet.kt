@@ -5,30 +5,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
-import com.example.giftmoa.AutoRegistrationActivity
 import com.example.giftmoa.Data.CustomCropTransformation
 import com.example.giftmoa.Data.ParsedGifticon
 import com.example.giftmoa.GifticonInfoListener
 import com.example.giftmoa.R
-import com.example.giftmoa.databinding.LayoutGifticonInfoBottomSheetBinding
+import com.example.giftmoa.databinding.FragmentGifticonInfoBottomSheetBinding
 import com.example.giftmoa.util.FormatUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 class GifticonInfoBottomSheet(private var gifticon: ParsedGifticon, private val listener: GifticonInfoListener) : BottomSheetDialogFragment() {
     private val TAG = "GifticonInfoBottomSheet"
-    private lateinit var binding: LayoutGifticonInfoBottomSheetBinding
+    private lateinit var binding: FragmentGifticonInfoBottomSheetBinding
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.layout_gifticon_info_bottom_sheet, container, false)
+        return inflater.inflate(R.layout.fragment_gifticon_info_bottom_sheet, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = LayoutGifticonInfoBottomSheetBinding.bind(view)
+        binding = FragmentGifticonInfoBottomSheetBinding.bind(view)
 
         val behavior = BottomSheetBehavior.from(view.parent as View)
         behavior.peekHeight = resources.getDimensionPixelSize(R.dimen.bottom_sheet_peek_height)
@@ -45,7 +44,13 @@ class GifticonInfoBottomSheet(private var gifticon: ParsedGifticon, private val 
         binding.etCouponName.setText(gifticon.name)
         binding.etBarcodeNumber.setText(gifticon.barcodeNumber)
         binding.etExchangePlace.setText(gifticon.exchangePlace)
-        binding.etDueDate.setText("$formattedDueDate   ${formattedAmount}원")
+        binding.etDueDate.setText(formattedDueDate)
+        if (gifticon.amount != null) {
+            binding.etCouponAmount.visibility = View.VISIBLE
+            binding.tvCouponAmountUnit.visibility = View.VISIBLE
+            binding.switchCouponAmount.isChecked = true
+            binding.etCouponAmount.setText(formattedAmount)
+        }
 
         binding.btnConfirm.setOnClickListener {
             // 쿠폰 정보 업데이트

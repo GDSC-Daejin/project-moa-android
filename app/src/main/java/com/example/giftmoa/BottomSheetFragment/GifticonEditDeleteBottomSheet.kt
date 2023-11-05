@@ -2,14 +2,13 @@ package com.example.giftmoa.BottomSheetFragment
 
 import android.app.Dialog
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.example.giftmoa.R
-import com.example.giftmoa.databinding.FragmentBottomSheetBinding
+import com.example.giftmoa.databinding.FragmentGifticonEditDeleteBottomSheetBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -24,12 +23,12 @@ private const val ARG_PARAM2 = "param2"
  * Use the [BottomSheetFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class BottomSheetFragment : BottomSheetDialogFragment() {
+class GifticonEditDeleteBottomSheet : BottomSheetDialogFragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
 
-    private lateinit var bsBinding : FragmentBottomSheetBinding
+    private lateinit var binding : FragmentGifticonEditDeleteBottomSheetBinding
     //필터로 선택한 데이터들을 외부로 전송하기 위한 리스너
     private var listener: OnSendFromBottomSheetDialog? = null
 
@@ -45,22 +44,22 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        bsBinding = FragmentBottomSheetBinding.inflate(inflater, container, false)
+        binding = FragmentGifticonEditDeleteBottomSheetBinding.inflate(inflater, container, false)
 
-        bsBinding.bottomAuto.setOnClickListener {
+        binding.bottomAuto.setOnClickListener {
             if (listener == null) return@setOnClickListener
-            listener?.sendValue("자동 등록")
+            listener?.sendValue("수정하기")
             dismiss()
         }
 
-        bsBinding.bottomManual.setOnClickListener {
+        binding.bottomManual.setOnClickListener {
             if (listener == null) return@setOnClickListener
-            listener?.sendValue("수동 등록")
+            listener?.sendValue("삭제하기")
             dismiss()
         }
 
 
-        return bsBinding.root
+        return binding.root
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -75,7 +74,7 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
             val parentLayout =
                 bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
             parentLayout?.let { it ->
-                val behavior = BottomSheetBehavior.from(it)
+                val behaviour = BottomSheetBehavior.from(it)
                 //setupFullHeight(it)
                 //behaviour.state = BottomSheetBehavior.STATE_EXPANDED
             }

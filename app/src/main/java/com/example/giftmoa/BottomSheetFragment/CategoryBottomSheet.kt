@@ -7,31 +7,28 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import com.example.giftmoa.BottomMenu.CategoryListener
-import com.example.giftmoa.BottomMenu.CouponFragment
-import com.example.giftmoa.BottomMenu.HomeFragment
 import com.example.giftmoa.Data.CategoryItem
-import com.example.giftmoa.HomeTab.HomeEntireFragment
 import com.example.giftmoa.R
-import com.example.giftmoa.databinding.LayoutCategoryBottomSheetBinding
+import com.example.giftmoa.databinding.FragmentCategoryBottomSheetBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 
 class CategoryBottomSheet(private var categoryList: List<CategoryItem>, private val listener: CategoryListener) : BottomSheetDialogFragment() {
 
-    private lateinit var binding: LayoutCategoryBottomSheetBinding
+    private lateinit var binding: FragmentCategoryBottomSheetBinding
     private val TAG = "CategoryBottomSheet"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.layout_category_bottom_sheet, container, false)
+        return inflater.inflate(R.layout.fragment_category_bottom_sheet, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = LayoutCategoryBottomSheetBinding.bind(view)
+        binding = FragmentCategoryBottomSheetBinding.bind(view)
 
         Log.d(TAG, "onViewCreated: $categoryList")
 

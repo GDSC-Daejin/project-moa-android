@@ -5,52 +5,92 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/ll_button"
+    <View
+        android:id="@+id/view_drag_handle"
+        android:layout_width="100dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/background_drag_handle"
+        android:contentDescription="@null"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Space
+        android:id="@+id/space"
+        android:layout_width="0dp"
+        android:layout_height="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/view_drag_handle" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nsv_gifticon_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/space">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="30dp"
             android:paddingBottom="100dp">
 
             <TextView
-                android:id="@+id/tv_manual_registration_title"
+                android:id="@+id/tv_sub_title"
                 android:layout_width="wrap_content"
-                android:layout_height="56dp"
-                android:fontFamily="@font/pretendard_bold"
-                android:gravity="center"
-                android:text="수동 등록"
-                android:textColor="@color/moa_gray_900"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="쿠폰정보가 다르다면 수정해보세요!"
+                android:textColor="@color/moa_gray_400"
+                android:fontFamily="@font/pretendard_medium"
+                android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="선택하신 쿠폰 정보가\n일치한가요?"
+                android:fontFamily="@font/pretendard_bold"
+                android:textColor="@color/moa_gray_800"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_sub_title" />
+
+            <ImageView
+                android:id="@+id/iv_gifticon"
+                android:layout_width="123dp"
+                android:layout_height="123dp"
+                android:layout_marginEnd="20dp"
+                android:src="@drawable/asset_gifticon_starbucks"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_sub_title" />
+
             <LinearLayout
-                android:id="@+id/ll_gifticon_info"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="20dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:orientation="vertical"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_manual_registration_title">
-
+                app:layout_constraintTop_toBottomOf="@id/iv_gifticon"
+                app:layout_constraintVertical_bias="0.0">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:fontFamily="@font/pretendard_medium"
                     android:text="쿠폰 이름"
                     android:textColor="@color/moa_gray_800"
+                    android:fontFamily="@font/pretendard_medium"
                     android:textSize="16sp" />
 
                 <EditText
@@ -59,14 +99,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="18dp"
                     android:background="@drawable/background_gifticon_edit_text"
-                    android:hint="스타벅스 5만원권"
                     android:inputType="text"
                     android:paddingStart="10dp"
                     android:paddingTop="12dp"
                     android:paddingEnd="40dp"
                     android:paddingBottom="12dp"
+                    android:text="스타벅스 5만원권"
                     android:textColor="@color/moa_gray_600"
-                    android:textColorHint="@color/moa_gray_400"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -74,9 +113,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:fontFamily="@font/pretendard_medium"
                     android:text="바코드 번호"
                     android:textColor="@color/moa_gray_800"
+                    android:fontFamily="@font/pretendard_medium"
                     android:textSize="16sp" />
 
                 <EditText
@@ -86,13 +125,12 @@
                     android:layout_marginBottom="18dp"
                     android:background="@drawable/background_gifticon_edit_text"
                     android:hint="1234 1234 1234"
-                    android:inputType="text"
+                    android:inputType="number"
                     android:paddingStart="10dp"
                     android:paddingTop="12dp"
                     android:paddingEnd="40dp"
                     android:paddingBottom="12dp"
                     android:textColor="@color/moa_gray_600"
-                    android:textColorHint="@color/moa_gray_400"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     tools:text="1234 1234 1234" />
@@ -101,9 +139,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:fontFamily="@font/pretendard_medium"
                     android:text="교환처"
                     android:textColor="@color/moa_gray_800"
+                    android:fontFamily="@font/pretendard_medium"
                     android:textSize="16sp" />
 
                 <EditText
@@ -112,14 +150,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="18dp"
                     android:background="@drawable/background_gifticon_edit_text"
-                    android:hint="스타벅스"
                     android:inputType="text"
                     android:paddingStart="10dp"
                     android:paddingTop="12dp"
                     android:paddingEnd="40dp"
                     android:paddingBottom="12dp"
+                    android:text="스타벅스"
                     android:textColor="@color/moa_gray_600"
-                    android:textColorHint="@color/moa_gray_400"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -127,9 +164,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:fontFamily="@font/pretendard_medium"
                     android:text="유효기간"
                     android:textColor="@color/moa_gray_800"
+                    android:fontFamily="@font/pretendard_medium"
                     android:textSize="16sp" />
 
                 <EditText
@@ -138,14 +175,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="18dp"
                     android:background="@drawable/background_gifticon_edit_text"
-                    android:hint="2024년 12월 31일"
                     android:inputType="text"
                     android:paddingStart="10dp"
                     android:paddingTop="12dp"
                     android:paddingEnd="40dp"
                     android:paddingBottom="12dp"
+                    android:text="2024년 12월 31일까지"
                     android:textColor="@color/moa_gray_600"
-                    android:textColorHint="@color/moa_gray_400"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -153,9 +189,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:fontFamily="@font/pretendard_medium"
                     android:text="주문번호"
                     android:textColor="@color/moa_gray_800"
+                    android:fontFamily="@font/pretendard_medium"
                     android:textSize="16sp" />
 
                 <EditText
@@ -163,16 +199,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/background_gifticon_edit_text"
-                    android:hint="123412341234"
-                    android:inputType="number"
+                    android:inputType="text"
                     android:paddingStart="10dp"
                     android:paddingTop="12dp"
                     android:paddingEnd="40dp"
                     android:paddingBottom="12dp"
                     android:textColor="@color/moa_gray_600"
-                    android:textColorHint="@color/moa_gray_400"
                     android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    tools:text="123412341234" />
 
                 <LinearLayout
                     android:id="@+id/ll_set_coupon_amount"
@@ -224,14 +259,13 @@
                         android:background="@drawable/background_edit_text"
                         android:fontFamily="@font/pretendard_medium"
                         android:gravity="end"
-                        android:hint="0"
-                        android:inputType="text"
+                        android:inputType="number"
                         android:paddingStart="20dp"
                         android:paddingTop="15dp"
                         android:paddingEnd="44dp"
                         android:paddingBottom="19dp"
                         android:textColor="@color/moa_gray_600"
-                        android:textColorHint="@color/moa_gray_400"
+                        android:textColorHint="#b7b7b7"
                         android:textSize="16sp"
                         android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -258,80 +292,6 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <TextView
-                    android:id="@+id/tv_category"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    android:fontFamily="@font/pretendard_medium"
-                    android:text="카테고리"
-                    android:textColor="@color/moa_gray_800"
-                    android:textSize="16sp" />
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <HorizontalScrollView
-                        android:id="@+id/sv_category"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="14dp"
-                        android:scrollbars="none"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-
-                        <com.google.android.material.chip.ChipGroup
-                            android:id="@+id/chip_group_category"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:paddingStart="20dp"
-                            android:paddingEnd="20dp"
-                            android:visibility="visible"
-                            app:chipSpacingHorizontal="11dp"
-                            app:chipSpacingVertical="6dp"
-                            app:singleLine="true"
-                            app:singleSelection="true"
-                            tools:visibility="visible">
-
-                            <!--<com.google.android.material.chip.Chip
-                                style="@style/CustomChipStyle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="스타벅스"
-                                android:textAlignment="center"
-                                android:translationY="-2dp" />
-
-                            <com.google.android.material.chip.Chip
-                                style="@style/CustomChipStyle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="올리브영"
-                                android:textAlignment="center"
-                                android:translationY="-2dp" />
-
-                            <com.google.android.material.chip.Chip
-                                style="@style/CustomChipStyle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="편의점"
-                                android:textAlignment="center"
-                                android:translationY="-2dp" />-->
-
-                            <ImageView
-                                android:id="@+id/iv_add_category"
-                                android:layout_width="38dp"
-                                android:layout_height="38dp"
-                                android:background="@drawable/background_chip_add"
-                                android:src="@drawable/icon_add_gray" />
-
-                        </com.google.android.material.chip.ChipGroup>
-
-                    </HorizontalScrollView>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -345,7 +305,7 @@
         android:background="@color/moa_gray_white"
         android:orientation="horizontal"
         android:paddingTop="10dp"
-        android:paddingBottom="40dp"
+        android:paddingBottom="20dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.appcompat.widget.AppCompatButton
@@ -355,9 +315,10 @@
             android:layout_height="48dp"
             android:layout_marginStart="20dp"
             android:layout_weight="1"
+            android:fontFamily="@font/pretendard_medium"
             android:background="@drawable/background_disabled_button"
             android:text="취소"
-            android:textColor="#b7b7b7"
+            android:textColor="@color/moa_gray_400"
             android:textSize="16sp" />
 
         <View
@@ -372,10 +333,12 @@
             android:layout_marginEnd="20dp"
             android:layout_weight="1"
             android:background="@drawable/background_enabled_button"
-            android:text="등록"
+            android:text="확인"
+            android:fontFamily="@font/pretendard_medium"
             android:textColor="@color/moa_gray_white"
             android:textSize="16sp" />
 
     </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
