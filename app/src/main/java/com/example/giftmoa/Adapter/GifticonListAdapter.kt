@@ -38,7 +38,8 @@ class GifticonListAdapter(private val onClick: (GifticonDetailItem) -> Unit): Li
                     .load(gifticon.gifticonImagePath)
                     .into(binding.ivCouponImage)
             } else {
-                binding.ivCouponImage.setImageResource(R.drawable.asset_gifticon_coffee)
+                binding.ivCouponImage.setPadding(50, 50, 50, 50)
+                binding.ivCouponImage.setImageResource(R.drawable.icon_logo)
             }
 
             binding.tvCouponName.text = gifticon.name

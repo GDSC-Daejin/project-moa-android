@@ -1,128 +1,351 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:orientation="vertical"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/ll_button"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/ll_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="쿠폰 이름"
-            android:textColor="@color/moa_gray_800"
-            android:textSize="16sp" />
-
-        <EditText
-            android:id="@+id/et_coupon_name"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="18dp"
-            android:background="@drawable/background_gifticon_edit_text"
-            android:inputType="text"
-            android:paddingStart="10dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="40dp"
-            android:paddingBottom="12dp"
-            android:text="스타벅스 5만원권"
-            android:textColor="@color/moa_gray_600"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:layout_height="match_parent"
+            android:paddingBottom="100dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="바코드 번호"
-            android:textColor="@color/moa_gray_800"
-            android:textSize="16sp" />
+            <TextView
+                android:id="@+id/tv_manual_registration_title"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:fontFamily="@font/pretendard_bold"
+                android:gravity="center"
+                android:text="수동 등록"
+                android:textColor="@color/moa_gray_900"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <EditText
-            android:id="@+id/et_barcode_number"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="18dp"
-            android:background="@drawable/background_gifticon_edit_text"
-            android:hint="1234 1234 1234"
-            android:inputType="number"
-            android:paddingStart="10dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="40dp"
-            android:paddingBottom="12dp"
-            android:textColor="@color/moa_gray_600"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            tools:text="1234 1234 1234" />
+            <LinearLayout
+                android:id="@+id/ll_gifticon_info"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_manual_registration_title">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="교환처"
-            android:textColor="@color/moa_gray_800"
-            android:textSize="16sp" />
 
-        <EditText
-            android:id="@+id/et_exchange_place"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="18dp"
-            android:background="@drawable/background_gifticon_edit_text"
-            android:inputType="text"
-            android:paddingStart="10dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="40dp"
-            android:paddingBottom="12dp"
-            android:text="스타벅스"
-            android:textColor="@color/moa_gray_600"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:text="쿠폰 이름"
+                    android:textColor="@color/moa_gray_800"
+                    android:textSize="16sp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="유효기간"
-            android:textColor="@color/moa_gray_800"
-            android:textSize="16sp" />
+                <EditText
+                    android:id="@+id/et_coupon_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="18dp"
+                    android:background="@drawable/background_gifticon_edit_text"
+                    android:hint="스타벅스 5만원권"
+                    android:inputType="text"
+                    android:paddingStart="10dp"
+                    android:paddingTop="12dp"
+                    android:paddingEnd="40dp"
+                    android:paddingBottom="12dp"
+                    android:textColor="@color/moa_gray_600"
+                    android:textColorHint="@color/moa_gray_400"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/et_due_date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/background_gifticon_edit_text"
-            android:inputType="text"
-            android:paddingStart="10dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="40dp"
-            android:paddingBottom="12dp"
-            android:text="2024년 12월 31일까지"
-            android:textColor="@color/moa_gray_600"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:text="바코드 번호"
+                    android:textColor="@color/moa_gray_800"
+                    android:textSize="16sp" />
 
-    </LinearLayout>
+                <EditText
+                    android:id="@+id/et_barcode_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="18dp"
+                    android:background="@drawable/background_gifticon_edit_text"
+                    android:hint="1234 1234 1234"
+                    android:inputType="text"
+                    android:paddingStart="10dp"
+                    android:paddingTop="12dp"
+                    android:paddingEnd="40dp"
+                    android:paddingBottom="12dp"
+                    android:textColor="@color/moa_gray_600"
+                    android:textColorHint="@color/moa_gray_400"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="1234 1234 1234" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:text="교환처"
+                    android:textColor="@color/moa_gray_800"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:id="@+id/et_exchange_place"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="18dp"
+                    android:background="@drawable/background_gifticon_edit_text"
+                    android:hint="스타벅스"
+                    android:inputType="text"
+                    android:paddingStart="10dp"
+                    android:paddingTop="12dp"
+                    android:paddingEnd="40dp"
+                    android:paddingBottom="12dp"
+                    android:textColor="@color/moa_gray_600"
+                    android:textColorHint="@color/moa_gray_400"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:text="유효기간"
+                    android:textColor="@color/moa_gray_800"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:id="@+id/et_due_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="18dp"
+                    android:background="@drawable/background_gifticon_edit_text"
+                    android:hint="2024년 12월 31일"
+                    android:inputType="text"
+                    android:paddingStart="10dp"
+                    android:paddingTop="12dp"
+                    android:paddingEnd="40dp"
+                    android:paddingBottom="12dp"
+                    android:textColor="@color/moa_gray_600"
+                    android:textColorHint="@color/moa_gray_400"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:text="주문번호"
+                    android:textColor="@color/moa_gray_800"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:id="@+id/et_order_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/background_gifticon_edit_text"
+                    android:hint="123412341234"
+                    android:inputType="number"
+                    android:paddingStart="10dp"
+                    android:paddingTop="12dp"
+                    android:paddingEnd="40dp"
+                    android:paddingBottom="12dp"
+                    android:textColor="@color/moa_gray_600"
+                    android:textColorHint="@color/moa_gray_400"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/ll_set_coupon_amount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/view_divider_share_room">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/pretendard_medium"
+                        android:text="금액"
+                        android:textColor="@color/moa_gray_900"
+                        android:textSize="16sp" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+
+                    <Switch
+                        android:id="@+id/switch_coupon_amount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:thumb="@drawable/switch_thumb"
+                        android:track="@drawable/switch_track_ex"
+                        tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+
+                </LinearLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp">
+
+                    <EditText
+                        android:id="@+id/et_coupon_amount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="40dp"
+                        android:background="@drawable/background_edit_text"
+                        android:fontFamily="@font/pretendard_medium"
+                        android:gravity="end"
+                        android:hint="0"
+                        android:inputType="text"
+                        android:paddingStart="20dp"
+                        android:paddingTop="15dp"
+                        android:paddingEnd="44dp"
+                        android:paddingBottom="19dp"
+                        android:textColor="@color/moa_gray_600"
+                        android:textColorHint="@color/moa_gray_400"
+                        android:textSize="16sp"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0"
+                        tools:layout_editor_absoluteX="20dp"
+                        tools:visibility="visible" />
+
+                    <TextView
+                        android:id="@+id/tv_coupon_amount_unit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:fontFamily="@font/pretendard_medium"
+                        android:paddingEnd="20dp"
+                        android:text="원"
+                        android:textColor="@color/moa_gray_400"
+                        android:textSize="16sp"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="@+id/et_coupon_amount"
+                        app:layout_constraintTop_toTopOf="@+id/et_coupon_amount"
+                        tools:visibility="visible" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <TextView
+                    android:id="@+id/tv_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:text="카테고리"
+                    android:textColor="@color/moa_gray_800"
+                    android:textSize="16sp" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <HorizontalScrollView
+                        android:id="@+id/sv_category"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:scrollbars="none"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/chip_group_category"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:paddingStart="20dp"
+                            android:paddingEnd="20dp"
+                            android:visibility="visible"
+                            app:chipSpacingHorizontal="11dp"
+                            app:chipSpacingVertical="6dp"
+                            app:singleLine="true"
+                            app:singleSelection="true"
+                            tools:visibility="visible">
+
+                            <!--<com.google.android.material.chip.Chip
+                                style="@style/CustomChipStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="스타벅스"
+                                android:textAlignment="center"
+                                android:translationY="-2dp" />
+
+                            <com.google.android.material.chip.Chip
+                                style="@style/CustomChipStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="올리브영"
+                                android:textAlignment="center"
+                                android:translationY="-2dp" />
+
+                            <com.google.android.material.chip.Chip
+                                style="@style/CustomChipStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="편의점"
+                                android:textAlignment="center"
+                                android:translationY="-2dp" />-->
+
+                            <ImageView
+                                android:id="@+id/iv_add_category"
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
+                                android:background="@drawable/background_chip_add"
+                                android:src="@drawable/icon_add_gray" />
+
+                        </com.google.android.material.chip.ChipGroup>
+
+                    </HorizontalScrollView>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
         android:id="@+id/ll_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
+        android:background="@color/moa_gray_white"
         android:orientation="horizontal"
-        android:paddingTop="38dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="40dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.appcompat.widget.AppCompatButton
@@ -149,7 +372,7 @@
             android:layout_marginEnd="20dp"
             android:layout_weight="1"
             android:background="@drawable/background_enabled_button"
-            android:text="확인"
+            android:text="등록"
             android:textColor="@color/moa_gray_white"
             android:textSize="16sp" />
 

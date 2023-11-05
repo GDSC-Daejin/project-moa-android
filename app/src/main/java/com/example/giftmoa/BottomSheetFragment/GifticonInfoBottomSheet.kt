@@ -44,7 +44,13 @@ class GifticonInfoBottomSheet(private var gifticon: ParsedGifticon, private val 
         binding.etCouponName.setText(gifticon.name)
         binding.etBarcodeNumber.setText(gifticon.barcodeNumber)
         binding.etExchangePlace.setText(gifticon.exchangePlace)
-        binding.etDueDate.setText("$formattedDueDate   ${formattedAmount}원")
+        binding.etDueDate.setText(formattedDueDate)
+        if (gifticon.amount != null) {
+            binding.etCouponAmount.visibility = View.VISIBLE
+            binding.tvCouponAmountUnit.visibility = View.VISIBLE
+            binding.switchCouponAmount.isChecked = true
+            binding.etCouponAmount.setText(formattedAmount)
+        }
 
         binding.btnConfirm.setOnClickListener {
             // 쿠폰 정보 업데이트

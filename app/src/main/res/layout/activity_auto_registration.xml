@@ -266,12 +266,6 @@
                         android:textAlignment="center"
                         android:translationY="-2dp" />-->
 
-                    <!--<androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv_category"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:itemCount="2" />-->
-
                     <ImageView
                         android:id="@+id/iv_add_category"
                         android:layout_width="38dp"

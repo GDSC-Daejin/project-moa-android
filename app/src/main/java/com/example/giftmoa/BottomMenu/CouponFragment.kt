@@ -1,8 +1,10 @@
 package com.example.giftmoa.BottomMenu
 
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -10,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
@@ -31,6 +34,9 @@ import com.example.giftmoa.Data.StorageData
 import com.example.giftmoa.GifticonDetailActivity
 import com.example.giftmoa.GifticonInfoListener
 import com.example.giftmoa.GifticonRegistrationActivity
+import com.example.giftmoa.HomeTab.HomeEntireFragment
+import com.example.giftmoa.MainActivity
+import com.example.giftmoa.ManualRegistrationActivity
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.FragmentCouponBinding
 import com.google.android.material.chip.Chip
@@ -82,7 +88,7 @@ class CouponFragment : Fragment(), CategoryListener {
     private val tabTextList = listOf("전체", "사용가능", "사용완료")
 
     private var categoryList = mutableListOf<CategoryItem>()
-    private var gifticonList = mutableListOf<GifticonDetailItem>()
+    private var gifticonList = HomeEntireFragment().gifticonList
 
     private lateinit var gifticonListAdapter: GifticonListAdapter
 
@@ -97,6 +103,8 @@ class CouponFragment : Fragment(), CategoryListener {
         }
     }
     private lateinit var retrofit: Retrofit
+
+    private lateinit var manualAddGifticonResult: ActivityResultLauncher<Intent>
 
     interface NaverClovaOCRService {
         @Multipart
@@ -140,6 +148,31 @@ class CouponFragment : Fragment(), CategoryListener {
             startActivity(intent)
         }*/
 
+        // CouponFragment에서 쿠폰 추가 또는 수정을 처리하는 부분
+        manualAddGifticonResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val updatedGifticon = if (Build.VERSION.SDK_INT >= 33) {
+                    result.data?.getParcelableExtra("updatedGifticon", GifticonDetailItem::class.java)
+                } else {
+                    result.data?.getParcelableExtra<GifticonDetailItem>("updatedGifticon")
+                }
+                val isEdit = result.data?.getBooleanExtra("isEdit", false)
+                Log.d(TAG, "updatedGifticon: $updatedGifticon")
+                Log.d(TAG, "isEdit: $isEdit")
+
+                val currentItem = viewPager.currentItem
+                val fragment = homeTabAdapter.createFragment(currentItem)
+                if (fragment is HomeEntireFragment) {
+                    // HomeEntireFragment를 찾은 경우
+                    if (isEdit == true && updatedGifticon != null) {
+                        fragment.updateGifticon(updatedGifticon)
+                    } else if (updatedGifticon != null) {
+                        fragment.addGifticon(updatedGifticon)
+                    }
+                }
+            }
+        }
+
         getJsonData()
 
         TabLayoutMediator(tabLayout, viewPager) { tab, pos ->
@@ -166,7 +199,9 @@ class CouponFragment : Fragment(), CategoryListener {
                             }
 
                             "수동 등록" -> {
-
+                                manualAddGifticonResult.launch(Intent(requireActivity(), ManualRegistrationActivity::class.java).apply {
+                                    putExtra("isEdit", false)
+                                })
                             }
                         }
                     }
