@@ -1,7 +1,6 @@
 package com.example.giftmoa.Adapter
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -10,9 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.giftmoa.Data.GifticonDetailItem
 import com.example.giftmoa.R
-import com.example.giftmoa.databinding.ItemGifticonBinding
 import com.example.giftmoa.databinding.ItemHomeSharedGifticonBinding
-import com.example.giftmoa.util.ImageUtil
+import com.example.giftmoa.utils.ImageUtil
 import java.text.SimpleDateFormat
 import java.util.Date
 

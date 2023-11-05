@@ -9,14 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.giftmoa.Adapter.GifticonListAdapter
-import com.example.giftmoa.AssetLoader
+import com.example.giftmoa.utils.AssetLoader
 import com.example.giftmoa.Data.GifticonDetailItem
 import com.example.giftmoa.Data.StorageData
 import com.example.giftmoa.GifticonDetailActivity
 import com.example.giftmoa.GridSpacingItemDecoration
-import com.example.giftmoa.R
 import com.example.giftmoa.databinding.FragmentHomeAvailableBinding
-import com.example.giftmoa.databinding.FragmentHomeEntireBinding
 import com.google.gson.Gson
 
 // TODO: Rename parameter arguments, choose names that match

@@ -1,4 +1,4 @@
-package com.example.giftmoa
+package com.example.giftmoa.CouponTab
 
 import android.content.Intent
 import android.os.Build
@@ -6,21 +6,22 @@ import android.os.Bundle
 import android.util.Log
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
 import com.example.giftmoa.Adapter.CategoryAdapter
-import com.example.giftmoa.Data.Author
+import com.example.giftmoa.BottomMenu.CategoryListener
+import com.example.giftmoa.BottomSheetFragment.CategoryBottomSheet
 import com.example.giftmoa.Data.AutoRegistrationData
 import com.example.giftmoa.Data.Category
 import com.example.giftmoa.Data.CategoryItem
 import com.example.giftmoa.Data.GifticonDetailItem
-import com.example.giftmoa.Data.ParsedGifticon
-import com.example.giftmoa.Data.UpdateGifticonItem
-import com.example.giftmoa.Data.UploadGifticonItem
+import com.example.giftmoa.R
 import com.example.giftmoa.databinding.ActivityManualRegistrationBinding
-import com.example.giftmoa.util.FormatUtil
+import com.example.giftmoa.utils.AssetLoader
+import com.example.giftmoa.utils.FormatUtil
 import com.google.android.material.chip.Chip
 import com.google.gson.Gson
 
-class ManualRegistrationActivity : AppCompatActivity() {
+class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
 
     private val TAG = "ManualRegistrationActivity"
     private lateinit var binding: ActivityManualRegistrationBinding
@@ -82,6 +83,10 @@ class ManualRegistrationActivity : AppCompatActivity() {
             } else {
                 registerGifticon()
             }
+        }
+
+        binding.ivAddCategory.setOnClickListener {
+            showCategoryBottomSheet(categoryList)
         }
     }
 
@@ -186,5 +191,48 @@ class ManualRegistrationActivity : AppCompatActivity() {
             (it.parent as? ViewGroup)?.removeView(it)
         }
         return chip
+    }
+
+    private fun deleteChip(text: String) {
+        for (i in 0 until binding.chipGroupCategory.childCount) {
+            val childView = binding.chipGroupCategory.getChildAt(i)
+            if (childView is Chip) {
+                val chip = childView as Chip
+                if (chip.text == text) {
+                    binding.chipGroupCategory.removeView(chip)
+                    break
+                }
+            }
+        }
+    }
+
+    private fun showCategoryBottomSheet(cateogoryList: List<CategoryItem>) {
+        val categoryBottomSheet = CategoryBottomSheet(categoryList, this)
+        categoryBottomSheet.setStyle(DialogFragment.STYLE_NORMAL, R.style.RoundCornerBottomSheetDialogTheme)
+        categoryBottomSheet.show(this.supportFragmentManager, categoryBottomSheet.tag)
+    }
+
+    override fun onCategoryUpdated(categoryName: String) {
+        Log.d(TAG, "onCategoryUpdated: $categoryName")
+        val chip = createNewChip(categoryName)
+        val positionToInsert = binding.chipGroupCategory.childCount - 1
+        binding.chipGroupCategory.addView(chip, positionToInsert)
+        // categoryList에 추가
+        categoryList.add(CategoryItem(0, categoryName))
+    }
+
+    override fun onCategoryDeleted(categoryName: String) {
+        var categoryId: Long? = null
+        Log.d(TAG, "onCategoryDeleted: $categoryName")
+        for (category in categoryList) {
+            if (categoryName == category.categoryName) {
+                // categoryList에서 해당 카테고리의 id 값 가져오기
+                categoryId = category.id
+                // categoryList에서 해당 카테고리 삭제
+                categoryList.remove(category)
+                deleteChip(categoryName)
+                break
+            }
+        }
     }
 }

@@ -18,25 +18,25 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
-import com.bumptech.glide.Glide
+import androidx.fragment.app.FragmentPagerAdapter
+import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import com.example.giftmoa.Adapter.GifticonListAdapter
 import com.example.giftmoa.Adapter.HomeTabAdapter
-import com.example.giftmoa.AssetLoader
-import com.example.giftmoa.AutoRegistrationActivity
+import com.example.giftmoa.utils.AssetLoader
+import com.example.giftmoa.CouponTab.AutoRegistrationActivity
 import com.example.giftmoa.BottomSheetFragment.BottomSheetFragment
 import com.example.giftmoa.BottomSheetFragment.CategoryBottomSheet
+import com.example.giftmoa.BottomSheetFragment.SortBottomSheet
 import com.example.giftmoa.BuildConfig
 import com.example.giftmoa.Data.BoundingBox
 import com.example.giftmoa.Data.CategoryItem
 import com.example.giftmoa.Data.GifticonDetailItem
 import com.example.giftmoa.Data.ParsedGifticon
 import com.example.giftmoa.Data.StorageData
-import com.example.giftmoa.GifticonDetailActivity
-import com.example.giftmoa.GifticonInfoListener
 import com.example.giftmoa.GifticonRegistrationActivity
 import com.example.giftmoa.HomeTab.HomeEntireFragment
-import com.example.giftmoa.MainActivity
-import com.example.giftmoa.ManualRegistrationActivity
+import com.example.giftmoa.CouponTab.ManualRegistrationActivity
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.FragmentCouponBinding
 import com.google.android.material.chip.Chip
@@ -189,12 +189,8 @@ class CouponFragment : Fragment(), CategoryListener {
                     override fun sendValue(value: String) {
                         Log.d("test", "BottomSheetDialog -> 액티비티로 전달된 값 : $value")
                         getBottomSheetData = value
-                        //myViewModel.postCheckSearchFilter(getBottomSheetData)
                         when (value) {
                             "자동 등록" -> {
-                                //val intent = Intent(requireActivity(), CouponAutoAddActivity::class.java)
-                                /*val intent = Intent(requireActivity(), GifticonRegistrationActivity::class.java)
-                                startActivity(intent)*/
                                 checkPermission()
                             }
 
@@ -213,7 +209,43 @@ class CouponFragment : Fragment(), CategoryListener {
             showCategoryBottomSheet(categoryList)
         }
 
+        binding.chipSort.setOnClickListener {
+            val bottomSheet = SortBottomSheet()
+            bottomSheet.show(requireActivity().supportFragmentManager, bottomSheet.tag)
+            bottomSheet.apply {
+                setCallback(object : SortBottomSheet.OnSendFromBottomSheetDialog{
+                    override fun sendValue(value: String) {
+                        Log.d("test", "BottomSheetDialog -> 액티비티로 전달된 값 : $value")
+                        getBottomSheetData = value
+                        when (value) {
+                            "최신순" -> {
+                                val currentItem = viewPager.currentItem
+                                val fragment = findFragmentByPosition(viewPager, currentItem)
+                                Log.d(TAG, "sendValue: $fragment")
+                                if (fragment is HomeEntireFragment) {
+                                    fragment.sortByRecent()
+                                }
+                            }
+
+                            "유효기간순" -> {
+                                val currentItem = viewPager.currentItem
+                                val fragment = findFragmentByPosition(viewPager, currentItem)
+                                Log.d(TAG, "sendValue: $fragment")
+                                if (fragment is HomeEntireFragment) {
+                                    fragment.sortByDueDate()
+                                }
+                            }
+                        }
+                    }
+                })
+            }
+        }
+
         return root
+    }
+    // viewPager의 현재 position에 있는 프래그먼트 인스턴스를 찾는 메서드
+    private fun findFragmentByPosition(viewPager: ViewPager2, position: Int): Fragment? {
+        return childFragmentManager.findFragmentByTag("f${viewPager.id}:$position")
     }
 
     private fun checkPermission() {

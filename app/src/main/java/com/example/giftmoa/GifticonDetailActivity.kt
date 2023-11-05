@@ -1,6 +1,5 @@
 package com.example.giftmoa
 
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -11,13 +10,11 @@ import com.example.giftmoa.Adapter.UsageHistoryAdapter
 import com.example.giftmoa.Data.GifticonDetailItem
 import com.example.giftmoa.Data.UsageHistoryItem
 import com.example.giftmoa.databinding.ActivityGifticonDetailBinding
-import com.example.giftmoa.util.FormatUtil
-import com.example.giftmoa.util.ImageUtil
+import com.example.giftmoa.utils.AssetLoader
+import com.example.giftmoa.utils.FormatUtil
+import com.example.giftmoa.utils.ImageUtil
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.MultiFormatWriter
-import com.google.zxing.common.BitMatrix
 
 class GifticonDetailActivity: AppCompatActivity() {
 
@@ -42,6 +39,7 @@ class GifticonDetailActivity: AppCompatActivity() {
         initRecyclerView()
 
         if (gifticonDetail != null) {
+            binding.tvToolbarCategoryName.text = gifticonDetail?.category?.categoryName
             binding.tvCouponName.text = gifticonDetail?.name
             Glide.with(binding.ivCouponImage.context)
                 .load(gifticonDetail?.gifticonImagePath)

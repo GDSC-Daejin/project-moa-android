@@ -1,4 +1,4 @@
-package com.example.giftmoa.util
+package com.example.giftmoa.utils
 
 import android.util.Log
 import java.text.SimpleDateFormat

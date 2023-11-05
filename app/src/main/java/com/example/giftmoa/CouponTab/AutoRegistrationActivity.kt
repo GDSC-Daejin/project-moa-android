@@ -1,11 +1,10 @@
-package com.example.giftmoa
+package com.example.giftmoa.CouponTab
 
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -15,6 +14,8 @@ import com.bumptech.glide.Glide
 import com.example.giftmoa.Adapter.CategoryAdapter
 import com.example.giftmoa.Adapter.RegisteredGifticonAdapter
 import com.example.giftmoa.Adapter.SmallShareRoomAdapter
+import com.example.giftmoa.BottomMenu.CategoryListener
+import com.example.giftmoa.BottomSheetFragment.CategoryBottomSheet
 import com.example.giftmoa.BottomSheetFragment.GifticonInfoBottomSheet
 import com.example.giftmoa.Data.AutoRegistrationData
 import com.example.giftmoa.Data.CategoryItem
@@ -22,22 +23,20 @@ import com.example.giftmoa.Data.CustomCropTransformation
 import com.example.giftmoa.Data.ParsedGifticon
 import com.example.giftmoa.Data.ShareRoomItem
 import com.example.giftmoa.Data.UploadGifticonItem
+import com.example.giftmoa.R
 import com.example.giftmoa.databinding.ActivityAutoRegistrationBinding
-import com.example.giftmoa.util.FormatUtil
+import com.example.giftmoa.utils.AssetLoader
+import com.example.giftmoa.utils.FormatUtil
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
-import java.util.TimeZone
 
 interface GifticonInfoListener {
     fun onGifticonInfoUpdated(gifticon: ParsedGifticon)
 }
 
-class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener {
+class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener, CategoryListener {
 
     private val TAG = "AutoRegistrationActivity"
     private lateinit var binding: ActivityAutoRegistrationBinding
@@ -90,15 +89,9 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener {
         }
 
         binding.ivAddCategory.setOnClickListener {
-            val newCategory = binding.etCategory.text.toString().trim()
-
-            if (newCategory.isNotEmpty()) {
-                val chip = createNewChip(newCategory)
-                val positionToInsert = binding.chipGroupCategory.childCount - 1
-                binding.chipGroupCategory.addView(chip, positionToInsert)
-                binding.etCategory.text.clear()
-            }
+            showCategoryBottomSheet(categoryList)
         }
+
         // 체크박스 클릭 시
         binding.checkbox.setOnCheckedChangeListener { _, isChecked ->
             isUploading = if (isChecked) {
@@ -143,7 +136,6 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener {
                 val chip = category.categoryName?.let { createNewChip(it) }
                 val positionToInsert = binding.chipGroupCategory.childCount - 1
                 binding.chipGroupCategory.addView(chip, positionToInsert)
-                binding.etCategory.text.clear()
             }
             // autoRegistrationData.shareRooms가 null이 아닐 때 실행
             if (autoRegistrationData.shareRooms.size > 0) {
@@ -171,9 +163,24 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener {
         return chip
     }
 
+    private fun deleteChip(text: String) {
+        for (i in 0 until binding.chipGroupCategory.childCount) {
+            val childView = binding.chipGroupCategory.getChildAt(i)
+            if (childView is Chip) {
+                val chip = childView as Chip
+                if (chip.text == text) {
+                    binding.chipGroupCategory.removeView(chip)
+                    break
+                }
+            }
+        }
+    }
+
     private fun showGifticonBottomSheet(gifticon: ParsedGifticon) {
         val gifticonInfoBottomSheet = GifticonInfoBottomSheet(gifticon, this)
-        gifticonInfoBottomSheet.setStyle(DialogFragment.STYLE_NORMAL, R.style.RoundCornerBottomSheetDialogTheme)
+        gifticonInfoBottomSheet.setStyle(DialogFragment.STYLE_NORMAL,
+            R.style.RoundCornerBottomSheetDialogTheme
+        )
         gifticonInfoBottomSheet.show(supportFragmentManager, "gifticonInfoBottomSheet")
     }
 
@@ -265,5 +272,35 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener {
             .addOnFailureListener {
                 onFailure(it)
             }
+    }
+
+    private fun showCategoryBottomSheet(cateogoryList: List<CategoryItem>) {
+        val categoryBottomSheet = CategoryBottomSheet(categoryList, this)
+        categoryBottomSheet.setStyle(DialogFragment.STYLE_NORMAL, R.style.RoundCornerBottomSheetDialogTheme)
+        categoryBottomSheet.show(this.supportFragmentManager, categoryBottomSheet.tag)
+    }
+
+    override fun onCategoryUpdated(categoryName: String) {
+        Log.d(TAG, "onCategoryUpdated: $categoryName")
+        val chip = createNewChip(categoryName)
+        val positionToInsert = binding.chipGroupCategory.childCount - 1
+        binding.chipGroupCategory.addView(chip, positionToInsert)
+        // categoryList에 추가
+        categoryList.add(CategoryItem(0, categoryName))
+    }
+
+    override fun onCategoryDeleted(categoryName: String) {
+        var categoryId: Long? = null
+        Log.d(TAG, "onCategoryDeleted: $categoryName")
+        for (category in categoryList) {
+            if (categoryName == category.categoryName) {
+                // categoryList에서 해당 카테고리의 id 값 가져오기
+                categoryId = category.id
+                // categoryList에서 해당 카테고리 삭제
+                categoryList.remove(category)
+                deleteChip(categoryName)
+                break
+            }
+        }
     }
 }

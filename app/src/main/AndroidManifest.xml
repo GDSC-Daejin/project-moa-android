@@ -62,8 +62,8 @@
             android:name="com.kakao.sdk.AppKey"
             android:value="${kakao_app_key}" />
         <activity android:name=".GifticonRegistrationActivity" />
-        <activity android:name=".AutoRegistrationActivity" />
-        <activity android:name=".ManualRegistrationActivity" />
+        <activity android:name=".CouponTab.AutoRegistrationActivity" />
+        <activity android:name=".CouponTab.ManualRegistrationActivity" />
         <activity android:name=".SplashActivity" />
         <activity android:name=".GifticonDetailActivity" />
     </application>

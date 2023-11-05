@@ -3,7 +3,6 @@ package com.example.giftmoa.BottomMenu
 import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,21 +15,17 @@ import com.example.giftmoa.Adapter.GifticonListAdapter
 import com.example.giftmoa.Adapter.HomeShareRoomNameAdapter
 import com.example.giftmoa.Adapter.HomeSharedGifticonAdapter
 import com.example.giftmoa.Adapter.HomeUsedGiftAdapter
-import com.example.giftmoa.AssetLoader
+import com.example.giftmoa.utils.AssetLoader
 import com.example.giftmoa.Data.GiftData
 import com.example.giftmoa.Data.GifticonDetailItem
 import com.example.giftmoa.Data.HomeData
 import com.example.giftmoa.Data.ShareRoomDetailItem
-import com.example.giftmoa.Data.ShareRoomItem
-import com.example.giftmoa.Data.StorageData
 import com.example.giftmoa.Data.UsedGiftData
 import com.example.giftmoa.GifticonDetailActivity
 import com.example.giftmoa.GridSpacingItemDecoration
 import com.example.giftmoa.LeftMarginItemDecoration
 import com.example.giftmoa.R
-import com.example.giftmoa.RightMarginItemDecoration
 import com.example.giftmoa.databinding.FragmentHomeBinding
-import com.google.android.material.chip.Chip
 import com.google.gson.Gson
 
 // TODO: Rename parameter arguments, choose names that match

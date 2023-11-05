@@ -56,6 +56,25 @@
         <item name="android:theme">@style/ChipOverlayTheme</item>
     </style>
 
+    <style name="CustomChipStyleWithSortIcon" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipStrokeColor">@color/stroke_color_category_state</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipBackgroundColor">@color/background_category_state</item>
+        <item name="android:textColor">@color/text_color_category_state</item>
+        <item name="fontFamily">@font/pretendard_medium</item>
+        <item name="android:textSize">16sp</item>
+        <item name="textStartPadding">8dp</item>
+        <item name="textEndPadding">3dp</item>
+        <item name="closeIconVisible">true</item>
+        <item name="closeIconEnabled">true</item>
+        <item name="closeIcon">@drawable/icon_sort</item>
+        <item name="closeIconTint">@color/moa_gray_400</item>
+        <item name="closeIconSize">22dp</item>
+        <item name="chipEndPadding">3dp</item>
+        <item name="closeIconEndPadding">8dp</item>
+        <item name="android:theme">@style/ChipOverlayTheme</item>
+    </style>
+
     <style name="ChipOverlayTheme" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Any other customization for this theme overlay -->
     </style>

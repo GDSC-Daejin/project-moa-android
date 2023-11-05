@@ -1,4 +1,4 @@
-package com.example.giftmoa.util
+package com.example.giftmoa.utils
 
 import android.content.Context
 import android.graphics.Bitmap

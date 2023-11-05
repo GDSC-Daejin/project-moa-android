@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.example.giftmoa.Data.CustomCropTransformation
 import com.example.giftmoa.Data.ParsedGifticon
-import com.example.giftmoa.GifticonInfoListener
+import com.example.giftmoa.CouponTab.GifticonInfoListener
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.FragmentGifticonInfoBottomSheetBinding
-import com.example.giftmoa.util.FormatUtil
+import com.example.giftmoa.utils.FormatUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 class GifticonInfoBottomSheet(private var gifticon: ParsedGifticon, private val listener: GifticonInfoListener) : BottomSheetDialogFragment() {
@@ -45,6 +45,7 @@ class GifticonInfoBottomSheet(private var gifticon: ParsedGifticon, private val 
         binding.etBarcodeNumber.setText(gifticon.barcodeNumber)
         binding.etExchangePlace.setText(gifticon.exchangePlace)
         binding.etDueDate.setText(formattedDueDate)
+        binding.etOrderNumber.setText(gifticon.orderNumber)
         if (gifticon.amount != null) {
             binding.etCouponAmount.visibility = View.VISIBLE
             binding.tvCouponAmountUnit.visibility = View.VISIBLE

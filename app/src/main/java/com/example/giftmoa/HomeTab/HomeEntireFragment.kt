@@ -3,7 +3,6 @@ package com.example.giftmoa.HomeTab
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.res.Resources
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -11,30 +10,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.giftmoa.Adapter.GifticonListAdapter
-import com.example.giftmoa.Adapter.HomeGiftAdapter
-import com.example.giftmoa.AssetLoader
-import com.example.giftmoa.BottomSheetFragment.BottomSheetFragment
-import com.example.giftmoa.BottomSheetFragment.CategoryBottomSheet
+import com.example.giftmoa.utils.AssetLoader
 import com.example.giftmoa.BottomSheetFragment.GifticonEditDeleteBottomSheet
-import com.example.giftmoa.CouponTab.CouponAutoAddActivity
-import com.example.giftmoa.Data.CategoryItem
 import com.example.giftmoa.Data.GiftData
 import com.example.giftmoa.Data.GifticonDetailItem
-import com.example.giftmoa.Data.ParsedGifticon
 import com.example.giftmoa.Data.StorageData
 import com.example.giftmoa.GifticonDetailActivity
-import com.example.giftmoa.GifticonRegistrationActivity
 import com.example.giftmoa.GridSpacingItemDecoration
-import com.example.giftmoa.ManualRegistrationActivity
-import com.example.giftmoa.R
+import com.example.giftmoa.CouponTab.ManualRegistrationActivity
 import com.example.giftmoa.databinding.FragmentHomeEntireBinding
-import com.google.android.material.chip.Chip
 import com.google.gson.Gson
 
 // TODO: Rename parameter arguments, choose names that match
@@ -205,6 +193,28 @@ class HomeEntireFragment : Fragment() {
 
         Log.d(TAG, "addGifticon: $gifticonList")
         Log.d(TAG, "newGifticon: ${newGifticon}")
+    }
+
+    fun sortByRecent() {
+        if(!::giftAdapter.isInitialized) {
+            Log.d(TAG, "sortByRecent: ")
+            return
+        }
+        // 최신순은 기본으로 정렬되어 있으므로 아무것도 하지 않음
+        gifticonList.sortBy { it.id }
+        giftAdapter.submitList(gifticonList)
+        giftAdapter.notifyDataSetChanged()
+    }
+
+    fun sortByDueDate() {
+        if(!::giftAdapter.isInitialized) {
+            Log.d(TAG, "sortByDueDate: ")
+            return
+        }
+        // 유효기간이 얼마 남지 않은 순으로 정렬
+        gifticonList.sortBy { it.dueDate }
+        giftAdapter.submitList(gifticonList)
+        giftAdapter.notifyDataSetChanged()
     }
 
     companion object {

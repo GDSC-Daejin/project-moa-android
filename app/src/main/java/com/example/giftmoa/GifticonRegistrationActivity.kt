@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.example.giftmoa.BuildConfig.NCP_OCR_URL_PARAMS
 import com.example.giftmoa.BuildConfig.X_OCR_SECRET_KEY
+import com.example.giftmoa.CouponTab.AutoRegistrationActivity
 import com.example.giftmoa.Data.BoundingBox
 import com.example.giftmoa.Data.ParsedGifticon
 import com.example.giftmoa.databinding.ActivityGifticonRegistrationBinding
