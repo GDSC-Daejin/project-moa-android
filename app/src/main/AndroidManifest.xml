@@ -66,6 +66,7 @@
         <activity android:name=".CouponTab.ManualRegistrationActivity" />
         <activity android:name=".SplashActivity" />
         <activity android:name=".GifticonDetailActivity" />
+        <activity android:name=".MyProfileActivity" />
     </application>
 
 </manifest>

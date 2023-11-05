@@ -45,7 +45,7 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
         isEdit = intent.getBooleanExtra("isEdit", false)
 
         if (gifticon != null && isEdit) {
-            binding.tvManualRegistrationTitle.text = "기프티콘 수정"
+            binding.tvToolbarTitle.text = "기프티콘 수정"
             binding.btnConfirm.text = "수정"
 
             binding.etCouponName.setText(gifticon.name)
