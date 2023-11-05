@@ -17,6 +17,7 @@
         android:background="@drawable/background_home_shared_gifticon_image"
         android:clipToOutline="true"
         android:src="@drawable/asset_gifticon_coffee"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

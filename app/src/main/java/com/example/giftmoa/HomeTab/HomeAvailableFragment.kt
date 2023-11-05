@@ -56,11 +56,11 @@ class HomeAvailableFragment : Fragment() {
         // Inflate the layout for this fragment
         binding  = FragmentHomeAvailableBinding.inflate(inflater, container, false)
 
-        giftAdapter = GifticonListAdapter { gifticon ->
+        giftAdapter = GifticonListAdapter({ gifticon ->
             val intent = Intent(requireActivity(), GifticonDetailActivity::class.java)
             intent.putExtra("gifticonId", gifticon.id)
             startActivity(intent)
-        }
+        }, requireActivity())
 
         getJsonData()
 

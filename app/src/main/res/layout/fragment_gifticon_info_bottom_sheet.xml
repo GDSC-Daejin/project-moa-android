@@ -64,7 +64,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/tv_sub_title" />
 
             <ImageView
-                android:id="@+id/iv_gifticon"
+                android:id="@+id/iv_coupon_image"
                 android:layout_width="123dp"
                 android:layout_height="123dp"
                 android:layout_marginEnd="20dp"
@@ -81,7 +81,7 @@
                 android:paddingEnd="20dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/iv_gifticon"
+                app:layout_constraintTop_toBottomOf="@id/iv_coupon_image"
                 app:layout_constraintVertical_bias="0.0">
 
                 <TextView

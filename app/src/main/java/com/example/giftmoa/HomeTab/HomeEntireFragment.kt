@@ -71,11 +71,11 @@ class HomeEntireFragment : Fragment() {
         Log.d(TAG, "onCreateView: ")
 
 
-        giftAdapter = GifticonListAdapter { gifticon ->
+        giftAdapter = GifticonListAdapter({ gifticon ->
             val intent = Intent(requireActivity(), GifticonDetailActivity::class.java)
             intent.putExtra("gifticonId", gifticon.id)
             startActivity(intent)
-        }
+        }, requireActivity())
 
         manualAddGifticonResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == RESULT_OK) {

@@ -5,11 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
-import com.example.giftmoa.Data.CustomCropTransformation
+import com.bumptech.glide.request.RequestOptions
 import com.example.giftmoa.Data.ParsedGifticon
 import com.example.giftmoa.CouponTab.GifticonInfoListener
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.FragmentGifticonInfoBottomSheetBinding
+import com.example.giftmoa.utils.CustomCropTransformation
 import com.example.giftmoa.utils.FormatUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -37,10 +38,18 @@ class GifticonInfoBottomSheet(private var gifticon: ParsedGifticon, private val 
         // gifticon.amount 50000 -> 50,000
         val formattedAmount = gifticon.amount?.let { String.format("%,d", it) }
 
-        Glide.with(binding.ivGifticon.context)
+        // 자르고 싶은 위치와 크기 지정
+        val cropX = 25 // X 시작 위치
+        val cropY = 25 // Y 시작 위치
+        val cropWidth = 285 // 잘라낼 너비
+        val cropHeight = 275 // 잘라낼 높이
+
+        Glide.with(binding.ivCouponImage.context)
+            .asBitmap()
             .load(gifticon.image)
-            .transform(CustomCropTransformation(0.5f, 0.5f))
-            .into(binding.ivGifticon)
+            .apply(RequestOptions().transform(CustomCropTransformation(cropX, cropY, cropWidth, cropHeight)))
+            .into(binding.ivCouponImage)
+
         binding.etCouponName.setText(gifticon.name)
         binding.etBarcodeNumber.setText(gifticon.barcodeNumber)
         binding.etExchangePlace.setText(gifticon.exchangePlace)

@@ -74,11 +74,12 @@ class HomeFragment : Fragment() {
     ): View {
         hBinding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        giftAdapter = GifticonListAdapter { gifticon ->
+        giftAdapter = GifticonListAdapter({ gifticon ->
             val intent = Intent(requireActivity(), GifticonDetailActivity::class.java)
             intent.putExtra("gifticonId", gifticon.id)
             startActivity(intent)
-        }
+        }, requireActivity())
+
         homeShareRoomNameAdapter = HomeShareRoomNameAdapter { shareRoom ->
             // shareRoomDetailList에서 shareRoom의 teamId와 같은 teamId를 가진 ShareRoomDetailItem을 찾기
             val shareRoomDetail = shareRoomDetailList.find { it.teamId == shareRoom.teamId }

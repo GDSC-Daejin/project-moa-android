@@ -11,6 +11,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.giftmoa.Adapter.CategoryAdapter
 import com.example.giftmoa.Adapter.RegisteredGifticonAdapter
 import com.example.giftmoa.Adapter.SmallShareRoomAdapter
@@ -19,13 +20,13 @@ import com.example.giftmoa.BottomSheetFragment.CategoryBottomSheet
 import com.example.giftmoa.BottomSheetFragment.GifticonInfoBottomSheet
 import com.example.giftmoa.Data.AutoRegistrationData
 import com.example.giftmoa.Data.CategoryItem
-import com.example.giftmoa.Data.CustomCropTransformation
 import com.example.giftmoa.Data.ParsedGifticon
 import com.example.giftmoa.Data.ShareRoomItem
 import com.example.giftmoa.Data.UploadGifticonItem
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.ActivityAutoRegistrationBinding
 import com.example.giftmoa.utils.AssetLoader
+import com.example.giftmoa.utils.CustomCropTransformation
 import com.example.giftmoa.utils.FormatUtil
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
@@ -190,11 +191,17 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener, Categ
         binding.llCouponDueDate.visibility = ViewGroup.VISIBLE
         if (binding.llRegisterCoupon.isVisible) {
             binding.tvCouponName.text = gifticon.name
+            // 자르고 싶은 위치와 크기 지정
+            val cropX = 5 // X 시작 위치
+            val cropY = 10 // Y 시작 위치
+            val cropWidth = 85 // 잘라낼 너비
+            val cropHeight = 75 // 잘라낼 높이
+
             Glide.with(binding.ivCouponImage.context)
+                .asBitmap()
                 .load(gifticon.image)
-                .transform(CustomCropTransformation(0.5f, 0.5f))
+                .apply(RequestOptions().transform(CustomCropTransformation(cropX, cropY, cropWidth, cropHeight)))
                 .into(binding.ivCouponImage)
-            isUploading = true
         }
         if (binding.llCouponDueDate.isVisible) {
             binding.tvCouponDueDate.text = gifticon.dueDate

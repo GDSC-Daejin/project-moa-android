@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.example.giftmoa.utils.CustomCropTransformation
 import com.example.giftmoa.Data.GifticonDetailItem
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.ItemHomeSharedGifticonBinding
@@ -26,9 +28,16 @@ class HomeSharedGifticonAdapter(private val onClick: (GifticonDetailItem) -> Uni
 
         fun bind(gifticon: GifticonDetailItem) {
             if (gifticon.gifticonImagePath != null) {
+                // 자르고 싶은 위치와 크기 지정
+                val cropX = 25 // X 시작 위치
+                val cropY = 25 // Y 시작 위치
+                val cropWidth = 275 // 잘라낼 너비
+                val cropHeight = 265 // 잘라낼 높이
+
                 Glide.with(binding.ivCouponImage.context)
+                    .asBitmap()
                     .load(gifticon.gifticonImagePath)
-                    .centerCrop()
+                    .apply(RequestOptions().transform(CustomCropTransformation(cropX, cropY, cropWidth, cropHeight)))
                     .into(binding.ivCouponImage)
             } else {
                 binding.ivCouponImage.setImageResource(R.drawable.asset_gifticon_coffee)
