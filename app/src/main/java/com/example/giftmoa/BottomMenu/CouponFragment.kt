@@ -19,6 +19,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentPagerAdapter
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.giftmoa.Adapter.GifticonListAdapter
@@ -37,6 +38,7 @@ import com.example.giftmoa.Data.StorageData
 import com.example.giftmoa.GifticonRegistrationActivity
 import com.example.giftmoa.HomeTab.HomeEntireFragment
 import com.example.giftmoa.CouponTab.ManualRegistrationActivity
+import com.example.giftmoa.HomeTab.CouponViewModel
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.FragmentCouponBinding
 import com.example.giftmoa.utils.FileGalleryPermissionUtil
@@ -77,6 +79,10 @@ interface CategoryListener {
     fun onCategoryDeleted(category: String)
 }
 
+interface GifticonDataReceiver {
+    fun receiveGifticonData(gifticonList: List<GifticonDetailItem>)
+}
+
 class CouponFragment : Fragment(), CategoryListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -86,12 +92,20 @@ class CouponFragment : Fragment(), CategoryListener {
     private val binding get() = _binding!!
 
     private val TAG = "CouponFragment"
+
+    private lateinit var viewModel: CouponViewModel
+
+
     private val tabTextList = listOf("전체", "사용가능", "사용완료")
 
     private var categoryList = mutableListOf<CategoryItem>()
-    private var gifticonList = HomeEntireFragment().gifticonList
 
-    private lateinit var gifticonListAdapter: GifticonListAdapter
+    // 기프티콘 전체 리스트
+    var allGifticonList = mutableListOf<GifticonDetailItem>()
+    // 사용가능한 기프티콘 리스트
+    var availableGifticonList = mutableListOf<GifticonDetailItem>()
+    // 사용완료한 기프티콘 리스트
+    var usedGifticonList = mutableListOf<GifticonDetailItem>()
 
     private var getBottomSheetData = ""
 
@@ -117,13 +131,17 @@ class CouponFragment : Fragment(), CategoryListener {
         ): Call<ResponseBody>
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    /*override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-    }
+
+        *//*viewModel = ViewModelProvider(this).get(CouponViewModel::class.java)
+        // 여기서 데이터 로딩 시작
+        viewModel.loadData()*//*
+    }*/
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -142,6 +160,16 @@ class CouponFragment : Fragment(), CategoryListener {
 
         val homeTabAdapter = HomeTabAdapter(this)
         viewPager.adapter = homeTabAdapter
+
+        /*binding.viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                // 선택된 페이지에 따라 각 프래그먼트에 LiveData를 관찰하도록 설정
+                updateFragmentObservers(position)
+            }
+        })
+
+        updateFragmentObservers(binding.viewpager.currentItem)*/
 
         /*gifticonListAdapter = GifticonListAdapter { gifticon ->
             val intent = Intent(requireActivity(), GifticonDetailActivity::class.java)
@@ -176,13 +204,15 @@ class CouponFragment : Fragment(), CategoryListener {
 
         getJsonData()
 
+        //distributeDataToFragments(homeTabAdapter)
+
         TabLayoutMediator(tabLayout, viewPager) { tab, pos ->
             tab.text = tabTextList[pos]
             //val typeface = resources.getFont(com.example.mio.R.font.pretendard_medium)
             //tab.setIcon(tabIconList[pos])
         }.attach()
 
-        binding.tvAddCoupon.setOnClickListener {
+        /*binding.tvAddCoupon.setOnClickListener {
             val bottomSheet = BottomSheetFragment()
             bottomSheet.show(requireActivity().supportFragmentManager, bottomSheet.tag)
             bottomSheet.apply {
@@ -205,7 +235,7 @@ class CouponFragment : Fragment(), CategoryListener {
                     }
                 })
             }
-        }
+        }*/
 
         binding.ivAddCategory.setOnClickListener {
             showCategoryBottomSheet(categoryList)
@@ -429,6 +459,17 @@ class CouponFragment : Fragment(), CategoryListener {
                     binding.chipGroupCategory.addView(chip)
                 }
             }
+
+            for (gifticon in storageData.gifticons) {
+                allGifticonList.add(gifticon)
+                // gifticon.status가 "AVAILABLE"인 경우 availableGifticonList에 추가
+                if (gifticon.status == "AVAILABLE") {
+                    availableGifticonList.add(gifticon)
+                } else {
+                    // 그 외의 경우 usedGifticonList에 추가
+                    usedGifticonList.add(gifticon)
+                }
+            }
         }
     }
 
@@ -478,6 +519,66 @@ class CouponFragment : Fragment(), CategoryListener {
                 Log.d(TAG, "onCategoryDeleted: $categoryId")
                 Log.d(TAG, "onCategoryDeleted: $categoryList")
                 break
+            }
+        }
+    }
+
+    private fun updateFragmentObservers(position: Int) {
+        val fragment = childFragmentManager.findFragmentByTag("f${binding.viewpager.id}:$position") as? GifticonDataReceiver
+        when (position) {
+            0 -> viewModel.allGifticonList.observe(viewLifecycleOwner) { list ->
+                fragment?.receiveGifticonData(list)
+            }
+            1 -> viewModel.availableGifticonList.observe(viewLifecycleOwner) { list ->
+                fragment?.receiveGifticonData(list)
+            }
+            2 -> viewModel.usedGifticonList.observe(viewLifecycleOwner) { list ->
+                fragment?.receiveGifticonData(list)
+            }
+        }
+    }
+
+    private fun distributeDataToFragments(adapter: HomeTabAdapter) {
+        val entireFragment = adapter.getFragment(0) as? GifticonDataReceiver
+        entireFragment?.receiveGifticonData(allGifticonList)
+
+        val availableFragment = adapter.getFragment(1) as? GifticonDataReceiver
+        availableFragment?.receiveGifticonData(availableGifticonList)
+
+        val usedFragment = adapter.getFragment(2) as? GifticonDataReceiver
+        usedFragment?.receiveGifticonData(usedGifticonList)
+
+        Log.d(TAG, "allGifticonList: $allGifticonList")
+        Log.d(TAG, "availableGifticonList: $availableGifticonList")
+        Log.d(TAG, "usedGifticonList: $usedGifticonList")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "onStart: ")
+
+        binding.tvAddCoupon.setOnClickListener {
+            val bottomSheet = BottomSheetFragment()
+            bottomSheet.show(requireActivity().supportFragmentManager, bottomSheet.tag)
+            bottomSheet.apply {
+                setCallback(object : BottomSheetFragment.OnSendFromBottomSheetDialog{
+                    override fun sendValue(value: String) {
+                        Log.d("test", "BottomSheetDialog -> 액티비티로 전달된 값 : $value")
+                        getBottomSheetData = value
+                        when (value) {
+                            "자동 등록" -> {
+                                //checkPermission()
+                                FileGalleryPermissionUtil().checkPermission(requireActivity(), imageLoadLauncher)
+                            }
+
+                            "수동 등록" -> {
+                                manualAddGifticonResult.launch(Intent(requireActivity(), ManualRegistrationActivity::class.java).apply {
+                                    putExtra("isEdit", false)
+                                })
+                            }
+                        }
+                    }
+                })
             }
         }
     }

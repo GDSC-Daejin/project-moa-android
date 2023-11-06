@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.giftmoa.Adapter.CategoryAdapter
 import com.example.giftmoa.BottomMenu.CategoryListener
 import com.example.giftmoa.BottomSheetFragment.CategoryBottomSheet
@@ -14,6 +15,7 @@ import com.example.giftmoa.Data.AutoRegistrationData
 import com.example.giftmoa.Data.Category
 import com.example.giftmoa.Data.CategoryItem
 import com.example.giftmoa.Data.GifticonDetailItem
+import com.example.giftmoa.HomeTab.CouponViewModel
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.ActivityManualRegistrationBinding
 import com.example.giftmoa.utils.AssetLoader
@@ -29,15 +31,24 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
     private val categoryList = mutableListOf<CategoryItem>()
     private lateinit var categoryAdapter: CategoryAdapter
 
+    private lateinit var couponViewModel: CouponViewModel
+
+    private var gifticon: GifticonDetailItem? = null
+
     private var isEdit = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        couponViewModel =
+            ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(
+                CouponViewModel::class.java
+            )
+
         binding = ActivityManualRegistrationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val gifticon = if (Build.VERSION.SDK_INT >= 33) {
+        gifticon = if (Build.VERSION.SDK_INT >= 33) {
             intent.getParcelableExtra("gifticon", GifticonDetailItem::class.java)
         } else {
             intent.getParcelableExtra<GifticonDetailItem>("gifticon")
@@ -48,15 +59,15 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
             binding.tvToolbarTitle.text = "기프티콘 수정"
             binding.btnConfirm.text = "수정"
 
-            binding.etCouponName.setText(gifticon.name)
-            binding.etBarcodeNumber.setText(gifticon.barcodeNumber.toString())
-            binding.etExchangePlace.setText(gifticon.exchangePlace)
-            binding.etDueDate.setText(gifticon.dueDate?.let { FormatUtil().DateToString(it) })
-            if (gifticon.gifticonType == "MONEY") {
+            binding.etCouponName.setText(gifticon!!.name)
+            binding.etBarcodeNumber.setText(gifticon!!.barcodeNumber.toString())
+            binding.etExchangePlace.setText(gifticon!!.exchangePlace)
+            binding.etDueDate.setText(gifticon!!.dueDate?.let { FormatUtil().DateToString(it) })
+            if (gifticon!!.gifticonType == "MONEY") {
                 binding.etCouponAmount.visibility = android.view.View.VISIBLE
                 binding.tvCouponAmountUnit.visibility = android.view.View.VISIBLE
                 binding.switchCouponAmount.isChecked = true
-                binding.etCouponAmount.setText(gifticon.amount.toString())
+                binding.etCouponAmount.setText(gifticon!!.amount.toString())
             }
         } else {
             binding.switchCouponAmount.isClickable = true
@@ -74,14 +85,6 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
             } else {
                 binding.etCouponAmount.visibility = android.view.View.GONE
                 binding.tvCouponAmountUnit.visibility = android.view.View.GONE
-            }
-        }
-
-        binding.btnConfirm.setOnClickListener {
-            if (gifticon != null && isEdit) {
-                editGifticon(gifticon)
-            } else {
-                registerGifticon()
             }
         }
 
@@ -234,5 +237,82 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
                 break
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "onStart: ")
+
+        var updateGifticon: GifticonDetailItem
+
+        binding.btnConfirm.setOnClickListener {
+            if (gifticon != null && isEdit) {
+                updateGifticon = editGifticon2(gifticon!!)
+            } else {
+                updateGifticon = registerGifticon2()
+            }
+            couponViewModel.addData(updateGifticon)
+
+            finish()
+        }
+    }
+
+    private fun editGifticon2(gifticon: GifticonDetailItem): GifticonDetailItem {
+        // 클릭된 카테고리 chip의 text를 가져옴
+        val selectedCategory = binding.chipGroupCategory.findViewById<Chip>(binding.chipGroupCategory.checkedChipId)
+        val categoryName = selectedCategory?.text
+
+        var categoryId: Long? = null
+
+        // categoryList에 있는 카테고리 이름과 같은 카테고리를 찾아서 categoryId를 가져옴
+        for (category in categoryList) {
+            if (categoryName == category.categoryName) {
+                categoryId = category.id
+            }
+        }
+
+        val updatedGifticon = GifticonDetailItem(
+            id = gifticon.id,
+            name = binding.etCouponName.text.toString(),
+            barcodeNumber = binding.etBarcodeNumber.text.toString(),
+            exchangePlace = binding.etExchangePlace.text.toString(),
+            dueDate = gifticon.dueDate,
+            category = Category(id = categoryId, categoryName = categoryName.toString()),
+            amount = if (binding.switchCouponAmount.isChecked) binding.etCouponAmount.text.toString().toLong() else null,
+        )
+
+        Log.d(TAG, "editGifticon: $updatedGifticon")
+
+        return updatedGifticon
+    }
+
+    private fun registerGifticon2(): GifticonDetailItem {
+        // 클릭된 카테고리 chip의 text를 가져옴
+        val selectedCategory = binding.chipGroupCategory.findViewById<Chip>(binding.chipGroupCategory.checkedChipId)
+        val categoryName = selectedCategory?.text
+
+        var categoryId: Long? = null
+
+        // categoryList에 있는 카테고리 이름과 같은 카테고리를 찾아서 categoryId를 가져옴
+        for (category in categoryList) {
+            if (categoryName == category.categoryName) {
+                categoryId = category.id
+            }
+        }
+
+        val updatedGifticon = GifticonDetailItem(
+            name = binding.etCouponName.text.toString(),
+            barcodeNumber = binding.etBarcodeNumber.text.toString(),
+            exchangePlace = binding.etExchangePlace.text.toString(),
+            dueDate = FormatUtil().StringToDate(binding.etDueDate.text.toString(), TAG),
+            gifticonType = if (binding.switchCouponAmount.isChecked) "MONEY" else "GENERAL",
+            orderNumber = binding.etOrderNumber.text.toString(),
+            category = Category(id = categoryId, categoryName = categoryName.toString()),
+            amount = if (binding.switchCouponAmount.isChecked) binding.etCouponAmount.text.toString().toLong() else null,
+        )
+
+        Log.d(TAG, "registerGifticon: $updatedGifticon")
+
+        return updatedGifticon
     }
 }

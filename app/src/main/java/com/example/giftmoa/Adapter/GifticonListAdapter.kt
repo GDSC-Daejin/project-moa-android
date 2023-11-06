@@ -15,7 +15,7 @@ import com.example.giftmoa.databinding.ItemGifticonBinding
 import java.text.SimpleDateFormat
 import java.util.Date
 
-class GifticonListAdapter(private val onClick: (GifticonDetailItem) -> Unit, private val context: Context): ListAdapter<GifticonDetailItem, GifticonListAdapter.ViewHolder>(diffUtil) {
+class GifticonListAdapter(private val onClick: (GifticonDetailItem) -> Unit, var Gifticons: List<GifticonDetailItem>): ListAdapter<GifticonDetailItem, GifticonListAdapter.ViewHolder>(diffUtil) {
 
     interface OnItemLongClickListener {
         fun onItemLongClick(position: Int)
@@ -89,6 +89,21 @@ class GifticonListAdapter(private val onClick: (GifticonDetailItem) -> Unit, pri
     /*fun setOnItemLongClickListener(listener: OnItemLongClickListener) {
         this.itemLongClickListener = listener
     }*/
+
+    fun setAllGifticonList(allGifticonList: List<GifticonDetailItem>) {
+        Gifticons = allGifticonList
+        notifyDataSetChanged()
+    }
+
+    fun setAvailableGifticonList(availableGifticonList: List<GifticonDetailItem>) {
+        Gifticons = availableGifticonList
+        notifyDataSetChanged()
+    }
+
+    fun setUsedGifticonList(usedGifticonList: List<GifticonDetailItem>) {
+        Gifticons = usedGifticonList
+        notifyDataSetChanged()
+    }
 
     companion object {
         val diffUtil = object : DiffUtil.ItemCallback<GifticonDetailItem>() {

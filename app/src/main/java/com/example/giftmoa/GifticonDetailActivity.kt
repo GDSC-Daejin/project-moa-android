@@ -80,10 +80,6 @@ class GifticonDetailActivity: AppCompatActivity() {
                 usageHistoryAdapter.notifyDataSetChanged()
             }
         }
-
-        binding.tvToolbarConfirm.setOnClickListener {
-            finish()
-        }
     }
 
     private fun initRecyclerView() {

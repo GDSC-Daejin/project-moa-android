@@ -27,7 +27,7 @@
             android:textColor="@color/moa_gray_900"
             android:textSize="16sp" />
 
-        <TextView
+        <!--<TextView
             android:id="@+id/tv_toolbar_confirm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
             android:fontFamily="@font/pretendard_medium"
             android:text="확인"
             android:textColor="@color/moa_carrot_700"
-            android:textSize="16sp" />
+            android:textSize="16sp" />-->
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -256,9 +256,9 @@
                         android:paddingEnd="44dp"
                         android:paddingBottom="19dp"
                         android:textColor="@color/moa_gray_700"
-                        android:textColorHint="#b7b7b7"
+                        android:textColorHint="@color/moa_gray_400"
                         android:textSize="16sp"
-                        app:layout_constraintTop_toBottomOf="@id/tv_coupon_used_amount"
+                        app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_bias="0.0"
                         tools:layout_editor_absoluteX="20dp" />
 
@@ -514,16 +514,16 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_cancel"
+            android:id="@+id/btn_back"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_marginStart="20dp"
             android:layout_weight="1"
-            android:background="@drawable/background_enabled_button"
+            android:background="@drawable/background_disabled_button"
             android:fontFamily="@font/pretendard_medium"
-            android:text="사용 완료"
-            android:textColor="@color/moa_gray_white"
+            android:text="뒤로"
+            android:textColor="@color/moa_gray_400"
             android:textSize="16sp" />
 
         <View
@@ -531,7 +531,7 @@
             android:layout_height="1dp" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_confirm"
+            android:id="@+id/btn_used_complete"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
             android:layout_height="48dp"
@@ -539,7 +539,7 @@
             android:layout_weight="1"
             android:background="@drawable/background_enabled_button"
             android:fontFamily="@font/pretendard_medium"
-            android:text="공유하기"
+            android:text="사용 완료"
             android:textColor="@color/moa_gray_white"
             android:textSize="16sp" />
 

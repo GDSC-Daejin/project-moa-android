@@ -12,8 +12,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.giftmoa.Adapter.GifticonListAdapter
+import com.example.giftmoa.BottomMenu.CouponFragment
+import com.example.giftmoa.BottomMenu.GifticonDataReceiver
 import com.example.giftmoa.utils.AssetLoader
 import com.example.giftmoa.BottomSheetFragment.GifticonEditDeleteBottomSheet
 import com.example.giftmoa.Data.GiftData
@@ -35,15 +39,17 @@ private const val ARG_PARAM2 = "param2"
  * Use the [HomeEntireFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class HomeEntireFragment : Fragment() {
+class HomeEntireFragment : Fragment(), GifticonDataReceiver {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
 
-    private lateinit var binding : FragmentHomeEntireBinding
+    private lateinit var binding: FragmentHomeEntireBinding
     private val TAG = "HomeEntireFragment"
 
     private lateinit var giftAdapter: GifticonListAdapter
+
+    private lateinit var couponViewModel: CouponViewModel
 
     var gifticonList = mutableListOf<GifticonDetailItem>()
 
@@ -52,6 +58,8 @@ class HomeEntireFragment : Fragment() {
     private var getBottomSheetData = ""
 
     private lateinit var manualAddGifticonResult: ActivityResultLauncher<Intent>
+
+    //private var allGifticonList = mutableListOf<GifticonDetailItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,39 +70,66 @@ class HomeEntireFragment : Fragment() {
         Log.d(TAG, "onCreate: ")
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        /*couponViewModel.gifticonList.observe(viewLifecycleOwner, Observer{
+            binding.giftRv.post(Runnable { giftAdapter.setAllGifticonList(it.filter { x -> x.name != null }) })
+        })*/
+        couponViewModel.allGifticonList.observe(viewLifecycleOwner, Observer { allGifticons ->
+            // RecyclerView의 어댑터에 모든 기프티콘 목록을 설정
+            giftAdapter.submitList(allGifticons)
+            // 아이템 추가 시 애니메이션 효과를 주기 위해 notifyDataSetChanged() 대신 submitList() 사용
+            //giftAdapter.notifyDataSetChanged()
+        })
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        couponViewModel =
+            ViewModelProvider(requireActivity(), ViewModelProvider.NewInstanceFactory()).get(
+                CouponViewModel::class.java
+            )
+
         binding = FragmentHomeEntireBinding.inflate(inflater, container, false)
 
         Log.d(TAG, "onCreateView: ")
 
+        var allGifticonList = couponViewModel.allGifticonList.value
 
         giftAdapter = GifticonListAdapter({ gifticon ->
             val intent = Intent(requireActivity(), GifticonDetailActivity::class.java)
             intent.putExtra("gifticonId", gifticon.id)
             startActivity(intent)
-        }, requireActivity())
+        }, allGifticonList ?: emptyList<GifticonDetailItem>())
 
-        manualAddGifticonResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == RESULT_OK) {
-                val updatedGifticon = if (Build.VERSION.SDK_INT >= 33) {
-                    it.data?.getParcelableExtra("updatedGifticon", GifticonDetailItem::class.java)
-                } else {
-                    it.data?.getParcelableExtra<GifticonDetailItem>("updatedGifticon")
-                }
-                val isEdit = it.data?.getBooleanExtra("isEdit", false)
-                Log.d(TAG, "updatedGifticon: $updatedGifticon")
-                Log.d(TAG, "isEdit: $isEdit")
-                if (isEdit == true) {
-                    updatedGifticon?.let { it1 -> updateGifticon(it1) }
-                } else {
-                    // 기프티콘 추가
-                    updatedGifticon?.let { it1 -> addGifticon(it1) }
+        getJsonData()
+
+        initHomeRecyclerView()
+
+        manualAddGifticonResult =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                if (it.resultCode == RESULT_OK) {
+                    val updatedGifticon = if (Build.VERSION.SDK_INT >= 33) {
+                        it.data?.getParcelableExtra(
+                            "updatedGifticon",
+                            GifticonDetailItem::class.java
+                        )
+                    } else {
+                        it.data?.getParcelableExtra<GifticonDetailItem>("updatedGifticon")
+                    }
+                    val isEdit = it.data?.getBooleanExtra("isEdit", false)
+                    Log.d(TAG, "updatedGifticon: $updatedGifticon")
+                    Log.d(TAG, "isEdit: $isEdit")
+                    if (isEdit == true) {
+                        updatedGifticon?.let { it1 -> updateGifticon(it1) }
+                    } else {
+                        // 기프티콘 추가
+                        updatedGifticon?.let { it1 -> addGifticon(it1) }
+                    }
                 }
             }
-        }
 
         giftAdapter.itemLongClickListener = object : GifticonListAdapter.OnItemLongClickListener {
             override fun onItemLongClick(position: Int) {
@@ -104,7 +139,7 @@ class HomeEntireFragment : Fragment() {
                 val bottomSheet = GifticonEditDeleteBottomSheet()
                 bottomSheet.show(requireActivity().supportFragmentManager, bottomSheet.tag)
                 bottomSheet.apply {
-                    setCallback(object : GifticonEditDeleteBottomSheet.OnSendFromBottomSheetDialog{
+                    setCallback(object : GifticonEditDeleteBottomSheet.OnSendFromBottomSheetDialog {
                         override fun sendValue(value: String) {
                             Log.d("test", "BottomSheetDialog -> 액티비티로 전달된 값 : $value")
                             getBottomSheetData = value
@@ -115,10 +150,14 @@ class HomeEntireFragment : Fragment() {
                                     intent.putExtra("gifticon", gifticon)
                                     intent.putExtra("isEdit", true)
                                     startActivity(intent)*/
-                                    manualAddGifticonResult.launch(Intent(requireActivity(), ManualRegistrationActivity::class.java).apply {
-                                        putExtra("gifticon", gifticon)
-                                        putExtra("isEdit", true)
-                                    })
+                                    manualAddGifticonResult.launch(
+                                        Intent(
+                                            requireActivity(),
+                                            ManualRegistrationActivity::class.java
+                                        ).apply {
+                                            putExtra("gifticon", gifticon)
+                                            putExtra("isEdit", true)
+                                        })
                                 }
 
                                 "삭제하기" -> {
@@ -133,9 +172,11 @@ class HomeEntireFragment : Fragment() {
             }
         }
 
-        getJsonData()
-
-        initHomeRecyclerView()
+        /*couponViewModel.allGifticonList.observe(viewLifecycleOwner) {
+            Log.d(TAG, "allGifticonList: $it")
+            giftAdapter.submitList(it)
+            giftAdapter.notifyDataSetChanged()
+        }*/
 
         return binding.root
     }
@@ -163,15 +204,17 @@ class HomeEntireFragment : Fragment() {
             val storageData = gson.fromJson(storageJsonString, StorageData::class.java)
 
             for (gifticon in storageData.gifticons) {
-                gifticonList.add(gifticon)
+                //gifticonList.add(gifticon)
+
+                couponViewModel.addData(gifticon)
             }
 
-            if (gifticonList.size == 0) {
-                binding.tvNoGifticon.visibility = View.VISIBLE
-            } else {
-                binding.tvNoGifticon.visibility = View.GONE
-                giftAdapter.submitList(gifticonList)
-            }
+//            if (gifticonList.size == 0) {
+//                binding.tvNoGifticon.visibility = View.VISIBLE
+//            } else {
+//                binding.tvNoGifticon.visibility = View.GONE
+//                giftAdapter.submitList(gifticonList)
+//            }
         }
     }
 
@@ -195,7 +238,14 @@ class HomeEntireFragment : Fragment() {
         Log.d(TAG, "newGifticon: ${newGifticon}")
     }
 
-    fun sortByRecent() {
+    override fun receiveGifticonData(gifticonList: List<GifticonDetailItem>) {
+        Log.d(TAG, "receiveGifticonData: ${gifticonList}")
+        this.gifticonList = gifticonList as MutableList<GifticonDetailItem>
+        giftAdapter.submitList(gifticonList)
+        //giftAdapter.notifyDataSetChanged()
+    }
+
+    /*fun sortByRecent() {
         if(!::giftAdapter.isInitialized) {
             Log.d(TAG, "sortByRecent: ")
             return
@@ -215,7 +265,7 @@ class HomeEntireFragment : Fragment() {
         gifticonList.sortBy { it.dueDate }
         giftAdapter.submitList(gifticonList)
         giftAdapter.notifyDataSetChanged()
-    }
+    }*/
 
     companion object {
         /**

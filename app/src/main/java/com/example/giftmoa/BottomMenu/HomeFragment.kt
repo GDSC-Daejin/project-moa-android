@@ -78,7 +78,7 @@ class HomeFragment : Fragment() {
             val intent = Intent(requireActivity(), GifticonDetailActivity::class.java)
             intent.putExtra("gifticonId", gifticon.id)
             startActivity(intent)
-        }, requireActivity())
+        }, gifticonList?: emptyList<GifticonDetailItem>())
 
         homeShareRoomNameAdapter = HomeShareRoomNameAdapter { shareRoom ->
             // shareRoomDetailList에서 shareRoom의 teamId와 같은 teamId를 가진 ShareRoomDetailItem을 찾기
@@ -165,7 +165,7 @@ class HomeFragment : Fragment() {
                 gifticonList.add(gifticon)
             }
 
-            giftAdapter.submitList(gifticonList)
+            //giftAdapter.submitList(gifticonList)
             homeSharedGifticonAdapter.submitList(gifticonList)
             homeShareRoomNameAdapter.submitList(shareRoomDetailList)
         }
