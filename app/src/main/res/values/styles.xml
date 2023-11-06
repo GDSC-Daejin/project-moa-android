@@ -57,10 +57,10 @@
     </style>
 
     <style name="CustomChipStyleWithSortIcon" parent="Widget.MaterialComponents.Chip.Choice">
-        <item name="chipStrokeColor">@color/stroke_color_category_state</item>
+        <item name="chipStrokeColor">@color/moa_gray_300</item>
         <item name="chipStrokeWidth">1dp</item>
-        <item name="chipBackgroundColor">@color/background_category_state</item>
-        <item name="android:textColor">@color/text_color_category_state</item>
+        <item name="chipBackgroundColor">@color/moa_gray_white</item>
+        <item name="android:textColor">@color/moa_gray_400</item>
         <item name="fontFamily">@font/pretendard_medium</item>
         <item name="android:textSize">16sp</item>
         <item name="textStartPadding">8dp</item>

@@ -31,7 +31,6 @@
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -42,7 +41,7 @@
         android:id="@+id/sv_category"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="23dp"
+        android:layout_marginTop="15dp"
         android:scrollbars="none"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tabLayout">
@@ -95,9 +94,10 @@
     <com.google.android.material.chip.Chip
         android:id="@+id/chip_sort"
         style="@style/CustomChipStyleWithSortIcon"
-        android:layout_width="wrap_content"
+        android:layout_width="130dp"
         android:layout_height="wrap_content"
         android:text="최신순"
+        app:chipMinTouchTargetSize="0dp"
         android:textAlignment="center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sv_category"

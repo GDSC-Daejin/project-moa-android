@@ -29,10 +29,10 @@ class HomeSharedGifticonAdapter(private val onClick: (GifticonDetailItem) -> Uni
         fun bind(gifticon: GifticonDetailItem) {
             if (gifticon.gifticonImagePath != null) {
                 // 자르고 싶은 위치와 크기 지정
-                val cropX = 25 // X 시작 위치
+                val cropX = 23 // X 시작 위치
                 val cropY = 25 // Y 시작 위치
-                val cropWidth = 275 // 잘라낼 너비
-                val cropHeight = 265 // 잘라낼 높이
+                val cropWidth = 270 // 잘라낼 너비
+                val cropHeight = 250 // 잘라낼 높이
 
                 Glide.with(binding.ivCouponImage.context)
                     .asBitmap()

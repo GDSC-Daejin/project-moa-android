@@ -39,6 +39,7 @@ import com.example.giftmoa.HomeTab.HomeEntireFragment
 import com.example.giftmoa.CouponTab.ManualRegistrationActivity
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.FragmentCouponBinding
+import com.example.giftmoa.utils.FileGalleryPermissionUtil
 import com.google.android.material.chip.Chip
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.Gson
@@ -191,7 +192,8 @@ class CouponFragment : Fragment(), CategoryListener {
                         getBottomSheetData = value
                         when (value) {
                             "자동 등록" -> {
-                                checkPermission()
+                                //checkPermission()
+                                FileGalleryPermissionUtil().checkPermission(requireActivity(), imageLoadLauncher)
                             }
 
                             "수동 등록" -> {
@@ -219,21 +221,11 @@ class CouponFragment : Fragment(), CategoryListener {
                         getBottomSheetData = value
                         when (value) {
                             "최신순" -> {
-                                val currentItem = viewPager.currentItem
-                                val fragment = findFragmentByPosition(viewPager, currentItem)
-                                Log.d(TAG, "sendValue: $fragment")
-                                if (fragment is HomeEntireFragment) {
-                                    fragment.sortByRecent()
-                                }
+                                binding.chipSort.text = "최신순"
                             }
 
                             "유효기간순" -> {
-                                val currentItem = viewPager.currentItem
-                                val fragment = findFragmentByPosition(viewPager, currentItem)
-                                Log.d(TAG, "sendValue: $fragment")
-                                if (fragment is HomeEntireFragment) {
-                                    fragment.sortByDueDate()
-                                }
+                                binding.chipSort.text = "유효기간순"
                             }
                         }
                     }
@@ -248,35 +240,7 @@ class CouponFragment : Fragment(), CategoryListener {
         return childFragmentManager.findFragmentByTag("f${viewPager.id}:$position")
     }
 
-    private fun checkPermission() {
-        when {
-            ContextCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED -> loadImage()
-            shouldShowRequestPermissionRationale(android.Manifest.permission.READ_EXTERNAL_STORAGE) -> showPermissionInfoDialog()
-            else -> requestReadExternalStoragePermission()
-        }
-    }
 
-    private fun showPermissionInfoDialog() {
-        AlertDialog.Builder(requireActivity()).apply {
-            setMessage("이미지를 가져오기 위해서, 외부 저장소 읽기 권한이 필요합니다.")
-            setPositiveButton("동의") { _, _ -> requestReadExternalStoragePermission() }
-            setNegativeButton("취소", null)
-        }.show()
-    }
-
-    private fun requestReadExternalStoragePermission() {
-        ActivityCompat.requestPermissions(requireActivity(), arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
-            REQUEST_READ_EXTERNAL_STORAGE
-        )
-    }
-
-    private fun loadImage() {
-        try {
-            imageLoadLauncher.launch("image/*")
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to load image: ${e.message}")
-        }
-    }
 
     private fun updateImages(uriList: List<Uri>) {
         Log.i(TAG, uriList.toString())
@@ -340,7 +304,7 @@ class CouponFragment : Fragment(), CategoryListener {
             REQUEST_READ_EXTERNAL_STORAGE -> {
                 val resultCode = grantResults.firstOrNull() ?: PackageManager.PERMISSION_DENIED
                 if (resultCode == PackageManager.PERMISSION_GRANTED) {
-                    loadImage()
+                    FileGalleryPermissionUtil().loadImage(imageLoadLauncher)
                 }
             }
         }
@@ -492,6 +456,31 @@ class CouponFragment : Fragment(), CategoryListener {
         }
     }
 
+    override fun onCategoryUpdated(categoryName: String) {
+        Log.d(TAG, "onCategoryUpdated: $categoryName")
+        val chip = createNewChip(categoryName)
+        val positionToInsert = binding.chipGroupCategory.childCount - 1
+        binding.chipGroupCategory.addView(chip, positionToInsert)
+        // categoryList에 추가
+        categoryList.add(CategoryItem(0, categoryName))
+    }
+
+    override fun onCategoryDeleted(categoryName: String) {
+        var categoryId: Long? = null
+        Log.d(TAG, "onCategoryDeleted: $categoryName")
+        for (category in categoryList) {
+            if (categoryName == category.categoryName) {
+                // categoryList에서 해당 카테고리의 id 값 가져오기
+                categoryId = category.id
+                // categoryList에서 해당 카테고리 삭제
+                categoryList.remove(category)
+                deleteChip(categoryName)
+                Log.d(TAG, "onCategoryDeleted: $categoryId")
+                Log.d(TAG, "onCategoryDeleted: $categoryList")
+                break
+            }
+        }
+    }
 
     override fun onStop() {
         super.onStop()
@@ -524,33 +513,6 @@ class CouponFragment : Fragment(), CategoryListener {
                 }
             }
 
-        private const val REQUEST_READ_EXTERNAL_STORAGE = 100
+        const val REQUEST_READ_EXTERNAL_STORAGE = 100
     }
-
-    override fun onCategoryUpdated(categoryName: String) {
-        Log.d(TAG, "onCategoryUpdated: $categoryName")
-        val chip = createNewChip(categoryName)
-        val positionToInsert = binding.chipGroupCategory.childCount - 1
-        binding.chipGroupCategory.addView(chip, positionToInsert)
-        // categoryList에 추가
-        categoryList.add(CategoryItem(0, categoryName))
-    }
-
-    override fun onCategoryDeleted(categoryName: String) {
-        var categoryId: Long? = null
-        Log.d(TAG, "onCategoryDeleted: $categoryName")
-        for (category in categoryList) {
-            if (categoryName == category.categoryName) {
-                // categoryList에서 해당 카테고리의 id 값 가져오기
-                categoryId = category.id
-                // categoryList에서 해당 카테고리 삭제
-                categoryList.remove(category)
-                deleteChip(categoryName)
-                Log.d(TAG, "onCategoryDeleted: $categoryId")
-                Log.d(TAG, "onCategoryDeleted: $categoryList")
-                break
-            }
-        }
-    }
-
 }

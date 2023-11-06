@@ -46,7 +46,7 @@ class GifticonListAdapter(private val onClick: (GifticonDetailItem) -> Unit, pri
                     .apply(RequestOptions().transform(CustomCropTransformation(cropX, cropY, cropWidth, cropHeight)))
                     .into(binding.ivCouponImage)
             } else {
-                binding.ivCouponImage.setPadding(50, 50, 50, 50)
+                binding.ivCouponImage.setPadding(100, 100, 100, 100)
                 binding.ivCouponImage.setImageResource(R.drawable.icon_logo)
             }
 

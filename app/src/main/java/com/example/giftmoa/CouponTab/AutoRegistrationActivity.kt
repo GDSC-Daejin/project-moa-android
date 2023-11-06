@@ -194,7 +194,7 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener, Categ
             // 자르고 싶은 위치와 크기 지정
             val cropX = 5 // X 시작 위치
             val cropY = 10 // Y 시작 위치
-            val cropWidth = 85 // 잘라낼 너비
+            val cropWidth = 80 // 잘라낼 너비
             val cropHeight = 75 // 잘라낼 높이
 
             Glide.with(binding.ivCouponImage.context)

@@ -41,8 +41,8 @@ class GifticonInfoBottomSheet(private var gifticon: ParsedGifticon, private val 
         // 자르고 싶은 위치와 크기 지정
         val cropX = 25 // X 시작 위치
         val cropY = 25 // Y 시작 위치
-        val cropWidth = 285 // 잘라낼 너비
-        val cropHeight = 275 // 잘라낼 높이
+        val cropWidth = 275 // 잘라낼 너비
+        val cropHeight = 265 // 잘라낼 높이
 
         Glide.with(binding.ivCouponImage.context)
             .asBitmap()

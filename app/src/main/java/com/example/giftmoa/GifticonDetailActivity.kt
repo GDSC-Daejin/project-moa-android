@@ -46,8 +46,8 @@ class GifticonDetailActivity: AppCompatActivity() {
             // 자르고 싶은 위치와 크기 지정
             val cropX = 20 // X 시작 위치
             val cropY = 20 // Y 시작 위치
-            val cropWidth = 220 // 잘라낼 너비
-            val cropHeight = 210 // 잘라낼 높이
+            val cropWidth = 215 // 잘라낼 너비
+            val cropHeight = 205 // 잘라낼 높이
 
             Glide.with(binding.ivCouponImage.context)
                 .asBitmap()
