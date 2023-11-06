@@ -26,6 +26,7 @@ import com.example.giftmoa.Data.StorageData
 import com.example.giftmoa.GifticonDetailActivity
 import com.example.giftmoa.GridSpacingItemDecoration
 import com.example.giftmoa.CouponTab.ManualRegistrationActivity
+import com.example.giftmoa.Data.Gifticon
 import com.example.giftmoa.databinding.FragmentHomeEntireBinding
 import com.google.gson.Gson
 
@@ -51,7 +52,7 @@ class HomeEntireFragment : Fragment(), GifticonDataReceiver {
 
     private lateinit var couponViewModel: CouponViewModel
 
-    var gifticonList = mutableListOf<GifticonDetailItem>()
+    var gifticonList = mutableListOf<Gifticon>()
 
     private var giftAllData = ArrayList<GiftData>()
     private var gridManager = GridLayoutManager(activity, 2, GridLayoutManager.VERTICAL, false)
@@ -102,7 +103,7 @@ class HomeEntireFragment : Fragment(), GifticonDataReceiver {
             val intent = Intent(requireActivity(), GifticonDetailActivity::class.java)
             intent.putExtra("gifticonId", gifticon.id)
             startActivity(intent)
-        }, allGifticonList ?: emptyList<GifticonDetailItem>())
+        }, allGifticonList ?: emptyList<Gifticon>())
 
         getJsonData()
 
@@ -221,16 +222,16 @@ class HomeEntireFragment : Fragment(), GifticonDataReceiver {
     fun updateGifticon(updatedGifticon: GifticonDetailItem) {
         for (i in 0 until gifticonList.size) {
             if (gifticonList[i].id == updatedGifticon.id) {
-                gifticonList[i] = updatedGifticon
+                //gifticonList[i] = updatedGifticon
                 break
             }
         }
         giftAdapter.submitList(gifticonList)
-        giftAdapter.notifyItemChanged(gifticonList.indexOf(updatedGifticon))
+        //giftAdapter.notifyItemChanged(gifticonList.indexOf(updatedGifticon))
     }
 
     fun addGifticon(newGifticon: GifticonDetailItem) {
-        gifticonList.add(newGifticon)
+        //gifticonList.add(newGifticon)
         giftAdapter.submitList(gifticonList)
         giftAdapter.notifyItemInserted(0)
 
@@ -239,9 +240,9 @@ class HomeEntireFragment : Fragment(), GifticonDataReceiver {
     }
 
     override fun receiveGifticonData(gifticonList: List<GifticonDetailItem>) {
-        Log.d(TAG, "receiveGifticonData: ${gifticonList}")
+        /*Log.d(TAG, "receiveGifticonData: ${gifticonList}")
         this.gifticonList = gifticonList as MutableList<GifticonDetailItem>
-        giftAdapter.submitList(gifticonList)
+        giftAdapter.submitList(gifticonList)*/
         //giftAdapter.notifyDataSetChanged()
     }
 

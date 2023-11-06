@@ -1,5 +1,7 @@
 package com.example.giftmoa
 
+import android.content.Context
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -7,11 +9,19 @@ object Retrofit2Generator {
 
     private const val BASE_URL = "https://moa-backend.kro.kr"
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create()) // JSON 컨버터 추가
-        // 여기에 필요한 경우 로깅 인터셉터나 기타 인터셉터 등을 추가할 수 있습니다.
-        .build()
+    fun create(context: Context): ApiService {
+        val okHttpClient = OkHttpClient.Builder()
+            .addInterceptor(AuthInterceptor(context))
+            .build()
 
-    val apiService: ApiService = retrofit.create(ApiService::class.java)
+        val retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        return retrofit.create(ApiService::class.java)
+    }
 }
+
+//val apiService: ApiService = Retrofit2Generator.create(applicationContext)

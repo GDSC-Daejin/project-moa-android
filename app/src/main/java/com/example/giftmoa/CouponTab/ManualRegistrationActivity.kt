@@ -251,7 +251,7 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
             } else {
                 updateGifticon = registerGifticon2()
             }
-            couponViewModel.addData(updateGifticon)
+            //couponViewModel.addData(updateGifticon)
 
             finish()
         }

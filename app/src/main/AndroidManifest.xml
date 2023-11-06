@@ -29,7 +29,7 @@
         <activity
             android:name=".BottomMenu.LockerActivity"
             android:exported="false" />
-        <activity
+        <!--<activity
             android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
@@ -37,7 +37,8 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity>-->
+        <activity android:name=".LoginActivity" />
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true">
@@ -51,7 +52,7 @@
                 <!-- scheme-ex: "kakao{NATIVE_APP_KEY}" -->
                 <data
                     android:host="oauth"
-                    android:scheme="kakao${kakao_app_key}" />
+                    android:scheme="kakaod29ddc6cfc3ed526d82d8889f045c746" />
             </intent-filter>
         </activity>
         <activity
@@ -60,13 +61,23 @@
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"
-            android:value="${kakao_app_key}" />
+            android:value="d29ddc6cfc3ed526d82d8889f045c746" />
         <activity android:name=".GifticonRegistrationActivity" />
         <activity android:name=".CouponTab.AutoRegistrationActivity" />
         <activity android:name=".CouponTab.ManualRegistrationActivity" />
-        <activity android:name=".SplashActivity" />
+        <activity
+            android:name=".SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.GiftMoa.Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".GifticonDetailActivity" />
         <activity android:name=".MyProfileActivity" />
+        <activity android:name=".Login2Activity" />
     </application>
 
 </manifest>

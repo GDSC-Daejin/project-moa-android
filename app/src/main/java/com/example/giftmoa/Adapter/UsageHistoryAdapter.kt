@@ -6,12 +6,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.giftmoa.Data.GifticonHistoryData
+import com.example.giftmoa.Data.GifticonHistoryResponse
 import com.example.giftmoa.Data.ShareRoomItem
 import com.example.giftmoa.Data.UsageHistoryItem
 import com.example.giftmoa.databinding.ItemGifticonUsageHistoryBinding
 import com.example.giftmoa.databinding.ItemShareRoomBinding
 
-class UsageHistoryAdapter: ListAdapter<UsageHistoryItem, UsageHistoryAdapter.ViewHolder>(diffUtil) {
+class UsageHistoryAdapter: ListAdapter<GifticonHistoryData, UsageHistoryAdapter.ViewHolder>(diffUtil) {
 
     interface OnItemClickListener {
         fun onItemClick(position: Int) {}
@@ -21,12 +23,12 @@ class UsageHistoryAdapter: ListAdapter<UsageHistoryItem, UsageHistoryAdapter.Vie
 
     inner class ViewHolder(private val binding: ItemGifticonUsageHistoryBinding): RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(usageHistory: UsageHistoryItem) {
+        fun bind(usageHistory: GifticonHistoryData) {
             Glide.with(binding.ivUserProfileImage.context)
-                .load(usageHistory.profileImageUrl)
+                .load(usageHistory.usedUser?.profileImageUrl)
                 .into(binding.ivUserProfileImage)
-            binding.tvUserName.text = usageHistory.nickname
-            binding.tvUsedAmount.text = "${usageHistory.usedAmount.toString()}원"
+            binding.tvUserName.text = usageHistory.usedUser?.nickname
+            binding.tvUsedAmount.text = "${usageHistory.usedPrice.toString()}원"
         }
     }
 
@@ -39,12 +41,12 @@ class UsageHistoryAdapter: ListAdapter<UsageHistoryItem, UsageHistoryAdapter.Vie
     }
 
     companion object {
-        val diffUtil = object: DiffUtil.ItemCallback<UsageHistoryItem>() {
-            override fun areItemsTheSame(oldItem: UsageHistoryItem, newItem: UsageHistoryItem): Boolean {
-                return oldItem.id == newItem.id
+        val diffUtil = object: DiffUtil.ItemCallback<GifticonHistoryData>() {
+            override fun areItemsTheSame(oldItem: GifticonHistoryData, newItem: GifticonHistoryData): Boolean {
+                return oldItem.gifticonHistoryId == newItem.gifticonHistoryId
             }
 
-            override fun areContentsTheSame(oldItem: UsageHistoryItem, newItem: UsageHistoryItem): Boolean {
+            override fun areContentsTheSame(oldItem: GifticonHistoryData, newItem: GifticonHistoryData): Boolean {
                 return oldItem == newItem
             }
         }

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.giftmoa.Adapter.GifticonListAdapter
 import com.example.giftmoa.BottomMenu.CouponFragment
 import com.example.giftmoa.BottomMenu.GifticonDataReceiver
+import com.example.giftmoa.Data.Gifticon
 import com.example.giftmoa.utils.AssetLoader
 import com.example.giftmoa.Data.GifticonDetailItem
 import com.example.giftmoa.Data.StorageData
@@ -84,7 +85,7 @@ class HomeUsedFragment : Fragment(), GifticonDataReceiver {
             val intent = Intent(requireActivity(), GifticonDetailActivity::class.java)
             intent.putExtra("gifticonId", gifticon.id)
             startActivity(intent)
-        }, gifticonList?: emptyList<GifticonDetailItem>())
+        }, gifticonList?: emptyList<Gifticon>())
 
         //getJsonData()
 

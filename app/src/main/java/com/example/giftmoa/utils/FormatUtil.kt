@@ -45,7 +45,7 @@ class FormatUtil {
     fun DateToString(date: String): String? {
         var formattedDate: String? = null
         val dateString = date // "2024-01-26T00:00:00.000Z"
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
         val outputFormat = SimpleDateFormat("yyyy년 MM월 dd일")
 
         try {

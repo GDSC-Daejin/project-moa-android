@@ -4,15 +4,16 @@ import android.util.Log
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.giftmoa.Data.Gifticon
 import com.example.giftmoa.Data.GifticonDetailItem
 
 class CouponViewModel : ViewModel() {
 
-    val gifticonList = MediatorLiveData<List<GifticonDetailItem>>()
-    private var datas = arrayListOf<GifticonDetailItem>()
-    val allGifticonList = MutableLiveData<List<GifticonDetailItem>>()
-    val availableGifticonList = MutableLiveData<List<GifticonDetailItem>>()
-    val usedGifticonList = MutableLiveData<List<GifticonDetailItem>>()
+    val gifticonList = MediatorLiveData<List<Gifticon>>()
+    private var datas = arrayListOf<Gifticon>()
+    val allGifticonList = MutableLiveData<List<Gifticon>>()
+    val availableGifticonList = MutableLiveData<List<Gifticon>>()
+    val usedGifticonList = MutableLiveData<List<Gifticon>>()
 
     init {
         gifticonList.addSource(allGifticonList) {
@@ -26,22 +27,15 @@ class CouponViewModel : ViewModel() {
         }
     }
 
-    private fun setData(data: ArrayList<GifticonDetailItem>) {
-        Log.d("TAG", "setData: $data")
+    private fun setData(data: ArrayList<Gifticon>) {
 
         allGifticonList.value = data.filter { x -> x.name != null }
         availableGifticonList.value = data.filter { x -> x.status == "AVAILABLE" }
         usedGifticonList.value = data.filter { x -> x.status != "AVAILABLE" }
         gifticonList.value = data
-
-        Log.d("TAG", "allGifticonList: ${allGifticonList.value}")
-        Log.d("TAG", "availableGifticonList: ${availableGifticonList.value}")
-        Log.d("TAG", "usedGifticonList: ${usedGifticonList.value}")
-        Log.d("TAG", "gifticonList: ${gifticonList.value}")
     }
 
-    fun addData(gifticon: GifticonDetailItem) {
-        Log.d("TAG", "addData: $gifticon")
+    fun addData(gifticon: Gifticon) {
         datas.add(gifticon)
         setData(datas)
     }

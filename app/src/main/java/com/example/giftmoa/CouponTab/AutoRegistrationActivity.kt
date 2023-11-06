@@ -18,12 +18,17 @@ import com.example.giftmoa.Adapter.SmallShareRoomAdapter
 import com.example.giftmoa.BottomMenu.CategoryListener
 import com.example.giftmoa.BottomSheetFragment.CategoryBottomSheet
 import com.example.giftmoa.BottomSheetFragment.GifticonInfoBottomSheet
+import com.example.giftmoa.Data.AddCategoryRequest
+import com.example.giftmoa.Data.AddCategoryResponse
+import com.example.giftmoa.Data.AddGifticonRequest
 import com.example.giftmoa.Data.AutoRegistrationData
 import com.example.giftmoa.Data.CategoryItem
+import com.example.giftmoa.Data.GetCategoryListResponse
 import com.example.giftmoa.Data.ParsedGifticon
 import com.example.giftmoa.Data.ShareRoomItem
-import com.example.giftmoa.Data.UploadGifticonItem
+import com.example.giftmoa.Data.UpdateGifticonResponse
 import com.example.giftmoa.R
+import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.ActivityAutoRegistrationBinding
 import com.example.giftmoa.utils.AssetLoader
 import com.example.giftmoa.utils.CustomCropTransformation
@@ -32,6 +37,9 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 interface GifticonInfoListener {
     fun onGifticonInfoUpdated(gifticon: ParsedGifticon)
@@ -84,6 +92,8 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener, Categ
 
         getJsonData()
 
+        getCategoryListFromServer()
+
         binding.rvShareRoom.apply {
             adapter = shareRoomAdapter
             layoutManager = LinearLayoutManager(this@AutoRegistrationActivity, LinearLayoutManager.HORIZONTAL, false)
@@ -128,16 +138,16 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener, Categ
             val autoRegistrationData = gson.fromJson(autoRegistrationJsonString, AutoRegistrationData::class.java)
 
             //Log.d(TAG, autoRegistrationData.toString())
-            for (gifticon in autoRegistrationData.gifticons) {
+            /*for (gifticon in autoRegistrationData.gifticons) {
                 parsedGifticonList.add(gifticon)
-            }
-            for (category in autoRegistrationData.categories) {
+            }*/
+            /*for (category in autoRegistrationData.categories) {
                 category.categoryName?.let { createNewChip(it.trim()) }
                 categoryList.add(category)
                 val chip = category.categoryName?.let { createNewChip(it) }
                 val positionToInsert = binding.chipGroupCategory.childCount - 1
                 binding.chipGroupCategory.addView(chip, positionToInsert)
-            }
+            }*/
             // autoRegistrationData.shareRooms가 null이 아닐 때 실행
             if (autoRegistrationData.shareRooms.size > 0) {
                 binding.tvShareRoom.visibility = ViewGroup.VISIBLE
@@ -151,6 +161,36 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener, Categ
             categoryAdapter.submitList(categoryList)
             shareRoomAdapter.submitList(shareRoomList)
         }
+    }
+
+    private fun getCategoryListFromServer() {
+        Retrofit2Generator.create(this).getCategoryList().enqueue(object : Callback<GetCategoryListResponse> {
+            override fun onResponse(call: Call<GetCategoryListResponse>, response: Response<GetCategoryListResponse>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "Retrofit onResponse: ${response.body()}")
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        val resposeBody = responseBody.data
+
+                        Log.d(TAG, "categories: $resposeBody")
+                        if (resposeBody != null) {
+                            for (category in resposeBody) {
+                                categoryList.add(category)
+                                val chip = category.categoryName?.let { createNewChip(it) }
+                                val positionToInsert = binding.chipGroupCategory.childCount - 1
+                                binding.chipGroupCategory.addView(chip, positionToInsert)
+                            }
+                        }
+                    }
+                } else {
+                    Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<GetCategoryListResponse>, t: Throwable) {
+                Log.e(TAG, "Retrofit onFailure: ", t)
+            }
+        })
     }
 
     private fun createNewChip(text: String): Chip {
@@ -215,10 +255,10 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener, Categ
             binding.switchCouponAmount.isChecked = false
         }
 
-        uploadGifticonToServer(gifticon)
+        uploadGifticon(gifticon)
     }
 
-    private fun uploadGifticonToServer(gifticon: ParsedGifticon) {
+    private fun uploadGifticon(gifticon: ParsedGifticon) {
         val formattedDate = FormatUtil().StringToDate(gifticon.dueDate.toString(), TAG)
 
         binding.btnConfirm.setOnClickListener {
@@ -244,20 +284,18 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener, Categ
             }
 
             if (!isUploading) {
-                val newGifticon = UploadGifticonItem(
+                val newGifticon = AddGifticonRequest(
                     name = gifticon.name,
                     barcodeNumber = gifticon.barcodeNumber,
-                    image = imageUrl,
+                    gifticonImagePath = imageUrl,
                     exchangePlace = gifticon.exchangePlace,
                     dueDate = formattedDate,
                     orderNumber = gifticon.orderNumber,
                     gifticonType = gifticonType,
-                    categoryId = categoryId,
-                    amount = gifticon.amount
+                    gifticonMoney = gifticon.amount.toString(),
+                    categoryId = categoryId
                 )
-                Log.d(TAG, "onCreate: $newGifticon")
-                //Toast.makeText(this, "쿠폰이 등록되었습니다.", Toast.LENGTH_SHORT).show()
-                //finish()
+                uploadGifticonToServer(newGifticon)
                 if (formattedDate != null) {
                     Log.d(TAG, "date: $formattedDate")
                 }
@@ -265,6 +303,28 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener, Categ
                 Snackbar.make(binding.root, "체크박스를 체크해주세요.", Snackbar.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun uploadGifticonToServer(gifticon: AddGifticonRequest) {
+        Retrofit2Generator.create(this).addGifticon(gifticon).enqueue(object :
+            Callback<UpdateGifticonResponse> {
+            override fun onResponse(call: Call<UpdateGifticonResponse>, response: Response<UpdateGifticonResponse>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "Retrofit onResponse: ${response.body()}")
+                    val responseBody = response.body()
+
+                    Log.d(TAG, "responseBody gifticon: $responseBody")
+
+                    finish()
+                } else {
+                    Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<UpdateGifticonResponse>, t: Throwable) {
+                Log.e(TAG, "Retrofit onFailure: ", t)
+            }
+        })
     }
 
     fun uploadImageToFirebase(uri: Uri, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
@@ -288,12 +348,36 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener, Categ
     }
 
     override fun onCategoryUpdated(categoryName: String) {
-        Log.d(TAG, "onCategoryUpdated: $categoryName")
-        val chip = createNewChip(categoryName)
-        val positionToInsert = binding.chipGroupCategory.childCount - 1
-        binding.chipGroupCategory.addView(chip, positionToInsert)
-        // categoryList에 추가
-        categoryList.add(CategoryItem(0, categoryName))
+        val categoryRequest = AddCategoryRequest(categoryName)
+        // Retrofit을 이용해서 서버에 카테고리 추가 요청
+        // 서버에서 카테고리 추가가 완료되면 아래 코드를 실행
+        Retrofit2Generator.create(this).addCategory(categoryRequest).enqueue(object :
+            Callback<AddCategoryResponse> {
+            override fun onResponse(call: Call<AddCategoryResponse>, response: Response<AddCategoryResponse>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "Retrofit onResponse: ${response.body()}")
+                    val responseBody = response.body()
+
+                    Log.d(TAG, "responseBody category: $responseBody")
+                    if (responseBody != null) {
+                        val category = responseBody.data
+                        // categoryList에 추가
+                        if (category != null) {
+                            val chip = category.categoryName?.let { createNewChip(it) }
+                            val positionToInsert = binding.chipGroupCategory.childCount - 1
+                            binding.chipGroupCategory.addView(chip, positionToInsert)
+                            categoryList.add(category)
+                        }
+                    }
+                } else {
+                    Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<AddCategoryResponse>, t: Throwable) {
+                Log.e(TAG, "Retrofit onFailure: ", t)
+            }
+        })
     }
 
     override fun onCategoryDeleted(categoryName: String) {

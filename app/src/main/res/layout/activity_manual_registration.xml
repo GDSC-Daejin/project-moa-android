@@ -114,8 +114,7 @@
                     android:textColor="@color/moa_gray_600"
                     android:textColorHint="@color/moa_gray_400"
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    tools:text="1234 1234 1234" />
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"

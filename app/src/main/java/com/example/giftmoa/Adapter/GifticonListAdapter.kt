@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.giftmoa.Data.Gifticon
 import com.example.giftmoa.utils.CustomCropTransformation
 import com.example.giftmoa.Data.GifticonDetailItem
 import com.example.giftmoa.R
@@ -15,7 +16,7 @@ import com.example.giftmoa.databinding.ItemGifticonBinding
 import java.text.SimpleDateFormat
 import java.util.Date
 
-class GifticonListAdapter(private val onClick: (GifticonDetailItem) -> Unit, var Gifticons: List<GifticonDetailItem>): ListAdapter<GifticonDetailItem, GifticonListAdapter.ViewHolder>(diffUtil) {
+class GifticonListAdapter(private val onClick: (Gifticon) -> Unit, var Gifticons: List<Gifticon>): ListAdapter<Gifticon, GifticonListAdapter.ViewHolder>(diffUtil) {
 
     interface OnItemLongClickListener {
         fun onItemLongClick(position: Int)
@@ -32,7 +33,7 @@ class GifticonListAdapter(private val onClick: (GifticonDetailItem) -> Unit, var
             }
         }
 
-        fun bind(gifticon: GifticonDetailItem) {
+        fun bind(gifticon: Gifticon) {
             if (gifticon.gifticonImagePath != null) {
                 // 자르고 싶은 위치와 크기 지정
                 val cropX = 30 // X 시작 위치
@@ -54,7 +55,8 @@ class GifticonListAdapter(private val onClick: (GifticonDetailItem) -> Unit, var
             binding.tvCouponExchangePlace.text = gifticon.exchangePlace
 
             try {
-                val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                //2024-01-26T00:00:00.000+00:00 -> inputFormat
+                val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
                 val dueDate = inputFormat.parse(gifticon.dueDate)
 
                 val currentDate = Date()
@@ -90,28 +92,28 @@ class GifticonListAdapter(private val onClick: (GifticonDetailItem) -> Unit, var
         this.itemLongClickListener = listener
     }*/
 
-    fun setAllGifticonList(allGifticonList: List<GifticonDetailItem>) {
+    fun setAllGifticonList(allGifticonList: List<Gifticon>) {
         Gifticons = allGifticonList
         notifyDataSetChanged()
     }
 
-    fun setAvailableGifticonList(availableGifticonList: List<GifticonDetailItem>) {
+    fun setAvailableGifticonList(availableGifticonList: List<Gifticon>) {
         Gifticons = availableGifticonList
         notifyDataSetChanged()
     }
 
-    fun setUsedGifticonList(usedGifticonList: List<GifticonDetailItem>) {
+    fun setUsedGifticonList(usedGifticonList: List<Gifticon>) {
         Gifticons = usedGifticonList
         notifyDataSetChanged()
     }
 
     companion object {
-        val diffUtil = object : DiffUtil.ItemCallback<GifticonDetailItem>() {
-            override fun areItemsTheSame(oldItem: GifticonDetailItem, newItem: GifticonDetailItem): Boolean {
+        val diffUtil = object : DiffUtil.ItemCallback<Gifticon>() {
+            override fun areItemsTheSame(oldItem: Gifticon, newItem: Gifticon): Boolean {
                 return oldItem.name == newItem.name
             }
 
-            override fun areContentsTheSame(oldItem: GifticonDetailItem, newItem: GifticonDetailItem): Boolean {
+            override fun areContentsTheSame(oldItem: Gifticon, newItem: Gifticon): Boolean {
                 return oldItem == newItem
             }
         }

@@ -3,6 +3,7 @@ package com.example.giftmoa.BottomMenu
 import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,8 +16,11 @@ import com.example.giftmoa.Adapter.GifticonListAdapter
 import com.example.giftmoa.Adapter.HomeShareRoomNameAdapter
 import com.example.giftmoa.Adapter.HomeSharedGifticonAdapter
 import com.example.giftmoa.Adapter.HomeUsedGiftAdapter
+import com.example.giftmoa.Data.AddCategoryResponse
+import com.example.giftmoa.Data.GetGifticonListResponse
 import com.example.giftmoa.utils.AssetLoader
 import com.example.giftmoa.Data.GiftData
+import com.example.giftmoa.Data.Gifticon
 import com.example.giftmoa.Data.GifticonDetailItem
 import com.example.giftmoa.Data.HomeData
 import com.example.giftmoa.Data.ShareRoomDetailItem
@@ -25,8 +29,12 @@ import com.example.giftmoa.GifticonDetailActivity
 import com.example.giftmoa.GridSpacingItemDecoration
 import com.example.giftmoa.LeftMarginItemDecoration
 import com.example.giftmoa.R
+import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.FragmentHomeBinding
 import com.google.gson.Gson
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -45,12 +53,15 @@ class HomeFragment : Fragment() {
     private var param2: String? = null
 
     private lateinit var hBinding : FragmentHomeBinding
+
+    private val TAG = "HomeFragment"
+
     private lateinit var giftAdapter : GifticonListAdapter
 
     private var giftAllData = ArrayList<GiftData>()
     private var gridManager = GridLayoutManager(activity, 2)
     //private val tabTextList = listOf("전체", "사용가능", "사용완료")
-    private var gifticonList = mutableListOf<GifticonDetailItem>()
+    private var gifticonList = mutableListOf<Gifticon>()
     private var shareRoomDetailList = mutableListOf<ShareRoomDetailItem>()
 
     private var usedGiftAdapter : HomeUsedGiftAdapter? = null
@@ -78,7 +89,7 @@ class HomeFragment : Fragment() {
             val intent = Intent(requireActivity(), GifticonDetailActivity::class.java)
             intent.putExtra("gifticonId", gifticon.id)
             startActivity(intent)
-        }, gifticonList?: emptyList<GifticonDetailItem>())
+        }, gifticonList?: emptyList<Gifticon>())
 
         homeShareRoomNameAdapter = HomeShareRoomNameAdapter { shareRoom ->
             // shareRoomDetailList에서 shareRoom의 teamId와 같은 teamId를 가진 ShareRoomDetailItem을 찾기
@@ -94,6 +105,7 @@ class HomeFragment : Fragment() {
         }, requireActivity())
 
         getJsonData()
+        //getHomeGifticonListFromServer()
 
         initHomeShareRoomNameRecyclerView()
         initHomeSharedGifticonRecyclerView()
@@ -147,6 +159,33 @@ class HomeFragment : Fragment() {
         homeShareRoomNameAdapter.submitList(shareRoomDetailList)
     }
 
+    private fun getHomeGifticonListFromServer() {
+        Retrofit2Generator.create(requireActivity()).getAllGifticonList(size = 20).enqueue(object :
+            Callback<GetGifticonListResponse> {
+            override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "Retrofit onResponse: ${response.body()}")
+                    val responseBody = response.body()
+
+                    Log.d(TAG, "responseBody category: $responseBody")
+                    if (responseBody != null) {
+                        gifticonList.clear()
+
+                        responseBody.data?.dataList?.let { gifticonList.addAll(it) }
+                        giftAdapter.submitList(gifticonList)
+                        giftAdapter.notifyDataSetChanged()
+                    }
+                } else {
+                    Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<GetGifticonListResponse>, t: Throwable) {
+                Log.e(TAG, "Retrofit onFailure: ", t)
+            }
+        })
+    }
+
     private fun getJsonData() {
         val assetLoader = AssetLoader()
         val homeJsonString = assetLoader.getJsonString(requireActivity(), "home.json")
@@ -161,14 +200,23 @@ class HomeFragment : Fragment() {
             }
 
 
-            for (gifticon in homeData.gifticons) {
+            /*for (gifticon in homeData.gifticons) {
                 gifticonList.add(gifticon)
-            }
+            }*/
 
             //giftAdapter.submitList(gifticonList)
-            homeSharedGifticonAdapter.submitList(gifticonList)
+            //homeSharedGifticonAdapter.submitList(gifticonList)
             homeShareRoomNameAdapter.submitList(shareRoomDetailList)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "onStart: ")
+
+        getHomeGifticonListFromServer()
+
+        //initHomeRecyclerView()
     }
 
     companion object {

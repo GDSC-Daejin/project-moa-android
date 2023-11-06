@@ -38,8 +38,14 @@ import com.example.giftmoa.Data.StorageData
 import com.example.giftmoa.GifticonRegistrationActivity
 import com.example.giftmoa.HomeTab.HomeEntireFragment
 import com.example.giftmoa.CouponTab.ManualRegistrationActivity
+import com.example.giftmoa.Data.AddCategoryRequest
+import com.example.giftmoa.Data.AddCategoryResponse
+import com.example.giftmoa.Data.GetCategoryListResponse
+import com.example.giftmoa.Data.GetKakaoLoginResponse
 import com.example.giftmoa.HomeTab.CouponViewModel
+import com.example.giftmoa.MainActivity
 import com.example.giftmoa.R
+import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.FragmentCouponBinding
 import com.example.giftmoa.utils.FileGalleryPermissionUtil
 import com.google.android.material.chip.Chip
@@ -203,6 +209,8 @@ class CouponFragment : Fragment(), CategoryListener {
         }
 
         getJsonData()
+
+        getCategoryListFromServer()
 
         //distributeDataToFragments(homeTabAdapter)
 
@@ -442,25 +450,7 @@ class CouponFragment : Fragment(), CategoryListener {
             val gson = Gson()
             val storageData = gson.fromJson(storageJsonString, StorageData::class.java)
 
-            for (category in storageData.categories) {
-                category.categoryName?.let { createNewChip(it.trim()) }
-                categoryList.add(category)
-                val chip = category.categoryName?.let { createNewChip(it) }
-
-                // 마지막 Chip 뷰의 인덱스를 계산
-                val lastChildIndex = binding.chipGroupCategory.childCount - 1
-
-                // 마지막 Chip 뷰의 인덱스가 0보다 큰 경우에만
-                // 현재 Chip을 바로 그 앞에 추가
-                if (lastChildIndex >= 0) {
-                    binding.chipGroupCategory.addView(chip, lastChildIndex)
-                } else {
-                    // ChipGroup에 자식이 없는 경우, 그냥 추가
-                    binding.chipGroupCategory.addView(chip)
-                }
-            }
-
-            for (gifticon in storageData.gifticons) {
+            /*for (gifticon in storageData.gifticons) {
                 allGifticonList.add(gifticon)
                 // gifticon.status가 "AVAILABLE"인 경우 availableGifticonList에 추가
                 if (gifticon.status == "AVAILABLE") {
@@ -469,8 +459,48 @@ class CouponFragment : Fragment(), CategoryListener {
                     // 그 외의 경우 usedGifticonList에 추가
                     usedGifticonList.add(gifticon)
                 }
-            }
+            }*/
         }
+    }
+
+    private fun getCategoryListFromServer() {
+        Retrofit2Generator.create(requireActivity()).getCategoryList().enqueue(object : Callback<GetCategoryListResponse> {
+            override fun onResponse(call: Call<GetCategoryListResponse>, response: Response<GetCategoryListResponse>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "Retrofit onResponse: ${response.body()}")
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        val resposeBody = responseBody.data
+
+                        if (resposeBody != null) {
+                            for (category in resposeBody) {
+                                val chip = category.categoryName?.let { createNewChip(it) }
+
+                                // 마지막 Chip 뷰의 인덱스를 계산
+                                val lastChildIndex = binding.chipGroupCategory.childCount - 1
+
+                                // 마지막 Chip 뷰의 인덱스가 0보다 큰 경우에만
+                                // 현재 Chip을 바로 그 앞에 추가
+                                if (lastChildIndex >= 0) {
+                                    binding.chipGroupCategory.addView(chip, lastChildIndex)
+                                } else {
+                                    // ChipGroup에 자식이 없는 경우, 그냥 추가
+                                    binding.chipGroupCategory.addView(chip)
+                                }
+
+                                categoryList.add(category)
+                            }
+                        }
+                    }
+                } else {
+                    Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<GetCategoryListResponse>, t: Throwable) {
+                Log.e(TAG, "Retrofit onFailure: ", t)
+            }
+        })
     }
 
     private fun createNewChip(text: String): Chip {
@@ -498,12 +528,35 @@ class CouponFragment : Fragment(), CategoryListener {
     }
 
     override fun onCategoryUpdated(categoryName: String) {
-        Log.d(TAG, "onCategoryUpdated: $categoryName")
-        val chip = createNewChip(categoryName)
-        val positionToInsert = binding.chipGroupCategory.childCount - 1
-        binding.chipGroupCategory.addView(chip, positionToInsert)
-        // categoryList에 추가
-        categoryList.add(CategoryItem(0, categoryName))
+        val categoryRequest = AddCategoryRequest(categoryName)
+        // Retrofit을 이용해서 서버에 카테고리 추가 요청
+        // 서버에서 카테고리 추가가 완료되면 아래 코드를 실행
+        Retrofit2Generator.create(requireActivity()).addCategory(categoryRequest).enqueue(object : Callback<AddCategoryResponse> {
+            override fun onResponse(call: Call<AddCategoryResponse>, response: Response<AddCategoryResponse>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "Retrofit onResponse: ${response.body()}")
+                    val responseBody = response.body()
+
+                    Log.d(TAG, "responseBody category: $responseBody")
+                    if (responseBody != null) {
+                        val category = responseBody.data
+                        // categoryList에 추가
+                        if (category != null) {
+                            val chip = category.categoryName?.let { createNewChip(it) }
+                            val positionToInsert = binding.chipGroupCategory.childCount - 1
+                            binding.chipGroupCategory.addView(chip, positionToInsert)
+                            categoryList.add(category)
+                        }
+                    }
+                } else {
+                    Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<AddCategoryResponse>, t: Throwable) {
+                Log.e(TAG, "Retrofit onFailure: ", t)
+            }
+        })
     }
 
     override fun onCategoryDeleted(categoryName: String) {
@@ -523,7 +576,7 @@ class CouponFragment : Fragment(), CategoryListener {
         }
     }
 
-    private fun updateFragmentObservers(position: Int) {
+    /*private fun updateFragmentObservers(position: Int) {
         val fragment = childFragmentManager.findFragmentByTag("f${binding.viewpager.id}:$position") as? GifticonDataReceiver
         when (position) {
             0 -> viewModel.allGifticonList.observe(viewLifecycleOwner) { list ->
@@ -536,7 +589,7 @@ class CouponFragment : Fragment(), CategoryListener {
                 fragment?.receiveGifticonData(list)
             }
         }
-    }
+    }*/
 
     private fun distributeDataToFragments(adapter: HomeTabAdapter) {
         val entireFragment = adapter.getFragment(0) as? GifticonDataReceiver

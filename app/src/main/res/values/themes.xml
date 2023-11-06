@@ -46,4 +46,7 @@
         <item name="colorControlActivated">@color/moa_carrot_700</item>
     </style>
 
+    <style name="Theme.GiftMoa.Splash">
+        <item name="android:windowBackground">@mipmap/ic_launcher</item>
+    </style>
 </resources>

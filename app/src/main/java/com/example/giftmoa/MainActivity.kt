@@ -1,5 +1,6 @@
 package com.example.giftmoa
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -25,6 +26,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val sharedPref = getSharedPreferences("TokenData", Context.MODE_PRIVATE)
+        val grantType = sharedPref.getString("grantType", null) // 기본값은 null
+        val accessToken = sharedPref.getString("accessToken", null) // 기본값은 null
+        val refreshToken = sharedPref.getString("refreshToken", null) // 기본값은 null
+        val accessTokenExpiresIn = sharedPref.getLong("accessTokenExpiresIn", -1) // 기본값은 -1
+
+        Log.d("MainActivity", "grantType: $grantType")
+        Log.d("MainActivity", "accessToken: $accessToken")
+        Log.d("MainActivity", "refreshToken: $refreshToken")
+        Log.d("MainActivity", "accessTokenExpiresIn: $accessTokenExpiresIn")
 
         mBinding = ActivityMainBinding.inflate(layoutInflater)
 
