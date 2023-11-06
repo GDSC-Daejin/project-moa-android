@@ -1,6 +1,7 @@
 package com.example.giftmoa.Data
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -23,13 +24,13 @@ data class GifticonDetailItem(
 
 @Parcelize
 data class Author(
-    val id: Long? = null,
-    val nickname: String? = null,
-    val profileImageUrl: String? = null,
+    @SerializedName("id") val id: Long?,
+    @SerializedName("nickname") val nickname: String?,
+    @SerializedName("profileImageUrl") val profileImageUrl: String?
 ): Parcelable
 
 @Parcelize
 data class Category(
-    val id: Long? = null,
-    val categoryName: String? = null,
+    @SerializedName("id") val id: Long?,
+    @SerializedName("categoryName") val categoryName: String?
 ): Parcelable
