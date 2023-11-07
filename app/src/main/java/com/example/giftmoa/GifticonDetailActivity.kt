@@ -81,27 +81,9 @@ class GifticonDetailActivity: AppCompatActivity() {
             }
         }
 
-        /*binding.btnUsedComplete.setOnClickListener {
-            if (gifticonDetail?.gifticon?.status == "AVAILABLE") {
-                binding.btnUsedComplete.text = "사용 취소"
-                val updateGifticonRequest = UpdateGifticonRequest(
-                    id = gifticonId,
-                    name = gifticonDetail?.gifticon?.name,
-                    barcodeNumber = gifticonDetail?.gifticon?.barcodeNumber,
-                    gifticonImagePath = gifticonDetail?.gifticon?.gifticonImagePath,
-                    exchangePlace = gifticonDetail?.gifticon?.exchangePlace,
-                    dueDate = gifticonDetail?.gifticon?.dueDate,
-                    gifticonType = gifticonDetail?.gifticon?.gifticonType,
-                    orderNumber = gifticonDetail?.gifticon?.orderNumber,
-                    gifticonMoney = gifticonDetail?.gifticon?.gifticonMoney,
-                    categoryId = gifticonDetail?.gifticon?.category?.id,
-                    status = "UNAVAILABLE"
-                )
-            } else {
-                gifticonDetail?.gifticon?.status = "AVAILABLE"
-                binding.btnUsedComplete.text = "사용 완료"
-            }
-        }*/
+        binding.btnUsedComplete.setOnClickListener {
+            sendUseGifticonToServer(gifticonId)
+        }
     }
 
     private fun initRecyclerView() {
@@ -149,9 +131,7 @@ class GifticonDetailActivity: AppCompatActivity() {
                             binding.tvCouponOrderNumber.text = gifticonDetail?.gifticon?.orderNumber
 
                             if (gifticonDetail?.gifticon?.gifticonType == "MONEY") {
-                                val formattedAmount = gifticonDetail?.gifticon?.gifticonMoney?.toLongOrNull()?.let { String.format("%,d", it) }
                                 binding.llCouponMoneyInfo.visibility = android.view.View.VISIBLE
-                                binding.etCouponRemainAmount.setText(formattedAmount)
                             } else {
                                 binding.llCouponMoneyInfo.visibility = android.view.View.GONE
                             }
@@ -205,6 +185,11 @@ class GifticonDetailActivity: AppCompatActivity() {
                             }
                             binding.rvCouponUsageHistory.visibility = android.view.View.VISIBLE
 
+                            // usageHistroyList 가장 마지막의 leftprice를 가져와서 etCouponRemainAmount에 넣어줌
+                            val lastLeftPrice = usageHistoryList[usageHistoryList.size - 1].leftPrice
+                            val formattedAmount = gifticonDetail?.gifticon?.gifticonMoney?.toLongOrNull()?.let { String.format("%,d", it) }
+                            binding.etCouponRemainAmount.setText(formattedAmount)
+
                             usageHistoryAdapter.submitList(usageHistoryList)
                             //usageHistoryAdapter.notifyDataSetChanged()
                         } else {
@@ -252,6 +237,38 @@ class GifticonDetailActivity: AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<GifticonHistoryResponse>, t: Throwable) {
+                Log.e(TAG, "Retrofit onFailure: ", t)
+            }
+        })
+    }
+
+    private fun sendUseGifticonToServer(gifticonId: Long) {
+        Retrofit2Generator.create(this).useGifticon(gifticonId).enqueue(object :
+            Callback<GetGifticonDetailResponse> {
+            override fun onResponse(call: Call<GetGifticonDetailResponse>, response: Response<GetGifticonDetailResponse>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "Retrofit onResponse: ${response.body()}")
+                    val responseBody = response.body()
+
+                    if (responseBody != null) {
+                        val gifticon = responseBody.data
+
+                        if (gifticon != null) {
+                            gifticonDetail = gifticon
+                        }
+
+                        if (gifticonDetail?.gifticon?.status == "AVAILABLE") {
+                            binding.btnUsedComplete.text = "사용 완료"
+                        } else {
+                            binding.btnUsedComplete.text = "사용 취소"
+                        }
+                    }
+                } else {
+                    Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<GetGifticonDetailResponse>, t: Throwable) {
                 Log.e(TAG, "Retrofit onFailure: ", t)
             }
         })

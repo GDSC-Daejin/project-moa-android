@@ -1,15 +1,26 @@
 package com.example.giftmoa.BottomMenu
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import com.bumptech.glide.Glide
+import com.example.giftmoa.Data.GetMyProfileResponse
+import com.example.giftmoa.Data.LogoutUserResponse
+import com.example.giftmoa.Data.MyProfileData
+import com.example.giftmoa.Data.RefreshTokenRequest
+import com.example.giftmoa.LoginActivity
 import com.example.giftmoa.MyProfileActivity
-import com.example.giftmoa.R
+import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.FragmentAccountBinding
-import com.example.giftmoa.databinding.FragmentHomeEntireBinding
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -29,6 +40,8 @@ class AccountFragment : Fragment() {
     private lateinit var binding : FragmentAccountBinding
     private val TAG = "AccountFragment"
 
+    private var myProfile: MyProfileData? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -44,13 +57,104 @@ class AccountFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentAccountBinding.inflate(inflater, container, false)
 
+        // SharedPreferences 에서 토큰 정보 가져오기
+        val sharedPref = requireActivity().getSharedPreferences("TokenData", Context.MODE_PRIVATE)
+        val refreshToken = sharedPref.getString("refreshToken", null) // 기본값은 null
+
         binding.tvUserName.setOnClickListener {
             val intent = Intent(context, MyProfileActivity::class.java)
-            intent.putExtra("userName", binding.tvUserName.text.toString())
+            intent.putExtra("nickname", myProfile?.nickname)
+            intent.putExtra("profileImageUrl", myProfile?.profileImageUrl)
             startActivity(intent)
         }
 
+        binding.tvLogout.setOnClickListener {
+            val requestBody = RefreshTokenRequest(refreshToken!!)
+            Log.d(TAG, "onCreateView: $requestBody")
+
+            Toast.makeText(requireActivity(), "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(requireActivity(), LoginActivity::class.java))
+            requireActivity().finish()
+
+            //logout(requestBody)
+        }
+
+        binding.tvWithdrawal.setOnClickListener {
+            Toast.makeText(requireActivity(), "회원탈퇴 되었습니다.", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(requireActivity(), LoginActivity::class.java))
+            requireActivity().finish()
+
+            //withdraw()
+        }
+
         return binding.root
+    }
+
+    private fun getMyProfile() {
+        Retrofit2Generator.create(requireActivity()).getMyProfile().enqueue(object : Callback<GetMyProfileResponse> {
+            override fun onResponse(
+                call: Call<GetMyProfileResponse>,
+                response: Response<GetMyProfileResponse>
+            ) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "onResponse: ${response.body()}")
+                    binding.tvUserName.text = response.body()?.data?.nickname
+                    Glide.with(requireActivity())
+                        .load(response.body()?.data?.profileImageUrl)
+                        .circleCrop()
+                        .into(binding.civUserProfileImage)
+
+                    myProfile = response.body()?.data
+                    Log.d(TAG, "myProfile: $myProfile")
+                }
+            }
+
+            override fun onFailure(call: Call<GetMyProfileResponse>, t: Throwable) {
+                Log.d(TAG, "onFailure: ${t.message}")
+            }
+        })
+    }
+
+    private fun logout(refreshToken: RefreshTokenRequest) {
+        Log.d(TAG, "logout: $refreshToken")
+
+        Retrofit2Generator.create(requireActivity()).logoutUser(refreshToken).enqueue(object : Callback<LogoutUserResponse> {
+            override fun onResponse(call: Call<LogoutUserResponse>, response: Response<LogoutUserResponse>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "onResponse: ${response.body()}")
+                    Toast.makeText(requireActivity(), "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(requireActivity(), LoginActivity::class.java))
+                    requireActivity().finish()
+                }
+            }
+
+            override fun onFailure(call: Call<LogoutUserResponse>, t: Throwable) {
+                Log.d(TAG, "onFailure: ${t.message}")
+            }
+        })
+    }
+
+    private fun withdraw() {
+        Retrofit2Generator.create(requireActivity()).deleteUser().enqueue(object : Callback<LogoutUserResponse> {
+            override fun onResponse(call: Call<LogoutUserResponse>, response: Response<LogoutUserResponse>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "onResponse: ${response.body()}")
+                    Toast.makeText(requireActivity(), "회원탈퇴 되었습니다.", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(requireActivity(), LoginActivity::class.java))
+                    requireActivity().finish()
+                }
+            }
+
+            override fun onFailure(call: Call<LogoutUserResponse>, t: Throwable) {
+                Log.d(TAG, "onFailure: ${t.message}")
+            }
+        })
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        getMyProfile()
     }
 
     companion object {

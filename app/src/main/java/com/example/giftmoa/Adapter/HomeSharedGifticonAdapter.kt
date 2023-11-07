@@ -10,13 +10,14 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.giftmoa.utils.CustomCropTransformation
 import com.example.giftmoa.Data.GifticonDetailItem
+import com.example.giftmoa.Data.TeamGifticon
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.ItemHomeSharedGifticonBinding
 import com.example.giftmoa.utils.ImageUtil
 import java.text.SimpleDateFormat
 import java.util.Date
 
-class HomeSharedGifticonAdapter(private val onClick: (GifticonDetailItem) -> Unit, private val context: Context): ListAdapter<GifticonDetailItem, HomeSharedGifticonAdapter.ViewHolder>(diffUtil) {
+class HomeSharedGifticonAdapter(private val onClick: (TeamGifticon) -> Unit, private val context: Context): ListAdapter<TeamGifticon, HomeSharedGifticonAdapter.ViewHolder>(diffUtil) {
 
     interface OnItemClickListener {
         fun onItemClick(position: Int) {}
@@ -26,7 +27,7 @@ class HomeSharedGifticonAdapter(private val onClick: (GifticonDetailItem) -> Uni
 
     inner class ViewHolder(private val binding: ItemHomeSharedGifticonBinding): RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(gifticon: GifticonDetailItem) {
+        fun bind(gifticon: TeamGifticon) {
             if (gifticon.gifticonImagePath != null) {
                 // 자르고 싶은 위치와 크기 지정
                 val cropX = 23 // X 시작 위치
@@ -47,7 +48,7 @@ class HomeSharedGifticonAdapter(private val onClick: (GifticonDetailItem) -> Uni
             binding.tvCouponExchangePlace.text = gifticon.exchangePlace
 
             try {
-                val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
                 val dueDate = inputFormat.parse(gifticon.dueDate)
 
                 val currentDate = Date()
@@ -65,8 +66,8 @@ class HomeSharedGifticonAdapter(private val onClick: (GifticonDetailItem) -> Uni
                 binding.tvDDay.text = "날짜 형식 오류"
             }
 
-            val barcode = ImageUtil(context).createBarcode(gifticon.barcodeNumber.toString().trim())
-            binding.ivBarcodeImage.setImageBitmap(barcode)
+           /* val barcode = ImageUtil(context).createBarcode(gifticon..toString().trim())
+            binding.ivBarcodeImage.setImageBitmap(barcode)*/
 
 
             binding.root.setOnClickListener {
@@ -84,12 +85,12 @@ class HomeSharedGifticonAdapter(private val onClick: (GifticonDetailItem) -> Uni
     }
 
     companion object {
-        val diffUtil = object: DiffUtil.ItemCallback<GifticonDetailItem>() {
-            override fun areItemsTheSame(oldItem: GifticonDetailItem, newItem: GifticonDetailItem): Boolean {
-                return oldItem.name == newItem.name
+        val diffUtil = object: DiffUtil.ItemCallback<TeamGifticon>() {
+            override fun areItemsTheSame(oldItem: TeamGifticon, newItem: TeamGifticon): Boolean {
+                return oldItem.gifticonId == newItem.gifticonId
             }
 
-            override fun areContentsTheSame(oldItem: GifticonDetailItem, newItem: GifticonDetailItem): Boolean {
+            override fun areContentsTheSame(oldItem: TeamGifticon, newItem: TeamGifticon): Boolean {
                 return oldItem == newItem
             }
         }

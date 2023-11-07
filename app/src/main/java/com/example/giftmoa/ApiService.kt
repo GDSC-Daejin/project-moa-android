@@ -36,6 +36,10 @@ interface ApiService {
     @DELETE("/api/v1/gifticon/{gifticonId}")
     fun deleteGifticon(@Path("gifticonId") gifticonId: Long): Call<UpdateGifticonResponse>
 
+    // 기프티콘 사용 완료(다시 누르면 취소)
+    @PUT("/api/v1/gifticon/use/{gifticonId}")
+    fun useGifticon(@Path("gifticonId") gifticonId: Long): Call<GetGifticonDetailResponse>
+
     // 사용가능한 기프티콘 리스트
     @GET("/api/v1/gifticon/usable_list")
     fun getUsableGifticonList(
@@ -89,22 +93,25 @@ interface ApiService {
 
     // 로그아웃
     @POST("/auth/user/logout")
-    fun logoutUser(): Call<LogoutUserResponse>
+    fun logoutUser(@Body requestBody: RefreshTokenRequest): Call<LogoutUserResponse>
 
     // team-controller-----------------------------------------------------------------------------
     // 팀 목록 가져오기
     @GET("/api/v1/team/my_team")
-    suspend fun getMyTeamList(): Response<GetMyTeamListResponse>
+    fun getMyTeamList(): Call<GetMyTeamListResponse>
 
     // 팀에 속한 기프티콘 가져오기
-    @GET("/api/v1/team/gifitcon/{teamId}")
-    suspend fun getTeamGifticonList(@Path("teamId") teamId: Long): Response<GetTeamGifticonListResponse>
+    @GET("/api/v1/team/gifticon/{teamId}")
+    fun getTeamGifticonList(@Path("teamId") teamId: Long): Call<GetTeamGifticonListResponse>
 
 
     // user-controller-----------------------------------------------------------------------------
     // 유저 정보 수정
     @PUT("/user")
     fun updateUser(@Body requestBody: UpdateUserRequest): Call<UpdateUserResponse>
+    // 내 정보 가져오기
+    @GET("/user/me")
+    fun getMyProfile(): Call<GetMyProfileResponse>
 
     // category-controller-------------------------------------------------------------------------
     // 카테고리 생성

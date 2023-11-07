@@ -71,14 +71,14 @@
                 <!-- Redirect URI: "kakao${kakaoAppKey}://oauth" -->
                 <data
                     android:host="oauth"
-                    android:scheme="kakao${kakaoAppKey}" />
-              
+                    android:scheme="kakaod29ddc6cfc3ed526d82d8889f045c746" />
+
             </intent-filter>
         </activity>
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"
-            android:value="${kakaoAppKey}" />
+            android:value="d29ddc6cfc3ed526d82d8889f045c746" />
         <activity android:name=".GifticonRegistrationActivity" />
         <activity android:name=".CouponTab.AutoRegistrationActivity" />
         <activity android:name=".CouponTab.ManualRegistrationActivity" />

@@ -69,7 +69,7 @@
                     android:id="@+id/civ_user_profile_image"
                     android:layout_width="65dp"
                     android:layout_height="65dp"
-                    android:src="@drawable/asset_gifticon_coffee" />
+                    tools:src="@drawable/asset_gifticon_coffee" />
 
                 <LinearLayout
                     android:id="@+id/ll_user_name"
@@ -86,7 +86,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/pretendard_bold"
-                        android:text="서정우"
+                        tools:text="서정우"
                         android:textColor="@color/moa_gray_900"
                         android:textSize="18sp"
                         app:drawableRightCompat="@drawable/baseline_keyboard_arrow_right_24" />

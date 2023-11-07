@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.giftmoa.Adapter.GifticonListAdapter
 import com.example.giftmoa.BottomMenu.CategoryListener
 import com.example.giftmoa.BottomMenu.CouponFragment
-import com.example.giftmoa.BottomMenu.GifticonDataReceiver
 import com.example.giftmoa.BottomSheetFragment.CategoryBottomSheet
 import com.example.giftmoa.utils.AssetLoader
 import com.example.giftmoa.BottomSheetFragment.GifticonEditDeleteBottomSheet
@@ -152,14 +151,46 @@ class HomeEntireFragment : Fragment(), CategoryListener {
                         when (value) {
                             "최신 순" -> {
                                 binding.tvSort.text = "최신 순"
+                                gifticonList.sortByDescending { it.id }
+                                giftAdapter.submitList(gifticonList.toList())
                             }
 
                             "마감임박 순" -> {
                                 binding.tvSort.text = "마감임박 순"
+                                gifticonList.sortBy { it.dueDate }
+                                giftAdapter.submitList(gifticonList.toList())
+
                             }
                         }
                     }
                 })
+            }
+        }
+
+        // binding.chipGroupCategory에서 카테고리를 선택했을 때
+        // 해당 카테고리에 속한 기프티콘만 보여주도록 처리
+        binding.chipGroupCategory.setOnCheckedStateChangeListener { group, checkedId ->
+            val selectedCategory = binding.chipGroupCategory.findViewById<Chip>(binding.chipGroupCategory.checkedChipId)
+            val categoryName = selectedCategory?.text
+
+            var categoryId: Long? = null
+
+            // categoryList에 있는 카테고리 이름과 같은 카테고리를 찾아서 categoryId를 가져옴
+            for (category in categoryList) {
+                if (categoryName == category.categoryName) {
+                    categoryId = category.id
+                }
+            }
+            if (categoryName == "전체") {
+                // 전체 카테고리를 선택한 경우
+                // 전체 기프티콘 리스트를 보여줍니다.
+                getAllGifticonListFromServer(0)
+            } else {
+                // 전체 카테고리가 아닌 경우
+                // 해당 카테고리에 속한 기프티콘 리스트를 보여줍니다.
+                if (categoryId != null) {
+                    getCategoryGifticonListFromServer(categoryId, 0)
+                }
             }
         }
 
@@ -360,6 +391,31 @@ class HomeEntireFragment : Fragment(), CategoryListener {
         val categoryBottomSheet = CategoryBottomSheet(categoryList, this)
         categoryBottomSheet.setStyle(DialogFragment.STYLE_NORMAL, R.style.RoundCornerBottomSheetDialogTheme)
         categoryBottomSheet.show(requireActivity().supportFragmentManager, categoryBottomSheet.tag)
+    }
+
+    private fun getCategoryGifticonListFromServer(categoryId: Long, page: Int) {
+        Retrofit2Generator.create(requireActivity()).getCategoryGifticonList(categoryId, 30, page).enqueue(object : Callback<GetGifticonListResponse> {
+            override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "Retrofit onResponse: ${response.body()}")
+                    val responseBody = response.body()
+                    responseBody?.data?.dataList?.let { newList ->
+                        if (page == 0) {
+                            // 첫 페이지인 경우 리스트를 새로 채웁니다.
+                            gifticonList.clear()
+                        }
+                        gifticonList.addAll(newList)
+                        giftAdapter.submitList(gifticonList.toList())
+                    }
+                } else {
+                    Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<GetGifticonListResponse>, t: Throwable) {
+                Log.e(TAG, "Retrofit onFailure: ", t)
+            }
+        })
     }
 
     override fun onStart() {

@@ -3,7 +3,7 @@ package com.example.giftmoa.Data
 import com.google.gson.annotations.SerializedName
 
 data class LogoutUserResponse(
-    @SerializedName("data") val data: Data,
-    @SerializedName("data") val message: String,
-    @SerializedName("data") val code: String
+    @SerializedName("data") val data: String?,
+    @SerializedName("message") val message: String?,
+    @SerializedName("code") val code: String?
 )

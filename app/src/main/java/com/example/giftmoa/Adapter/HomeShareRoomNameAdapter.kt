@@ -11,20 +11,21 @@ import com.bumptech.glide.Glide
 import com.example.giftmoa.Data.GifticonDetailItem
 import com.example.giftmoa.Data.ShareRoomDetailItem
 import com.example.giftmoa.Data.ShareRoomItem
+import com.example.giftmoa.Data.Team
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.ItemGifticonBinding
 import com.example.giftmoa.databinding.ItemHomeShareRoomNameBinding
 import java.text.SimpleDateFormat
 import java.util.Date
 
-class HomeShareRoomNameAdapter(private val onClick: (ShareRoomDetailItem) -> Unit) : ListAdapter<ShareRoomDetailItem, HomeShareRoomNameAdapter.ViewHolder>(diffUtil) {
+class HomeShareRoomNameAdapter(private val onClick: (Team) -> Unit) : ListAdapter<Team, HomeShareRoomNameAdapter.ViewHolder>(diffUtil) {
 
     private var selectedPosition: Int = -1 // 초기에 선택한 아이템의 위치 설정, -1은 아무것도 선택하지 않은 상태
 
     inner class ViewHolder(val binding: ItemHomeShareRoomNameBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(shareRoom: ShareRoomDetailItem) {
-            binding.tvShareRoomName.text = shareRoom.teamName
+        fun bind(team: Team) {
+            binding.tvShareRoomName.text = team.teamName
             val isSelected = adapterPosition == selectedPosition
 
             // 클릭된 아이템에만 밑줄 스타일을 적용
@@ -55,7 +56,7 @@ class HomeShareRoomNameAdapter(private val onClick: (ShareRoomDetailItem) -> Uni
                 selectedPosition = adapterPosition
                 notifyItemChanged(selectedPosition)
 
-                onClick(shareRoom)
+                onClick(team)
             }
         }
     }
@@ -77,12 +78,12 @@ class HomeShareRoomNameAdapter(private val onClick: (ShareRoomDetailItem) -> Uni
     }
 
     companion object {
-        val diffUtil = object: DiffUtil.ItemCallback<ShareRoomDetailItem>() {
-            override fun areItemsTheSame(oldItem: ShareRoomDetailItem, newItem: ShareRoomDetailItem): Boolean {
-                return oldItem.teamId == newItem.teamId
+        val diffUtil = object: DiffUtil.ItemCallback<Team>() {
+            override fun areItemsTheSame(oldItem: Team, newItem: Team): Boolean {
+                return oldItem.id == newItem.id
             }
 
-            override fun areContentsTheSame(oldItem: ShareRoomDetailItem, newItem: ShareRoomDetailItem): Boolean {
+            override fun areContentsTheSame(oldItem: Team, newItem: Team): Boolean {
                 return oldItem == newItem
             }
         }
