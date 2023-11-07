@@ -10,6 +10,7 @@ import com.example.giftmoa.Data.GiftData
 import com.example.giftmoa.Data.ShareRoomGifticon
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.HomeItemBinding
+import com.example.giftmoa.databinding.ItemGifticonBinding
 import com.kakao.sdk.common.util.SdkLogLevel
 import java.text.SimpleDateFormat
 import java.util.*

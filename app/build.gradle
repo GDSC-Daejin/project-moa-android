@@ -97,9 +97,6 @@ dependencies {
     // circleimageview
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
-    // glide
-    //implementation 'com.github.bumptech.glide:glide:4.16.0'
-
     // timber
     implementation 'com.jakewharton.timber:timber:5.0.1'
 
@@ -109,6 +106,8 @@ dependencies {
     // Zxing
     implementation 'com.journeyapps:zxing-android-embedded:4.1.0'
 
+    //splashScreen
+    implementation 'androidx.core:core-splashscreen:1.0.0-alpha01'
 
     //glide
     implementation("com.github.bumptech.glide:glide:4.14.2")

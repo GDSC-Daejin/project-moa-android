@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" >
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-  
-    <!--<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+    <!--
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />-->
-
+        android:maxSdkVersion="32" />
+    -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
 
     <application
         android:name=".GlobalApplication"
@@ -24,7 +23,13 @@
         android:theme="@style/Theme.GiftMoa"
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize"
-        tools:targetApi="31" >
+        tools:targetApi="31">
+        <activity
+            android:name=".ShareRoomMenu.SharedLockerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ShareRoomMenu.ShareRoomFriendListActivity"
+            android:exported="false" />
         <activity
             android:name=".ShareRoomMenu.ShareGifticonActivity"
             android:exported="false" />
@@ -46,22 +51,22 @@
         <activity
             android:name=".BottomMenu.LockerActivity"
             android:exported="false" />
-        <!--<activity
+        <activity
             android:name=".LoginActivity"
-            android:exported="true" >
+            android:exported="true"
+            android:theme="@style/Theme.App.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>-->
-        <activity android:name=".LoginActivity" />
+        </activity>
         <activity
             android:name=".MainActivity"
             android:exported="false" />
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -79,10 +84,12 @@
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="d29ddc6cfc3ed526d82d8889f045c746" />
+
         <activity android:name=".GifticonRegistrationActivity" />
         <activity android:name=".CouponTab.AutoRegistrationActivity" />
         <activity android:name=".CouponTab.ManualRegistrationActivity" />
-        <activity
+        <!--
+<activity
             android:name=".SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.GiftMoa.Splash">
@@ -92,10 +99,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        -->
         <activity android:name=".GifticonDetailActivity" />
         <activity android:name=".MyProfileActivity" />
-        <activity android:name=".Login2Activity" />
-
     </application>
 
 </manifest>

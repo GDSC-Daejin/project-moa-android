@@ -119,7 +119,7 @@ class ShareRoomFragment : Fragment() {
                val layoutInflater1 = LayoutInflater.from(activity)
                val view1 = layoutInflater1.inflate(R.layout.dialog_join_layout, null)
                val alertDialog1 = AlertDialog.Builder(activity, R.style.CustomAlertDialog)
-                   .setView(view)
+                   .setView(view1)
                    .create()
 
                val dialogET = view1.findViewById<EditText>(R.id.join_et)
@@ -137,8 +137,6 @@ class ShareRoomFragment : Fragment() {
                }
                alertDialog1.show()
            }
-           
-
             alertDialog.show()
         }
 
