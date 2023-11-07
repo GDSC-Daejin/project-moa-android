@@ -19,6 +19,7 @@ import com.example.giftmoa.BuildConfig
 import com.example.giftmoa.Data.*
 import com.example.giftmoa.MoaInterface
 import com.example.giftmoa.R
+import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.ShareRoomMenu.ShareRoomEditActivity
 import com.example.giftmoa.ShareRoomMenu.ShareRoomReadActivity
 import com.example.giftmoa.databinding.FragmentShareRoomBinding
@@ -50,7 +51,7 @@ class ShareRoomFragment : Fragment() {
 
     private lateinit var sBinding : FragmentShareRoomBinding
     private var sAdapter : ShareRoomAdapter? = null
-    private var shareRoomAllData = ArrayList<GetTeamData>()
+    private var shareRoomAllData = ArrayList<Team>()
     private var manager : LinearLayoutManager = LinearLayoutManager(activity)
     private val saveSharedPreference = SaveSharedPreference()
     private var identification = ""
@@ -89,14 +90,17 @@ class ShareRoomFragment : Fragment() {
 
                 val intent = Intent(activity, ShareRoomReadActivity::class.java).apply {
                     putExtra("type", "READ")
-                    putExtra("data", temp)
+                    //putExtra("data", temp)
                 }
                 startActivity(intent)
             }
         })
 
 
-       sBinding.shareCreateBtn.setOnClickListener {
+        sBinding.shareCreateBtn.setOnClickListener {
+            println(identification)
+            println(saveSharedPreference.getToken(requireActivity()).toString())
+
             val layoutInflater = LayoutInflater.from(activity)
             val view = layoutInflater.inflate(R.layout.dialog_layout, null)
             val alertDialog = AlertDialog.Builder(activity, R.style.CustomAlertDialog)
@@ -106,37 +110,37 @@ class ShareRoomFragment : Fragment() {
             val dialogCreate = view.findViewById<TextView>(R.id.dialog_create)
             val dialogEntrance = view.findViewById<TextView>(R.id.dialog_entrance)
 
-           dialogCreate.setOnClickListener {
-               val intent = Intent(requireActivity(), ShareRoomEditActivity::class.java).apply {
-                   putExtra("type", "ADD")
-               }
-               requestActivity.launch(intent)
-               alertDialog.dismiss()
-           }
+            dialogCreate.setOnClickListener {
+                val intent = Intent(requireActivity(), ShareRoomEditActivity::class.java).apply {
+                    putExtra("type", "ADD")
+                }
+                requestActivity.launch(intent)
+                alertDialog.dismiss()
+            }
 
-           dialogEntrance.setOnClickListener {
-               alertDialog.dismiss()
-               val layoutInflater1 = LayoutInflater.from(activity)
-               val view1 = layoutInflater1.inflate(R.layout.dialog_join_layout, null)
-               val alertDialog1 = AlertDialog.Builder(activity, R.style.CustomAlertDialog)
-                   .setView(view1)
-                   .create()
+            dialogEntrance.setOnClickListener {
+                alertDialog.dismiss()
+                val layoutInflater1 = LayoutInflater.from(activity)
+                val view1 = layoutInflater1.inflate(R.layout.dialog_join_layout, null)
+                val alertDialog1 = AlertDialog.Builder(activity, R.style.CustomAlertDialog)
+                    .setView(view1)
+                    .create()
 
-               val dialogET = view1.findViewById<EditText>(R.id.join_et)
-               val dialogCancel = view1.findViewById<Button>(R.id.join_cancel)
-               val dialogOk = view1.findViewById<Button>(R.id.join_ok)
+                val dialogET = view1.findViewById<EditText>(R.id.join_et)
+                val dialogCancel = view1.findViewById<Button>(R.id.join_cancel)
+                val dialogOk = view1.findViewById<Button>(R.id.join_ok)
 
-               dialogCancel.setOnClickListener {
-                   alertDialog1.dismiss()
-               }
+                dialogCancel.setOnClickListener {
+                    alertDialog1.dismiss()
+                }
 
-               dialogOk.setOnClickListener {
-                   val inviteCode = dialogET.text.toString()
-                   setJoinShareRoomData(inviteCode)
-                   alertDialog1.dismiss()
-               }
-               alertDialog1.show()
-           }
+                dialogOk.setOnClickListener {
+                    val inviteCode = dialogET.text.toString()
+                    //setJoinShareRoomData(inviteCode)
+                    alertDialog1.dismiss()
+                }
+                alertDialog1.show()
+            }
             alertDialog.show()
         }
 
@@ -172,7 +176,38 @@ class ShareRoomFragment : Fragment() {
     }
 
     private fun setRoomData() {
-        CoroutineScope(Dispatchers.IO).launch {
+        Retrofit2Generator.create(requireActivity()).getMyTeamList().enqueue(object : Callback<GetMyTeamListResponse> {
+            override fun onResponse(
+                call: Call<GetMyTeamListResponse>,
+                response: Response<GetMyTeamListResponse>
+            ) {
+                if (response.isSuccessful) {
+                    println("setSuc")
+
+                    shareRoomAllData.clear()
+
+                    for (i in response.body()!!.data?.indices!!) {
+
+                        shareRoomAllData.add(Team(
+                            response.body()!!.data?.get(i)!!.id,
+                            response.body()!!.data?.get(i)!!.teamCode,
+                            response.body()!!.data?.get(i)!!.teamName,
+                            response.body()!!.data?.get(i)!!.teamImage,
+                            response.body()!!.data?.get(i)!!.teamLeaderNickname,
+                            response.body()!!.data?.get(i)!!.teamMembers
+                        ))
+                    }
+                    sAdapter!!.notifyDataSetChanged()
+                } else {
+
+                }
+            }
+
+            override fun onFailure(call: Call<GetMyTeamListResponse>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+        })
+        /*CoroutineScope(Dispatchers.IO).launch {
             service.getMyShareRoom().enqueue(object : Callback<ShareRoomGetTeamData> {
                 override fun onResponse(
                     call: Call<ShareRoomGetTeamData>,
@@ -209,10 +244,10 @@ class ShareRoomFragment : Fragment() {
                 }
 
             })
-        }
+        }*/
     }
 
-    private fun setJoinShareRoomData(inviteCode : String) {
+    /*private fun setJoinShareRoomData(inviteCode : String) {
         val temp = TeamJoinData(inviteCode)
         CoroutineScope(Dispatchers.IO).launch {
             service.joinShareRoom(temp).enqueue(object : Callback<ShareRoomResponseData> {
@@ -248,7 +283,7 @@ class ShareRoomFragment : Fragment() {
 
             })
         }
-    }
+    }*/
 
 
     private val requestActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { it ->
@@ -284,10 +319,10 @@ class ShareRoomFragment : Fragment() {
                             supportFragmentManager.beginTransaction()
                                 .replace(R.id.fragment_content, HomeFragment())
                                 .commit()*/
-                        }
-
-                        //finish()
                     }
+
+                    //finish()
+                }
             }
         }
     }
