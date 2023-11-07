@@ -98,7 +98,7 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
     // glide
-    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    //implementation 'com.github.bumptech.glide:glide:4.16.0'
 
     // timber
     implementation 'com.jakewharton.timber:timber:5.0.1'

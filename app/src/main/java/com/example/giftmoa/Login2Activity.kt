@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.example.giftmoa.Data.Data
+import com.example.giftmoa.Data.Data1
 import com.example.giftmoa.Data.GetKakaoLoginResponse
 import com.example.giftmoa.databinding.ActivityLoginBinding
 import com.kakao.sdk.auth.model.OAuthToken
@@ -101,7 +101,7 @@ class Login2Activity: AppCompatActivity() {
         })
     }
 
-    private fun saveLoginData(data: Data) {
+    private fun saveLoginData(data: Data1) {
         val sharedPref = getSharedPreferences("TokenData", Context.MODE_PRIVATE)
         with(sharedPref.edit()) {
             putString("grantType", data.grantType)
