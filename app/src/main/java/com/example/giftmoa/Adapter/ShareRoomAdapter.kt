@@ -5,14 +5,26 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
+import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.example.giftmoa.Data.GetTeamData
 import com.example.giftmoa.Data.GiftData
 import com.example.giftmoa.Data.ShareRoomData
 import com.example.giftmoa.R
@@ -25,7 +37,7 @@ import org.w3c.dom.Text
 
 class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(){
     private lateinit var binding : ShareRoomItemBinding
-    var shareRoomItemData = ArrayList<ShareRoomData>()
+    var shareRoomItemData = ArrayList<GetTeamData>()
     private lateinit var context : Context
     private var inviteCode = ""
 
@@ -41,13 +53,56 @@ class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(
         private var shareCouponCnt = binding.shareCouponCnt*/
 
 
-        fun bind(itemData: ShareRoomData, position : Int) {
+        fun bind(itemData: GetTeamData, position : Int) {
             this.position = position
 
-            shareTitle.text = itemData.title
-            //shareCouponCnt.text = "공유중인 쿠폰 : ${itemData.shareCouponCount.toString()}"
-            shareNOP.text = "+${itemData.numberOfPeople.toString()}"
-            //shareMaster.text = "방장 : ${itemData.master}"
+            if (itemData.teamImage != null) {
+                shareTitle.text = itemData.teamName
+                binding.shareTitle.setTextColor(ContextCompat.getColor(context ,R.color.moa_gray_white))
+
+                //shareCouponCnt.text = "공유중인 쿠폰 : ${itemData.shareCouponCount.toString()}"
+                shareNOP.text = "+${itemData.teamMembers.size.toString()}"
+                binding.shareNumberOfPeople.setTextColor(ContextCompat.getColor(context ,R.color.moa_gray_white))
+
+            } else {
+                shareTitle.text = itemData.teamName
+                //shareCouponCnt.text = "공유중인 쿠폰 : ${itemData.shareCouponCount.toString()}"
+                shareNOP.text = "+${itemData.teamMembers.size.toString()}"
+            }
+
+
+            val requestOptions = RequestOptions()
+                .centerCrop() // 또는 .fitCenter()
+                .override(300, 100) // 원하는 크기로 조절
+
+            Glide.with(context)
+                .load(itemData.teamImage!!.toUri())
+                .error(R.drawable.image)
+                .apply(requestOptions)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: com.bumptech.glide.request.target.Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        Log.d("Glide", "Image load failed: ${e?.message}")
+                        println(e?.message.toString())
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: com.bumptech.glide.request.target.Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        println("glide")
+                        return false
+                    }
+                })
+                .into(binding.shareMainIv)
 
         }
     }
@@ -62,7 +117,7 @@ class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(
         holder.bind(shareRoomItemData[holder.adapterPosition], position)
 
         holder.itemView.setOnClickListener {
-            itemClickListener.onClick(it, holder.adapterPosition, shareRoomItemData[holder.adapterPosition].title)
+            itemClickListener.onClick(it, holder.adapterPosition, shareRoomItemData[holder.adapterPosition].teamCode)
         }
 
         /*binding.shareDeleteBtn.setOnClickListener {

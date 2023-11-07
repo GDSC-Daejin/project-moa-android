@@ -4,17 +4,23 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.example.giftmoa.Data.GiftData
+import com.example.giftmoa.Data.ShareRoomGifticon
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.HomeItemBinding
 import com.example.giftmoa.databinding.ItemGifticonBinding
 import com.kakao.sdk.common.util.SdkLogLevel
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class HomeGiftAdapter : RecyclerView.Adapter<HomeGiftAdapter.HomeGiftViewHolder>(){
-    private lateinit var binding : ItemGifticonBinding
-    var giftItemData = ArrayList<GiftData>()
+    private lateinit var binding : HomeItemBinding
+    var giftItemData = ArrayList<ShareRoomGifticon>()
+
     private lateinit var context : Context
 
     init {
@@ -29,17 +35,58 @@ class HomeGiftAdapter : RecyclerView.Adapter<HomeGiftAdapter.HomeGiftViewHolder>
         private var giftRemainingDay = binding.tvDDay
 
 
-        fun bind(itemData: GiftData, position : Int) {
+        fun bind(itemData: ShareRoomGifticon, position : Int) {
             this.position = position
+            val s = itemData.dueDate
 
-            giftBrand.text = itemData.brand
+            giftBrand.text = itemData.exchangePlace
             giftName.text = itemData.name
-            if (itemData.giftImg != null) {
-                giftImg.setImageURI(itemData.giftImg)
+            if (itemData.gifticonImagePath != null) {
+                giftImg.setImageURI(itemData.gifticonImagePath!!.toUri())
             } else {
                 giftImg.setImageResource(R.drawable.asset_gifticon_coffee)
             }
-            giftRemainingDay.text = "D+${itemData.remainingDay}"
+
+            val now = System.currentTimeMillis()
+            val date = Date(now)
+            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA)
+            val currentDate = sdf.format(date)
+
+            val nowFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).parse(currentDate)
+            val beforeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).parse(s)
+
+            val diffMilliseconds = beforeFormat?.time?.minus(nowFormat?.time!!)
+
+            val diffSeconds = diffMilliseconds?.div(1000)
+            val diffMinutes = diffMilliseconds?.div((60 * 1000))
+            val diffHours = diffMilliseconds?.div((60 * 60 * 1000))
+            val diffDays = diffMilliseconds?.div((24 * 60 * 60 * 1000))
+            if (diffMinutes != null && diffDays != null && diffHours != null && diffSeconds != null) {
+                if(diffSeconds > -1){
+
+                }
+
+                if (diffSeconds > 0) {
+
+                }
+
+                if (diffMinutes > 0) {
+
+                }
+
+                if (diffHours > 0) {
+
+                }
+
+                if (diffDays > 0) {
+                    giftRemainingDay.text = "D+${diffDays.toString()}"
+                }
+
+                if (diffDays < 0) {
+                    giftRemainingDay.text = "기간 지남"
+                }
+            }
+
 
         }
     }

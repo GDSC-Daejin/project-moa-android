@@ -11,62 +11,42 @@
         android:layout_marginStart="50dp"
         android:layout_marginEnd="50dp"
         android:orientation="vertical"
-        android:background="@color/white"
+        android:background="@drawable/dialog_round"
         android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/dialog_title"
+            android:id="@+id/dialog_create"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="입장하기"
-            android:textColor="@color/black"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:text="공유방 만들기"
+            android:textColor="@color/moa_gray_800"
             android:textSize="16sp"
             android:fontFamily="@font/pretendard_bold"
             />
 
-        <EditText
-            android:id="@+id/dialog_et"
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:textColor="@color/black"
-            android:gravity="center"
-            android:text="test"
-            android:visibility="visible"
-            android:background="@android:color/transparent"
+            android:layout_height="1dp"
+            android:background="@color/moa_gray_200"
             />
 
         <TextView
-            android:id="@+id/dialog_invite_code_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:textColor="@color/black"
-            android:gravity="center"
-            android:text="test"
-            android:visibility="gone"
-            />
-
-        <Button
-            android:id="@+id/dialog_entrance_btn"
+            android:id="@+id/dialog_entrance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/home_item_remaining_day_layout"
-            android:text="입장하기"
-            android:textColor="@color/white"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:text="초대코드 입력하기"
+            android:textColor="@color/moa_gray_800"
+            android:textSize="16sp"
+            android:fontFamily="@font/pretendard_bold"
             />
+
 
     </LinearLayout>
 

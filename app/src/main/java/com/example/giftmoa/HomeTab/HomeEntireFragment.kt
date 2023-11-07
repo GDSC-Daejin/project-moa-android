@@ -26,6 +26,7 @@ import com.example.giftmoa.utils.AssetLoader
 import com.example.giftmoa.BottomSheetFragment.GifticonEditDeleteBottomSheet
 import com.example.giftmoa.BottomSheetFragment.SortBottomSheet
 import com.example.giftmoa.Data.GiftData
+
 import com.example.giftmoa.Data.GifticonDetailItem
 import com.example.giftmoa.Data.StorageData
 import com.example.giftmoa.GifticonDetailActivity
@@ -39,6 +40,9 @@ import com.example.giftmoa.Data.GetGifticonListResponse
 import com.example.giftmoa.Data.Gifticon
 import com.example.giftmoa.Data.UpdateGifticonRequest
 import com.example.giftmoa.Data.UpdateGifticonResponse
+
+import com.example.giftmoa.Data.ShareRoomGifticon
+
 import com.example.giftmoa.R
 import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.FragmentHomeEntireBinding
@@ -64,6 +68,7 @@ class HomeEntireFragment : Fragment(), CategoryListener {
     private var param1: String? = null
     private var param2: String? = null
 
+
     private lateinit var binding: FragmentHomeEntireBinding
     private val TAG = "HomeEntireFragment"
 
@@ -74,6 +79,7 @@ class HomeEntireFragment : Fragment(), CategoryListener {
     private var categoryList = mutableListOf<CategoryItem>()
 
     private var gridManager = GridLayoutManager(activity, 2, GridLayoutManager.VERTICAL, false)
+
     private var getBottomSheetData = ""
 
     private lateinit var manualAddGifticonResult: ActivityResultLauncher<Intent>
@@ -428,6 +434,8 @@ class HomeEntireFragment : Fragment(), CategoryListener {
         super.onDestroyView()
         Log.d(TAG, "onDestroyView: ")
     }
+
+  
 
     override fun onDestroy() {
         super.onDestroy()
