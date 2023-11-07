@@ -138,8 +138,19 @@ class ShareRoomReadActivity : AppCompatActivity() {
 
 
         sBinding.shareGifticonBtn.setOnClickListener {
+            val intent = Intent(this@ShareRoomReadActivity, ShareGifticonActivity::class.java).apply {
 
+            }
+            startActivity(intent)
         }
+
+        sBinding.shareMoveIv.setOnClickListener {
+            val intent = Intent(this@ShareRoomReadActivity, SharedLockerActivity::class.java).apply {
+
+            }
+            startActivity(intent)
+        }
+
 
 
         setContentView(sBinding.root)
@@ -147,7 +158,7 @@ class ShareRoomReadActivity : AppCompatActivity() {
     }
 
 
-    //여긴 공유된것을 사용한거거
+    //여긴 공유된것을 사용한거
    private fun initUsedRecyclerView() {
         setUsedGiftData()
         shareUsedGiftAdapter = HomeUsedGiftAdapter()
@@ -167,7 +178,6 @@ class ShareRoomReadActivity : AppCompatActivity() {
         //manager.stackFromEnd = true
         sBinding.shareGiftRv.setHasFixedSize(true)
         sBinding.shareGiftRv.layoutManager = gridManager
-
     }
 
     private fun setUsedGiftData() {
@@ -202,6 +212,7 @@ class ShareRoomReadActivity : AppCompatActivity() {
                                 response.body()!!.data.data[i].author,
                                 response.body()!!.data.data[i].category,
                                 response.body()!!.data.data[i].gifticonMoney,
+                                false
                             ))
                         }
                         totalCount = response.body()!!.data.totalCount

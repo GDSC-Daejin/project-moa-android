@@ -49,7 +49,9 @@ data class ShareRoomGifticon(
     @SerializedName("category")
     var category : ShareRoomCategory,
     @SerializedName("gifticonMoney")
-    var gifticonMoney : String
+    var gifticonMoney : String,
+
+    var isSelected : Boolean?
 )
 
 data class ShareRoomAuthor(

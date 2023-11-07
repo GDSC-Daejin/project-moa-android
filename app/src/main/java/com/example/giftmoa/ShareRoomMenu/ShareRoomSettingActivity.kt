@@ -1,5 +1,6 @@
 package com.example.giftmoa.ShareRoomMenu
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -70,6 +71,17 @@ class ShareRoomSettingActivity : AppCompatActivity() {
             sBinding.shareSettingRoomNumberOfPeople.text = shareRoomData!!.teamMembers.size.toString()
             sBinding.shareSettingRoomGifticonCount.text = sharedGifticonAllData.size.toString()
         }
+
+        sBinding.backArrow.setOnClickListener {
+            this.finish()
+        }
+
+        sBinding.shareSettingRoomNumberOfPeople.setOnClickListener {
+            val intent = Intent(this@ShareRoomSettingActivity, ShareRoomFriendListActivity::class.java).apply {
+                putExtra("RoomId", shareRoomData!!.id)
+            }
+            startActivity(intent)
+        }
     }
 
 
@@ -103,8 +115,8 @@ class ShareRoomSettingActivity : AppCompatActivity() {
                                 response.body()!!.data.data[i].author,
                                 response.body()!!.data.data[i].category,
                                 response.body()!!.data.data[i].gifticonMoney,
-                            )
-                            )
+                                    false
+                            ))
                         }
                         /*totalCount = response.body()!!.data.totalCount
                         nextPage = response.body()!!.data.nextPage

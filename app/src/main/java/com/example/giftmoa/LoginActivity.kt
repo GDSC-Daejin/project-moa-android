@@ -1,10 +1,18 @@
 package com.example.giftmoa
 
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.ViewTreeObserver
+import android.view.animation.AnticipateInterpolator
+import androidx.core.animation.doOnEnd
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.giftmoa.Data.KakaoLoginUserData
 import com.example.giftmoa.Data.SaveSharedPreference
 import com.example.giftmoa.databinding.ActivityLoginBinding
@@ -15,6 +23,7 @@ import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -28,6 +37,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var mBinding : ActivityLoginBinding
     private val kakaoAppKey = BuildConfig.kakao_app_key
     private val sharedPreference = SaveSharedPreference()
+    //데이터 받아오기 준비
+    private var isReady = false
 
     private val SERVER_URL = BuildConfig.server_URL
     private val retrofit = Retrofit.Builder().baseUrl(SERVER_URL)
@@ -37,6 +48,7 @@ class LoginActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        initSplashScreen()
         super.onCreate(savedInstanceState)
         mBinding = ActivityLoginBinding.inflate(layoutInflater)
 
@@ -53,9 +65,9 @@ class LoginActivity : AppCompatActivity() {
         mBinding.kakaoUnlinkBtn.setOnClickListener {
             kakaoUnlink() //연결해제
         }*/
-
-
     }
+
+
 
     private fun kakaoLogin() {
         // 카카오계정으로 로그인 공통 callback 구성
@@ -165,6 +177,55 @@ class LoginActivity : AppCompatActivity() {
                 .build()
             return chain.proceed(newRequest)
         }
+    }
+
+    private fun initData() {
+        // 별도의 데이터 처리가 없기 때문에 3초의 딜레이를 줌.
+        // 선행되어야 하는 작업이 있는 경우, 이곳에서 처리 후 isReady를 변경.
+        CoroutineScope(Dispatchers.IO).launch {
+            delay(3000)
+        }
+        isReady = true
+    }
+    private fun initSplashScreen() {
+        initData()
+        val splashScreen = installSplashScreen()
+        val content: View = findViewById(android.R.id.content)
+        // SplashScreen이 생성되고 그려질 때 계속해서 호출된다.
+        content.viewTreeObserver.addOnPreDrawListener(
+            object : ViewTreeObserver.OnPreDrawListener {
+                override fun onPreDraw(): Boolean {
+                    return if (isReady) {
+                        // 3초 후 Splash Screen 제거
+                        content.viewTreeObserver.removeOnPreDrawListener(this)
+                        true
+                    } else {
+                        // The content is not ready
+                        false
+                    }
+                }
+            }
+        )
+
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            splashScreen.setOnExitAnimationListener {splashScreenView ->
+                val animScaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 8f)
+                val animScaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 8f)
+                val animAlpha = PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0f)
+
+                ObjectAnimator.ofPropertyValuesHolder(
+                    splashScreenView.iconView,
+                    animAlpha,
+                    animScaleX,
+                    animScaleY
+                ).run {
+                    interpolator = AnticipateInterpolator()
+                    duration = 300L
+                    doOnEnd { splashScreenView.remove() }
+                    start()
+                }
+            }
+        }*/
     }
 
     /*private fun kakaoLogout(){
