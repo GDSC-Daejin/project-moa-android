@@ -13,6 +13,7 @@ import com.example.giftmoa.Adapter.HomeGiftAdapter
 import com.example.giftmoa.BottomSheetFragment.BottomSheetFragment
 import com.example.giftmoa.CouponTab.CouponAutoAddActivity
 import com.example.giftmoa.Data.GiftData
+import com.example.giftmoa.Data.ShareRoomGifticon
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.FragmentHomeEntireBinding
 
@@ -33,7 +34,7 @@ class HomeEntireFragment : Fragment() {
 
     private lateinit var binding : FragmentHomeEntireBinding
     private var giftAdapter : HomeGiftAdapter? = null
-    private var giftAllData = ArrayList<GiftData>()
+    private var giftAllData = ArrayList<ShareRoomGifticon>()
     private var gridManager = GridLayoutManager(activity, 2)
     private var getBottomSheetData = ""
 
@@ -95,15 +96,15 @@ class HomeEntireFragment : Fragment() {
     }
 
     private fun setGiftData() {
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
-        giftAllData.add(GiftData(200, "스타벅스", "아이스 아메리카노", null))
+        /*giftAllData.add(ShareRoomGifticon(200, "스타벅스", "아이스 아메리카노", null))
+        giftAllData.add(ShareRoomGifticon(200, "스타벅스", "아이스 아메리카노", null))
+        giftAllData.add(ShareRoomGifticon(200, "스타벅스", "아이스 아메리카노", null))
+        giftAllData.add(ShareRoomGifticon(200, "스타벅스", "아이스 아메리카노", null))
+        giftAllData.add(ShareRoomGifticon(200, "스타벅스", "아이스 아메리카노", null))
+        giftAllData.add(ShareRoomGifticon(200, "스타벅스", "아이스 아메리카노", null))
+        giftAllData.add(ShareRoomGifticon(200, "스타벅스", "아이스 아메리카노", null))
+        giftAllData.add(ShareRoomGifticon(200, "스타벅스", "아이스 아메리카노", null))
+        giftAllData.add(ShareRoomGifticon(200, "스타벅스", "아이스 아메리카노", null))*/
 
     }
 

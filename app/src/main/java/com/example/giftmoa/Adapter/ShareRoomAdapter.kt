@@ -24,6 +24,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
+import com.example.giftmoa.Data.GetTeamData
 import com.example.giftmoa.Data.GiftData
 import com.example.giftmoa.Data.ShareRoomData
 import com.example.giftmoa.R
@@ -36,7 +37,7 @@ import org.w3c.dom.Text
 
 class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(){
     private lateinit var binding : ShareRoomItemBinding
-    var shareRoomItemData = ArrayList<ShareRoomData>()
+    var shareRoomItemData = ArrayList<GetTeamData>()
     private lateinit var context : Context
     private var inviteCode = ""
 
@@ -52,21 +53,21 @@ class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(
         private var shareCouponCnt = binding.shareCouponCnt*/
 
 
-        fun bind(itemData: ShareRoomData, position : Int) {
+        fun bind(itemData: GetTeamData, position : Int) {
             this.position = position
 
-            if (itemData.roomBackground != null) {
-                shareTitle.text = itemData.title
+            if (itemData.teamImage != null) {
+                shareTitle.text = itemData.teamName
                 binding.shareTitle.setTextColor(ContextCompat.getColor(context ,R.color.moa_gray_white))
 
                 //shareCouponCnt.text = "공유중인 쿠폰 : ${itemData.shareCouponCount.toString()}"
-                shareNOP.text = "+${itemData.numberOfPeople.toString()}"
+                shareNOP.text = "+${itemData.teamMembers.size.toString()}"
                 binding.shareNumberOfPeople.setTextColor(ContextCompat.getColor(context ,R.color.moa_gray_white))
 
             } else {
-                shareTitle.text = itemData.title
+                shareTitle.text = itemData.teamName
                 //shareCouponCnt.text = "공유중인 쿠폰 : ${itemData.shareCouponCount.toString()}"
-                shareNOP.text = "+${itemData.numberOfPeople.toString()}"
+                shareNOP.text = "+${itemData.teamMembers.size.toString()}"
             }
 
 
@@ -75,7 +76,7 @@ class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(
                 .override(300, 100) // 원하는 크기로 조절
 
             Glide.with(context)
-                .load(itemData.roomBackground!!.toUri())
+                .load(itemData.teamImage!!.toUri())
                 .error(R.drawable.image)
                 .apply(requestOptions)
                 .listener(object : RequestListener<Drawable> {
@@ -116,7 +117,7 @@ class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(
         holder.bind(shareRoomItemData[holder.adapterPosition], position)
 
         holder.itemView.setOnClickListener {
-            itemClickListener.onClick(it, holder.adapterPosition, shareRoomItemData[holder.adapterPosition].title)
+            itemClickListener.onClick(it, holder.adapterPosition, shareRoomItemData[holder.adapterPosition].teamCode)
         }
 
         /*binding.shareDeleteBtn.setOnClickListener {

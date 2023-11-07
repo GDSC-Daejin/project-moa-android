@@ -59,7 +59,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!--나중에 여기 이미지 bitmap조절해서 background에 적용하기 Todo-->
             <RelativeLayout
                 android:id="@+id/share_top_rl"
                 android:layout_width="match_parent"
@@ -190,4 +189,20 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+
+    <Button
+        android:id="@+id/share_gifticon_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/share_gifticon_btn_layout"
+        android:fontFamily="@font/pretendard_medium"
+        android:padding="8dp"
+        android:text="쿠폰 공유하기"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
