@@ -3,8 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+  
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
 
     <application
         android:name=".GlobalApplication"
@@ -39,7 +46,7 @@
         <activity
             android:name=".BottomMenu.LockerActivity"
             android:exported="false" />
-        <activity
+        <!--<activity
             android:name=".LoginActivity"
             android:exported="true" >
             <intent-filter>
@@ -47,7 +54,8 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity>-->
+        <activity android:name=".LoginActivity" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />
@@ -64,11 +72,29 @@
                 <data
                     android:host="oauth"
                     android:scheme="kakao${kakaoAppKey}" />
+              
             </intent-filter>
         </activity>
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"
+            android:value="${kakaoAppKey}" />
+        <activity android:name=".GifticonRegistrationActivity" />
+        <activity android:name=".CouponTab.AutoRegistrationActivity" />
+        <activity android:name=".CouponTab.ManualRegistrationActivity" />
+        <activity
+            android:name=".SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.GiftMoa.Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".GifticonDetailActivity" />
+        <activity android:name=".MyProfileActivity" />
+        <activity android:name=".Login2Activity" />
             android:value="${kakaoAppKey}" />
     </application>
 

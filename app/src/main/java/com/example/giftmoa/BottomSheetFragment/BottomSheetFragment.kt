@@ -75,7 +75,7 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
             val parentLayout =
                 bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
             parentLayout?.let { it ->
-                val behaviour = BottomSheetBehavior.from(it)
+                val behavior = BottomSheetBehavior.from(it)
                 //setupFullHeight(it)
                 //behaviour.state = BottomSheetBehavior.STATE_EXPANDED
             }

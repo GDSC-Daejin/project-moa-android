@@ -1,11 +1,15 @@
 package com.example.giftmoa.BottomMenu
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.giftmoa.MyProfileActivity
 import com.example.giftmoa.R
+import com.example.giftmoa.databinding.FragmentAccountBinding
+import com.example.giftmoa.databinding.FragmentHomeEntireBinding
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -22,6 +26,9 @@ class AccountFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private lateinit var binding : FragmentAccountBinding
+    private val TAG = "AccountFragment"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -35,7 +42,15 @@ class AccountFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_account, container, false)
+        binding = FragmentAccountBinding.inflate(inflater, container, false)
+
+        binding.tvUserName.setOnClickListener {
+            val intent = Intent(context, MyProfileActivity::class.java)
+            intent.putExtra("userName", binding.tvUserName.text.toString())
+            startActivity(intent)
+        }
+
+        return binding.root
     }
 
     companion object {

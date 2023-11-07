@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@color/moa_gray_white"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/icon_close" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <View
+        android:id="@+id/view_divider_title"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="@color/moa_gray_100"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/civ_user_profile_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="21dp"
+        android:src="@drawable/asset_gifticon_coffee"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/view_divider_title" />
+    
+    <ImageView
+        android:id="@+id/iv_edit_profile_image"
+        android:layout_width="31dp"
+        android:layout_height="31dp"
+        app:layout_constraintBottom_toBottomOf="@id/civ_user_profile_image"
+        app:layout_constraintEnd_toEndOf="@id/civ_user_profile_image"
+        android:src="@drawable/icon_edit_profile_image" />
+    
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintTop_toBottomOf="@id/civ_user_profile_image">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/pretendard_medium"
+            android:text="닉네임"
+            android:layout_marginEnd="10dp"
+            android:textColor="@color/moa_gray_800"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/et_exchange_place"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="18dp"
+            android:background="@drawable/background_gifticon_edit_text"
+            android:text="서정우"
+            android:inputType="text"
+            android:paddingStart="10dp"
+            android:paddingTop="12dp"
+            android:paddingEnd="40dp"
+            android:paddingBottom="12dp"
+            android:textColor="@color/moa_gray_600"
+            android:textColorHint="@color/moa_gray_400"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/moa_gray_white"
+        android:orientation="horizontal"
+        android:paddingTop="10dp"
+        android:paddingBottom="40dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_back"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="20dp"
+            android:layout_weight="1"
+            android:background="@drawable/background_disabled_button"
+            android:text="뒤로"
+            android:textColor="#b7b7b7"
+            android:textSize="16sp" />
+
+        <View
+            android:layout_width="10dp"
+            android:layout_height="1dp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_edit"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="20dp"
+            android:layout_weight="1"
+            android:background="@drawable/background_enabled_button"
+            android:text="수정"
+            android:textColor="@color/moa_gray_white"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

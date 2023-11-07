@@ -1,14 +1,156 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BottomMenu.CouponFragment">
+    android:orientation="vertical"
+    tools:context=".BottomMenu.LockerActivity">
 
-    <!-- TODO: Update blank fragment layout -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/home_top_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/pretendard_bold"
+            android:text="보관함"
+            android:textColor="@color/moa_gray_900"
+            android:textSize="16sp" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/home_top_ll"
+        app:tabIndicatorColor="@color/moa_carrot_700" />
+
+    <HorizontalScrollView
+        android:id="@+id/sv_category"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:scrollbars="none"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tabLayout">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:visibility="visible"
+            app:chipSpacingHorizontal="11dp"
+            app:chipSpacingVertical="6dp"
+            app:singleLine="true"
+            app:singleSelection="true"
+            app:selectionRequired="true"
+            app:checkedChip="@id/chip_all"
+            tools:visibility="visible">
+
+            <ImageView
+                android:id="@+id/iv_add_category"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:background="@drawable/background_chip_add"
+                android:src="@drawable/icon_add_gray" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_all"
+                style="@style/CustomChipStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="전체"
+                android:textAlignment="center"
+                android:translationY="-2dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_unclassified"
+                style="@style/CustomChipStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="미분류"
+                android:textAlignment="center"
+                android:translationY="-2dp" />
+
+        </com.google.android.material.chip.ChipGroup>
+
+    </HorizontalScrollView>
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chip_sort"
+        style="@style/CustomChipStyleWithSortIcon"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:text="최신순"
+        app:chipMinTouchTargetSize="0dp"
+        android:textAlignment="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sv_category"
+        android:layout_marginStart="20dp"
+        android:translationY="-2dp" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chip_sort" />
+
     <TextView
+        android:id="@+id/tv_add_coupon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="13dp"
+        android:background="@drawable/button_coupon_registration"
+        android:fontFamily="@font/pretendard_medium"
+        android:paddingStart="29dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="29dp"
+        android:paddingBottom="8dp"
+        android:text="쿠폰 추가하기"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:id="@+id/view_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:background="@color/moa_gray_white"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</FrameLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,9 +6,9 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:background="@drawable/bottom_sheet_background"
-    android:paddingBottom="24dp"
+    android:paddingTop="30dp"
+    android:paddingBottom="40dp"
     app:behavior_hideable="true"
-    app:behavior_peekHeight="56dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
     tools:context=".BottomSheetFragment.BottomSheetFragment">
 
@@ -16,22 +16,27 @@
         android:id="@+id/bottom_auto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:fontFamily="@font/pretendard_medium"
         android:gravity="center"
         android:text="자동 등록"
-        android:textSize="16sp"
         android:textColor="@color/moa_gray_900"
-        android:fontFamily="@font/pretendard_medium"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
         android:background="@color/moa_gray_600"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/bottom_manual"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bottom_auto"
         tools:layout_editor_absoluteX="3dp" />
 
@@ -39,17 +44,15 @@
         android:id="@+id/bottom_manual"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="88dp"
         android:fontFamily="@font/pretendard_medium"
         android:gravity="center"
         android:text="수동 등록"
         android:textColor="@color/moa_gray_900"
         android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

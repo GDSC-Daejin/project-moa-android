@@ -1,0 +1,15 @@
+{
+  "images": [
+    {
+      "format": "jpeg",
+      "name": "medium",
+      "data": null,
+      "url": "https://firebasestorage.googleapis.com/v0/b/gift-moa.appspot.com/o/images%2F1696957286493_image.jpeg?alt=media&token=58978e07-18c5-41a3-9de3-09d8da5fb610"
+    }
+  ],
+  "lang": "ko",
+  "requestId": "string",
+  "resultType": "string",
+  "timestamp": 0,
+  "version": "V2"
+}

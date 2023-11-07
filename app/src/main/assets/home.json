@@ -1,0 +1,440 @@
+{
+  "shareRooms": [
+    {
+      "team_id": 0,
+      "team_name": "우리 가족방",
+      "team_thumbnail_image_url": "https://img.freepik.com/free-vector/hand-drawn-illustration-for-korean-parents-day-celebration_23-2150288350.jpg?size=626&ext=jpg&ga=GA1.1.980875505.1697390731&semt=ais",
+      "teamMembers": [
+        {
+          "user_id": 0,
+          "user_name": "Judy",
+          "profile_image_url": "https://ca.slack-edge.com/T02BE2ERU5A-U052X10G0SZ-g2ffb49c81e1-512"
+        },
+        {
+          "user_id": 1,
+          "user_name": "Purang",
+          "profile_image_url": "https://ca.slack-edge.com/T02BE2ERU5A-U030E9L5VB8-d202c97a72ac-512"
+        },
+        {
+          "user_id": 2,
+          "user_name": "Nox",
+          "profile_image_url": "https://ca.slack-edge.com/T02BE2ERU5A-U02TLNR15PE-b14a81ec08cb-512"
+        }
+      ],
+      "gifticons": [
+        {
+          "id": 0,
+          "name": "디지털상품권 5천원권",
+          "barcodeNumber": "8591 2658 7534 3357",
+          "gifticonImagePath": "https://firebasestorage.googleapis.com/v0/b/gift-moa-1d5c8.appspot.com/o/images%2F1698827149340_image.jpeg?alt=media&token=a31d11a6-ad14-42bb-9146-91ec68ad6a7c",
+          "exchangePlace": "메가MGC커피",
+          "dueDate": "2023-11-6T00:00:00.000Z",
+          "gifticonType": "GENERAL",
+          "orderNumber": "1969302141",
+          "status": "AVAILABLE",
+          "usedDate": "2023-11-01T08:20:40.746Z",
+          "category": {
+            "id": 0,
+            "categoryName": "스타벅스"
+          },
+          "amount": 5000
+        },
+        {
+          "id": 0,
+          "name": "디지털상품권 5천원권",
+          "barcodeNumber": "8591 2658 7534 3357",
+          "gifticonImagePath": "https://firebasestorage.googleapis.com/v0/b/gift-moa-1d5c8.appspot.com/o/images%2F1698827149340_image.jpeg?alt=media&token=a31d11a6-ad14-42bb-9146-91ec68ad6a7c",
+          "exchangePlace": "메가MGC커피",
+          "dueDate": "2024-01-26T00:00:00.000Z",
+          "gifticonType": "GENERAL",
+          "orderNumber": "1969302141",
+          "status": "AVAILABLE",
+          "usedDate": "2023-11-01T08:20:40.746Z",
+          "category": {
+            "id": 0,
+            "categoryName": "스타벅스"
+          },
+          "amount": 5000
+        },
+        {
+          "id": 0,
+          "name": "디지털상품권 5천원권",
+          "barcodeNumber": "8591 2658 7534 3357",
+          "gifticonImagePath": "https://firebasestorage.googleapis.com/v0/b/gift-moa-1d5c8.appspot.com/o/images%2F1698827149340_image.jpeg?alt=media&token=a31d11a6-ad14-42bb-9146-91ec68ad6a7c",
+          "exchangePlace": "메가MGC커피",
+          "dueDate": "2024-01-26T00:00:00.000Z",
+          "gifticonType": "GENERAL",
+          "orderNumber": "1969302141",
+          "status": "AVAILABLE",
+          "usedDate": "2023-11-01T08:20:40.746Z",
+          "category": {
+            "id": 0,
+            "categoryName": "스타벅스"
+          },
+          "amount": 5000
+        },
+        {
+          "id": 0,
+          "name": "디지털상품권 5천원권",
+          "barcodeNumber": "8591 2658 7534 3357",
+          "gifticonImagePath": "https://firebasestorage.googleapis.com/v0/b/gift-moa-1d5c8.appspot.com/o/images%2F1698827149340_image.jpeg?alt=media&token=a31d11a6-ad14-42bb-9146-91ec68ad6a7c",
+          "exchangePlace": "메가MGC커피",
+          "dueDate": "2024-01-26T00:00:00.000Z",
+          "gifticonType": "GENERAL",
+          "orderNumber": "1969302141",
+          "status": "AVAILABLE",
+          "usedDate": "2023-11-01T08:20:40.746Z",
+          "category": {
+            "id": 0,
+            "categoryName": "스타벅스"
+          },
+          "amount": 5000
+        },
+        {
+          "id": 0,
+          "name": "디지털상품권 5천원권",
+          "barcodeNumber": "8591 2658 7534 3357",
+          "gifticonImagePath": "https://firebasestorage.googleapis.com/v0/b/gift-moa-1d5c8.appspot.com/o/images%2F1698827149340_image.jpeg?alt=media&token=a31d11a6-ad14-42bb-9146-91ec68ad6a7c",
+          "exchangePlace": "메가MGC커피",
+          "dueDate": "2024-01-26T00:00:00.000Z",
+          "gifticonType": "GENERAL",
+          "orderNumber": "1969302141",
+          "status": "AVAILABLE",
+          "usedDate": "2023-11-01T08:20:40.746Z",
+          "category": {
+            "id": 0,
+            "categoryName": "스타벅스"
+          },
+          "amount": 5000
+        }
+      ]
+    },
+    {
+      "team_id": 1,
+      "team_name": "거지방",
+      "team_thumbnail_image_url": "https://i.namu.wiki/i/VpoSGhJeW5GTVpafIwFZ0x1uVw7h80i5JlcZYJBTEu8VeZ3vwxX_Ikm7iZF2eJjAHa2uxraULXdIzJvDJ4CrhIIOx9UdRX-J3J-2J6ZZBIUJstOkn0PzNgfrP95e8DDrBZHpTJGRpCD-qZicELCVrg.webp",
+      "teamMembers": [
+        {
+          "user_id": 0,
+          "user_name": "Judy",
+          "profile_image_url": "https://ca.slack-edge.com/T02BE2ERU5A-U052X10G0SZ-g2ffb49c81e1-512"
+        },
+        {
+          "user_id": 1,
+          "user_name": "Purang",
+          "profile_image_url": "https://ca.slack-edge.com/T02BE2ERU5A-U030E9L5VB8-d202c97a72ac-512"
+        },
+        {
+          "user_id": 2,
+          "user_name": "Nox",
+          "profile_image_url": "https://ca.slack-edge.com/T02BE2ERU5A-U02TLNR15PE-b14a81ec08cb-512"
+        },
+        {
+          "user_id": 3,
+          "user_name": "Peony",
+          "profile_image_url": "https://ca.slack-edge.com/T02BE2ERU5A-U02TWSK3RQU-8e9ce1f41d82-512"
+        }
+      ],
+      "gifticons": [
+        {
+          "id": 0,
+          "name": "디지털상품권 5천원권",
+          "barcodeNumber": "8591 2658 7534 3357",
+          "gifticonImagePath": "https://firebasestorage.googleapis.com/v0/b/gift-moa-1d5c8.appspot.com/o/images%2F1698827149340_image.jpeg?alt=media&token=a31d11a6-ad14-42bb-9146-91ec68ad6a7c",
+          "exchangePlace": "메가MGC커피",
+          "dueDate": "2023-11-6T00:00:00.000Z",
+          "gifticonType": "GENERAL",
+          "orderNumber": "1969302141",
+          "status": "AVAILABLE",
+          "usedDate": "2023-11-01T08:20:40.746Z",
+          "category": {
+            "id": 0,
+            "categoryName": "스타벅스"
+          },
+          "amount": 5000
+        },
+        {
+          "id": 0,
+          "name": "디지털상품권 5천원권",
+          "barcodeNumber": "8591 2658 7534 3357",
+          "gifticonImagePath": "https://firebasestorage.googleapis.com/v0/b/gift-moa-1d5c8.appspot.com/o/images%2F1698827149340_image.jpeg?alt=media&token=a31d11a6-ad14-42bb-9146-91ec68ad6a7c",
+          "exchangePlace": "메가MGC커피",
+          "dueDate": "2024-01-26T00:00:00.000Z",
+          "gifticonType": "GENERAL",
+          "orderNumber": "1969302141",
+          "status": "AVAILABLE",
+          "usedDate": "2023-11-01T08:20:40.746Z",
+          "category": {
+            "id": 0,
+            "categoryName": "스타벅스"
+          },
+          "amount": 5000
+        }
+      ]
+    },
+    {
+      "team_id": 2,
+      "team_name": "고등학교",
+      "team_thumbnail_image_url": "https://joo7114.cafe24.com/web/upload/NNEditor/20160530/%EA%B3%A0%EC%96%91%EB%8F%99%EC%82%B0%EA%B3%A0%EA%B5%90%ED%9B%88%EC%84%9D5_shop1_132918.jpg",
+      "teamMembers": [
+        {
+          "user_id": 4,
+          "user_name": "Jade",
+          "profile_image_url": "https://ca.slack-edge.com/T02BE2ERU5A-U02CPD32N3D-g0beff217a80-512"
+        },
+        {
+          "user_id": 1,
+          "user_name": "Purang",
+          "profile_image_url": "https://ca.slack-edge.com/T02BE2ERU5A-U030E9L5VB8-d202c97a72ac-512"
+        },
+        {
+          "user_id": 2,
+          "user_name": "Nox",
+          "profile_image_url": "https://ca.slack-edge.com/T02BE2ERU5A-U02TLNR15PE-b14a81ec08cb-512"
+        }
+      ],
+      "gifticons": [
+        {
+          "id": 0,
+          "name": "디지털상품권 5천원권",
+          "barcodeNumber": "8591 2658 7534 3357",
+          "gifticonImagePath": "https://firebasestorage.googleapis.com/v0/b/gift-moa-1d5c8.appspot.com/o/images%2F1698827149340_image.jpeg?alt=media&token=a31d11a6-ad14-42bb-9146-91ec68ad6a7c",
+          "exchangePlace": "메가MGC커피",
+          "dueDate": "2023-11-6T00:00:00.000Z",
+          "gifticonType": "GENERAL",
+          "orderNumber": "1969302141",
+          "status": "AVAILABLE",
+          "usedDate": "2023-11-01T08:20:40.746Z",
+          "category": {
+            "id": 0,
+            "categoryName": "스타벅스"
+          },
+          "amount": 5000
+        },
+        {
+          "id": 0,
+          "name": "디지털상품권 5천원권",
+          "barcodeNumber": "8591 2658 7534 3357",
+          "gifticonImagePath": "https://firebasestorage.googleapis.com/v0/b/gift-moa-1d5c8.appspot.com/o/images%2F1698827149340_image.jpeg?alt=media&token=a31d11a6-ad14-42bb-9146-91ec68ad6a7c",
+          "exchangePlace": "메가MGC커피",
+          "dueDate": "2024-01-26T00:00:00.000Z",
+          "gifticonType": "GENERAL",
+          "orderNumber": "1969302141",
+          "status": "AVAILABLE",
+          "usedDate": "2023-11-01T08:20:40.746Z",
+          "category": {
+            "id": 0,
+            "categoryName": "스타벅스"
+          },
+          "amount": 5000
+        },
+        {
+          "id": 0,
+          "name": "디지털상품권 5천원권",
+          "barcodeNumber": "8591 2658 7534 3357",
+          "gifticonImagePath": "https://firebasestorage.googleapis.com/v0/b/gift-moa-1d5c8.appspot.com/o/images%2F1698827149340_image.jpeg?alt=media&token=a31d11a6-ad14-42bb-9146-91ec68ad6a7c",
+          "exchangePlace": "메가MGC커피",
+          "dueDate": "2024-01-26T00:00:00.000Z",
+          "gifticonType": "GENERAL",
+          "orderNumber": "1969302141",
+          "status": "AVAILABLE",
+          "usedDate": "2023-11-01T08:20:40.746Z",
+          "category": {
+            "id": 0,
+            "categoryName": "스타벅스"
+          },
+          "amount": 5000
+        }
+      ]
+    }
+  ],
+  "gifticons": [
+    {
+      "id": 0,
+      "name": "디지털상품권 5천원권",
+      "barcodeNumber": "8591 2658 7534 3357",
+      "gifticonImagePath": "https://firebasestorage.googleapis.com/v0/b/gift-moa-1d5c8.appspot.com/o/images%2F1698827149340_image.jpeg?alt=media&token=a31d11a6-ad14-42bb-9146-91ec68ad6a7c",
+      "exchangePlace": "메가MGC커피",
+      "dueDate": "2023-11-6T00:00:00.000Z",
+      "gifticonType": "GENERAL",
+      "orderNumber": "1969302141",
+      "status": "AVAILABLE",
+      "usedDate": "2023-11-01T08:20:40.746Z",
+      "category": {
+        "id": 0,
+        "categoryName": "스타벅스"
+      },
+      "amount": 5000
+    },
+    {
+      "id": 0,
+      "name": "디지털상품권 5천원권",
+      "barcodeNumber": "8591 2658 7534 3357",
+      "gifticonImagePath": "https://firebasestorage.googleapis.com/v0/b/gift-moa-1d5c8.appspot.com/o/images%2F1698827149340_image.jpeg?alt=media&token=a31d11a6-ad14-42bb-9146-91ec68ad6a7c",
+      "exchangePlace": "메가MGC커피",
+      "dueDate": "2024-01-26T00:00:00.000Z",
+      "gifticonType": "GENERAL",
+      "orderNumber": "1969302141",
+      "status": "AVAILABLE",
+      "usedDate": "2023-11-01T08:20:40.746Z",
+      "category": {
+        "id": 0,
+        "categoryName": "스타벅스"
+      },
+      "amount": 5000
+    },
+    {
+      "id": 0,
+      "name": "디지털상품권 5천원권",
+      "barcodeNumber": "8591 2658 7534 3357",
+      "gifticonImagePath": "https://firebasestorage.googleapis.com/v0/b/gift-moa-1d5c8.appspot.com/o/images%2F1698827149340_image.jpeg?alt=media&token=a31d11a6-ad14-42bb-9146-91ec68ad6a7c",
+      "exchangePlace": "메가MGC커피",
+      "dueDate": "2024-01-26T00:00:00.000Z",
+      "gifticonType": "GENERAL",
+      "orderNumber": "1969302141",
+      "status": "AVAILABLE",
+      "usedDate": "2023-11-01T08:20:40.746Z",
+      "category": {
+        "id": 0,
+        "categoryName": "스타벅스"
+      },
+      "amount": 5000
+    },
+    {
+      "id": 0,
+      "name": "디지털상품권 5천원권",
+      "barcodeNumber": "8591 2658 7534 3357",
+      "gifticonImagePath": "https://firebasestorage.googleapis.com/v0/b/gift-moa-1d5c8.appspot.com/o/images%2F1698827149340_image.jpeg?alt=media&token=a31d11a6-ad14-42bb-9146-91ec68ad6a7c",
+      "exchangePlace": "메가MGC커피",
+      "dueDate": "2024-01-26T00:00:00.000Z",
+      "gifticonType": "GENERAL",
+      "orderNumber": "1969302141",
+      "status": "AVAILABLE",
+      "usedDate": "2023-11-01T08:20:40.746Z",
+      "category": {
+        "id": 0,
+        "categoryName": "스타벅스"
+      },
+      "amount": 5000
+    },
+    {
+      "id": 0,
+      "name": "디지털상품권 5천원권",
+      "barcodeNumber": "8591 2658 7534 3357",
+      "gifticonImagePath": "https://firebasestorage.googleapis.com/v0/b/gift-moa-1d5c8.appspot.com/o/images%2F1698827149340_image.jpeg?alt=media&token=a31d11a6-ad14-42bb-9146-91ec68ad6a7c",
+      "exchangePlace": "메가MGC커피",
+      "dueDate": "2024-01-26T00:00:00.000Z",
+      "gifticonType": "GENERAL",
+      "orderNumber": "1969302141",
+      "status": "AVAILABLE",
+      "usedDate": "2023-11-01T08:20:40.746Z",
+      "category": {
+        "id": 0,
+        "categoryName": "스타벅스"
+      },
+      "amount": 5000
+    },
+    {
+      "id": 0,
+      "name": "디지털상품권 5천원권",
+      "barcodeNumber": "8591 2658 7534 3357",
+      "gifticonImagePath": "https://firebasestorage.googleapis.com/v0/b/gift-moa-1d5c8.appspot.com/o/images%2F1698827149340_image.jpeg?alt=media&token=a31d11a6-ad14-42bb-9146-91ec68ad6a7c",
+      "exchangePlace": "메가MGC커피",
+      "dueDate": "2024-01-26T00:00:00.000Z",
+      "gifticonType": "GENERAL",
+      "orderNumber": "1969302141",
+      "status": "AVAILABLE",
+      "usedDate": "2023-11-01T08:20:40.746Z",
+      "category": {
+        "id": 0,
+        "categoryName": "스타벅스"
+      },
+      "amount": 5000
+    },
+    {
+      "id": 0,
+      "name": "디지털상품권 5천원권",
+      "barcodeNumber": "8591 2658 7534 3357",
+      "gifticonImagePath": "https://firebasestorage.googleapis.com/v0/b/gift-moa-1d5c8.appspot.com/o/images%2F1698827149340_image.jpeg?alt=media&token=a31d11a6-ad14-42bb-9146-91ec68ad6a7c",
+      "exchangePlace": "메가MGC커피",
+      "dueDate": "2024-01-26T00:00:00.000Z",
+      "gifticonType": "GENERAL",
+      "orderNumber": "1969302141",
+      "status": "AVAILABLE",
+      "usedDate": "2023-11-01T08:20:40.746Z",
+      "category": {
+        "id": 0,
+        "categoryName": "스타벅스"
+      },
+      "amount": 5000
+    },
+    {
+      "id": 0,
+      "name": "디지털상품권 5천원권",
+      "barcodeNumber": "8591 2658 7534 3357",
+      "gifticonImagePath": "https://firebasestorage.googleapis.com/v0/b/gift-moa-1d5c8.appspot.com/o/images%2F1698827149340_image.jpeg?alt=media&token=a31d11a6-ad14-42bb-9146-91ec68ad6a7c",
+      "exchangePlace": "메가MGC커피",
+      "dueDate": "2024-01-26T00:00:00.000Z",
+      "gifticonType": "GENERAL",
+      "orderNumber": "1969302141",
+      "status": "AVAILABLE",
+      "usedDate": "2023-11-01T08:20:40.746Z",
+      "category": {
+        "id": 0,
+        "categoryName": "스타벅스"
+      },
+      "amount": 5000
+    },
+    {
+      "id": 0,
+      "name": "디지털상품권 5천원권",
+      "barcodeNumber": "8591 2658 7534 3357",
+      "gifticonImagePath": "https://firebasestorage.googleapis.com/v0/b/gift-moa-1d5c8.appspot.com/o/images%2F1698827149340_image.jpeg?alt=media&token=a31d11a6-ad14-42bb-9146-91ec68ad6a7c",
+      "exchangePlace": "메가MGC커피",
+      "dueDate": "2024-01-26T00:00:00.000Z",
+      "gifticonType": "GENERAL",
+      "orderNumber": "1969302141",
+      "status": "AVAILABLE",
+      "usedDate": "2023-11-01T08:20:40.746Z",
+      "category": {
+        "id": 0,
+        "categoryName": "스타벅스"
+      },
+      "amount": 5000
+    },
+    {
+      "id": 0,
+      "name": "디지털상품권 5천원권",
+      "barcodeNumber": "8591 2658 7534 3357",
+      "gifticonImagePath": "https://firebasestorage.googleapis.com/v0/b/gift-moa-1d5c8.appspot.com/o/images%2F1698827149340_image.jpeg?alt=media&token=a31d11a6-ad14-42bb-9146-91ec68ad6a7c",
+      "exchangePlace": "메가MGC커피",
+      "dueDate": "2024-01-26T00:00:00.000Z",
+      "gifticonType": "GENERAL",
+      "orderNumber": "1969302141",
+      "status": "AVAILABLE",
+      "usedDate": "2023-11-01T08:20:40.746Z",
+      "category": {
+        "id": 0,
+        "categoryName": "스타벅스"
+      },
+      "amount": 5000
+    },
+    {
+      "id": 0,
+      "name": "디지털상품권 5천원권",
+      "barcodeNumber": "8591 2658 7534 3357",
+      "gifticonImagePath": "https://firebasestorage.googleapis.com/v0/b/gift-moa-1d5c8.appspot.com/o/images%2F1698827149340_image.jpeg?alt=media&token=a31d11a6-ad14-42bb-9146-91ec68ad6a7c",
+      "exchangePlace": "메가MGC커피",
+      "dueDate": "2024-01-26T00:00:00.000Z",
+      "gifticonType": "GENERAL",
+      "orderNumber": "1969302141",
+      "status": "AVAILABLE",
+      "usedDate": "2023-11-01T08:20:40.746Z",
+      "category": {
+        "id": 0,
+        "categoryName": "스타벅스"
+      },
+      "amount": 5000
+    }
+  ]
+}
