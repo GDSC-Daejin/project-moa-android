@@ -139,7 +139,7 @@ class ShareRoomReadActivity : AppCompatActivity() {
 
         sBinding.shareGifticonBtn.setOnClickListener {
             val intent = Intent(this@ShareRoomReadActivity, ShareGifticonActivity::class.java).apply {
-
+                putExtra("teamId", shareRoomData!!.id)
             }
             startActivity(intent)
         }

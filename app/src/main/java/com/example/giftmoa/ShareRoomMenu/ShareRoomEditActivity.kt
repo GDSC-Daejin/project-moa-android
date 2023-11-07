@@ -160,19 +160,22 @@ class ShareRoomEditActivity : AppCompatActivity() {
 
                     //Authorization jwt토큰 로그인
                     val interceptor = Interceptor { chain ->
-
                         var newRequest: Request
                         if (token != null && token != "") { // 토큰이 없는 경우
                             // Authorization 헤더에 토큰 추가
-                            newRequest =
+                            /*newRequest =
                                 chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
-                            val expireDate: Long = getExpireDate.toLong()
+                            */
+                            /*val expireDate: Long = getExpireDate.toLong()
                             if (expireDate <= System.currentTimeMillis()) { // 토큰 만료 여부 체크
                                 //refresh 들어갈 곳
                                 newRequest =
                                     chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
                                 return@Interceptor chain.proceed(newRequest)
-                            }
+                            }*/
+                            newRequest =
+                                chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
+                            return@Interceptor chain.proceed(newRequest)
                         } else newRequest = chain.request()
                         chain.proceed(newRequest)
                     }
@@ -296,6 +299,7 @@ class ShareRoomEditActivity : AppCompatActivity() {
                         })
                         .into(sBinding.shareBackgroundImageRegistrationIv)
                 }
+                println("image" + imageFile)
                 sBinding.shareBackgroundImageRegistrationTv.visibility = View.GONE
                 isCheckImage = true
             }

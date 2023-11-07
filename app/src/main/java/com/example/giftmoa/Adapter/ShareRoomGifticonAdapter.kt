@@ -29,6 +29,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.giftmoa.Data.*
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.HomeItemBinding
+import com.example.giftmoa.databinding.ItemGifticonBinding
 import com.example.giftmoa.databinding.ShareRoomItemBinding
 import com.kakao.sdk.common.KakaoSdk.init
 import com.kakao.sdk.common.util.SdkLogLevel
@@ -39,7 +40,7 @@ import kotlin.collections.ArrayList
 
 
 class ShareRoomGifticonAdapter : RecyclerView.Adapter<ShareRoomGifticonAdapter.ShareViewHolder>(){
-    private lateinit var binding : HomeItemBinding
+    private lateinit var binding : ItemGifticonBinding
     var shareRoomGifticonItemData = ArrayList<ShareRoomGifticon>()
     private lateinit var context : Context
     private var pos = 0
@@ -48,12 +49,12 @@ class ShareRoomGifticonAdapter : RecyclerView.Adapter<ShareRoomGifticonAdapter.S
         setHasStableIds(true)
     }
 
-    inner class ShareViewHolder(private val binding : HomeItemBinding ) : RecyclerView.ViewHolder(binding.root) {
+    inner class ShareViewHolder(private val binding : ItemGifticonBinding ) : RecyclerView.ViewHolder(binding.root) {
         private var position : Int? = null
-        private var giftBrand = binding.giftBrand
-        private var giftName = binding.giftName
-        private var giftImg = binding.giftImg
-        private var giftRemainingDay = binding.giftRemainingDay
+        private var giftBrand = binding.tvCouponExchangePlace
+        private var giftName = binding.tvCouponName
+        private var giftImg = binding.ivCouponImage
+        private var giftRemainingDay = binding.tvDDay
 
 
         fun bind(itemData: ShareRoomGifticon, position : Int) {
@@ -67,6 +68,14 @@ class ShareRoomGifticonAdapter : RecyclerView.Adapter<ShareRoomGifticonAdapter.S
                 giftImg.setImageURI(itemData.gifticonImagePath!!.toUri())
             } else {
                 giftImg.setImageResource(R.drawable.image)
+            }
+
+            if (itemData.status == "AVAILABLE") {
+                binding.tvCouponUsedComplete.visibility = View.GONE
+                binding.ivCouponImage.setImageURI(itemData.gifticonImagePath!!.toUri())
+            } else {
+                binding.tvCouponUsedComplete.visibility = View.VISIBLE
+                binding.ivCouponImage.setImageURI(itemData.gifticonImagePath!!.toUri())
             }
 
             val now = System.currentTimeMillis()
@@ -124,7 +133,7 @@ class ShareRoomGifticonAdapter : RecyclerView.Adapter<ShareRoomGifticonAdapter.S
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShareRoomGifticonAdapter.ShareViewHolder {
         context = parent.context
-        binding = HomeItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        binding = ItemGifticonBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ShareViewHolder(binding)
     }
 
@@ -165,7 +174,7 @@ class ShareRoomGifticonAdapter : RecyclerView.Adapter<ShareRoomGifticonAdapter.S
         setMultipleSelection(binding, null, pos)
     }
 
-    private fun setMultipleSelection(binding: HomeItemBinding, s: Int?, adapterPosition : Int) {
+    private fun setMultipleSelection(binding: ItemGifticonBinding, s: Int?, adapterPosition : Int) {
         if(shareRoomGifticonItemData[adapterPosition].isSelected == true){
             shareRoomGifticonItemData[adapterPosition].isSelected = false
             changeBackground(binding, adapterPosition)
@@ -176,12 +185,12 @@ class ShareRoomGifticonAdapter : RecyclerView.Adapter<ShareRoomGifticonAdapter.S
         notifyDataSetChanged()
     }
 
-    private fun changeBackground(binding: HomeItemBinding, position: Int) {
+    private fun changeBackground(binding: ItemGifticonBinding, position: Int) {
         if(shareRoomGifticonItemData[position].isSelected == true){
             val colorStateList = ContextCompat.getColor(context, R.color.moa_gray_300)
-            binding.giftImg.setColorFilter(colorStateList)
+            binding.ivCouponImage.setColorFilter(colorStateList)
         }else{
-            binding.giftImg.clearColorFilter()
+            binding.ivCouponImage.clearColorFilter()
         }
     }
 

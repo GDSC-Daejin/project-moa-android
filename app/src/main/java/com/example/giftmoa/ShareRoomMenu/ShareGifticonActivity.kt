@@ -7,17 +7,24 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.giftmoa.*
 import com.example.giftmoa.Adapter.GifticonListAdapter
 import com.example.giftmoa.Adapter.ShareRoomGifticonAdapter
 import com.example.giftmoa.Data.*
 import com.example.giftmoa.GridSpacingItemDecoration
-import com.example.giftmoa.R
-import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.ActivityShareGifticonBinding
 import com.google.android.material.chip.Chip
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class ShareGifticonActivity : AppCompatActivity() {
     private lateinit var sBinding : ActivityShareGifticonBinding
@@ -30,6 +37,10 @@ class ShareGifticonActivity : AppCompatActivity() {
 
     private var gridManager = GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false)
 
+    private var selectGifticonList = ArrayList<ShareRoomGifticon>()
+
+    private var teamId = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sBinding = ActivityShareGifticonBinding.inflate(layoutInflater)
@@ -37,12 +48,97 @@ class ShareGifticonActivity : AppCompatActivity() {
         initSharedRecyclerView()
         getCategoryListFromServer()
 
+        teamId = intent.getIntExtra("teamId", 0).toInt()
 
         giftAdapter!!.setItemClickListener(object : ShareRoomGifticonAdapter.ItemClickListener {
             override fun onClick(view: View, position: Int, itemId: String) {
+                selectGifticonList.add(gifticonList[position])
 
+                sBinding.shareSelectLl.visibility = View.VISIBLE
+                sBinding.shareSelectTv.text = selectGifticonList.size.toString() +"개 쿠폰 선택됨"
             }
         })
+
+        sBinding.shareGifticonTv.setOnClickListener {
+            CoroutineScope(Dispatchers.IO).launch {
+                val saveSharedPreference = SaveSharedPreference()
+                val token = saveSharedPreference.getToken(this@ShareGifticonActivity).toString()
+                val getExpireDate = saveSharedPreference.getExpireDate(this@ShareGifticonActivity).toString()
+                /*var interceptor = HttpLoggingInterceptor()
+            interceptor = interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+            val client = OkHttpClient.Builder().addInterceptor(interceptor).build()*/
+
+                /*val retrofit = Retrofit.Builder().baseUrl("url 주소")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    //.client(client) 이걸 통해 통신 오류 log찍기 가능
+                    .build()
+                val service = retrofit.create(MioInterface::class.java)*/
+                //통신로그
+
+                /*val loggingInterceptor = HttpLoggingInterceptor()
+                loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+                val clientBuilder = OkHttpClient.Builder().addInterceptor(loggingInterceptor).build()*/
+                //통신
+                val SERVER_URL = BuildConfig.server_URL
+                val retrofit = Retrofit.Builder().baseUrl(SERVER_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                //.client(clientBuilder)
+
+                //Authorization jwt토큰 로그인
+                val interceptor = Interceptor { chain ->
+
+                    var newRequest: Request
+                    if (token != null && token != "") { // 토큰이 없는 경우
+                        // Authorization 헤더에 토큰 추가
+                        newRequest =
+                            chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
+                        /*val expireDate: Long = getExpireDate.toLong()
+                        if (expireDate <= System.currentTimeMillis()) { // 토큰 만료 여부 체크
+                            //refresh 들어갈 곳
+                            newRequest =
+                                chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
+                            return@Interceptor chain.proceed(newRequest)
+                        }*/
+                    } else newRequest = chain.request()
+                    chain.proceed(newRequest)
+                }
+                val builder = OkHttpClient.Builder()
+                builder.interceptors().add(interceptor)
+                val client: OkHttpClient = builder.build()
+                retrofit.client(client)
+                val retrofit2: Retrofit = retrofit.build()
+                val api = retrofit2.create(MoaInterface::class.java)
+
+                for (i in selectGifticonList.indices) {
+                    val temp = TeamShareGiftIcon(teamId,selectGifticonList[i].gifticonId)
+                    api.teamShareGificon(temp).enqueue(object : Callback<ShareRoomGifticonResponseData> {
+                        override fun onResponse(
+                            call: Call<ShareRoomGifticonResponseData>,
+                            response: Response<ShareRoomGifticonResponseData>
+                        ) {
+                            if (response.isSuccessful) {
+                                println("ssisisisi")
+                            } else {
+                                println("faafa")
+                                Log.d("test", response.errorBody()?.string()!!)
+                                Log.d("message", call.request().toString())
+                                println(response.code())
+                            }
+                        }
+
+                        override fun onFailure(
+                            call: Call<ShareRoomGifticonResponseData>,
+                            t: Throwable
+                        ) {
+                            Log.e("ERROR", t.message.toString())
+                        }
+
+                    })
+                }
+            }
+        }
+
+
     }
 
     private fun initSharedRecyclerView() {
