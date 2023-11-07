@@ -175,6 +175,7 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener, Categ
                         Log.d(TAG, "categories: $resposeBody")
                         if (resposeBody != null) {
                             for (category in resposeBody) {
+                                if (category.categoryName == null) continue
                                 categoryList.add(category)
                                 val chip = category.categoryName?.let { createNewChip(it) }
                                 val positionToInsert = binding.chipGroupCategory.childCount - 1

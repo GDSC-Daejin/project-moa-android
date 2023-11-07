@@ -17,6 +17,7 @@ import com.example.giftmoa.Data.GifticonDetailItem
 import com.example.giftmoa.Data.GifticonHistoryData
 import com.example.giftmoa.Data.GifticonHistoryResponse
 import com.example.giftmoa.Data.UpdateGifticonHistoryRequest
+import com.example.giftmoa.Data.UpdateGifticonRequest
 import com.example.giftmoa.Data.UsageHistoryItem
 import com.example.giftmoa.databinding.ActivityGifticonDetailBinding
 import com.example.giftmoa.utils.AssetLoader
@@ -58,56 +59,6 @@ class GifticonDetailActivity: AppCompatActivity() {
 
         initRecyclerView()
 
-        if (gifticonDetail != null) {
-            binding.tvToolbarCategoryName.text = gifticonDetail?.gifticon?.category?.categoryName
-            binding.tvCouponName.text = gifticonDetail?.gifticon?.name
-            // 자르고 싶은 위치와 크기 지정
-            val cropX = 20 // X 시작 위치
-            val cropY = 20 // Y 시작 위치
-            val cropWidth = 215 // 잘라낼 너비
-            val cropHeight = 205 // 잘라낼 높이
-
-            Glide.with(binding.ivCouponImage.context)
-                .asBitmap()
-                .load(gifticonDetail?.gifticon?.gifticonImagePath)
-                .apply(RequestOptions().transform(CustomCropTransformation(cropX, cropY, cropWidth, cropHeight)))
-                .into(binding.ivCouponImage)
-
-            binding.tvBarcodeNumber.text = gifticonDetail?.gifticon?.barcodeNumber
-            binding.tvCouponExchangePlace.text = gifticonDetail?.gifticon?.exchangePlace
-            binding.tvCouponDueDate.text = FormatUtil().DateToString(gifticonDetail?.gifticon?.dueDate.toString())
-            binding.tvCouponOrderNumber.text = gifticonDetail?.gifticon?.orderNumber
-
-            val formattedAmount = gifticonDetail?.gifticon?.gifticonMoney?.toLong()?.let { String.format("%,d", it) }
-
-            if (gifticonDetail?.gifticon?.gifticonMoney != null) {
-                binding.llCouponMoneyInfo.visibility = android.view.View.VISIBLE
-                binding.etCouponRemainAmount.setText(formattedAmount)
-            } else {
-                binding.llCouponMoneyInfo.visibility = android.view.View.GONE
-            }
-
-            val barcode = ImageUtil(this).createBarcode(gifticonDetail?.gifticon?.barcodeNumber.toString().trim())
-            binding.ivBarcodeImage.setImageBitmap(barcode)
-
-            if (gifticonDetail?.teamList != null) {
-                binding.switchCouponAmount.isChecked = true
-                binding.ivShareRoomImage.visibility = android.view.View.VISIBLE
-                Glide.with(binding.ivShareRoomImage.context)
-                    .load(gifticonDetail?.teamList?.get(0)?.teamImage)
-                    .into(binding.ivShareRoomImage)
-            } else {
-                binding.switchCouponAmount.isChecked = false
-                binding.ivShareRoomImage.visibility = android.view.View.GONE
-            }
-
-            if (gifticonDetail?.gifticon?.gifticonType == "AVAILABLE") {
-                binding.btnUsedComplete.text = "사용 완료"
-            } else {
-                binding.btnUsedComplete.text = "사용 취소"
-            }
-        }
-
         binding.tvEnterCouponUsedAmount.setOnClickListener {
             // 5,000 -> 5000
             val usedAmount = binding.etCouponUsedAmount.text.toString().replace(",", "").toIntOrNull() ?: 0
@@ -129,6 +80,28 @@ class GifticonDetailActivity: AppCompatActivity() {
                 sendUsageHistoryToServer(usedAmount)
             }
         }
+
+        /*binding.btnUsedComplete.setOnClickListener {
+            if (gifticonDetail?.gifticon?.status == "AVAILABLE") {
+                binding.btnUsedComplete.text = "사용 취소"
+                val updateGifticonRequest = UpdateGifticonRequest(
+                    id = gifticonId,
+                    name = gifticonDetail?.gifticon?.name,
+                    barcodeNumber = gifticonDetail?.gifticon?.barcodeNumber,
+                    gifticonImagePath = gifticonDetail?.gifticon?.gifticonImagePath,
+                    exchangePlace = gifticonDetail?.gifticon?.exchangePlace,
+                    dueDate = gifticonDetail?.gifticon?.dueDate,
+                    gifticonType = gifticonDetail?.gifticon?.gifticonType,
+                    orderNumber = gifticonDetail?.gifticon?.orderNumber,
+                    gifticonMoney = gifticonDetail?.gifticon?.gifticonMoney,
+                    categoryId = gifticonDetail?.gifticon?.category?.id,
+                    status = "UNAVAILABLE"
+                )
+            } else {
+                gifticonDetail?.gifticon?.status = "AVAILABLE"
+                binding.btnUsedComplete.text = "사용 완료"
+            }
+        }*/
     }
 
     private fun initRecyclerView() {
@@ -175,7 +148,7 @@ class GifticonDetailActivity: AppCompatActivity() {
                             binding.tvCouponDueDate.text = FormatUtil().DateToString(gifticonDetail?.gifticon?.dueDate.toString())
                             binding.tvCouponOrderNumber.text = gifticonDetail?.gifticon?.orderNumber
 
-                            if (gifticonDetail?.gifticon?.gifticonMoney != "null") {
+                            if (gifticonDetail?.gifticon?.gifticonType == "MONEY") {
                                 val formattedAmount = gifticonDetail?.gifticon?.gifticonMoney?.toLongOrNull()?.let { String.format("%,d", it) }
                                 binding.llCouponMoneyInfo.visibility = android.view.View.VISIBLE
                                 binding.etCouponRemainAmount.setText(formattedAmount)
@@ -197,7 +170,7 @@ class GifticonDetailActivity: AppCompatActivity() {
                                 binding.cardViewShareRoom.visibility = android.view.View.GONE
                             }
 
-                            if (gifticonDetail?.gifticon?.gifticonType == "AVAILABLE") {
+                            if (gifticonDetail?.gifticon?.status == "AVAILABLE") {
                                 binding.btnUsedComplete.text = "사용 완료"
                             } else {
                                 binding.btnUsedComplete.text = "사용 취소"

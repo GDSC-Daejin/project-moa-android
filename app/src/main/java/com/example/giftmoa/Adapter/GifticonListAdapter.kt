@@ -54,6 +54,14 @@ class GifticonListAdapter(private val onClick: (Gifticon) -> Unit, var Gifticons
             binding.tvCouponName.text = gifticon.name
             binding.tvCouponExchangePlace.text = gifticon.exchangePlace
 
+            if (gifticon.status == "AVAILABLE") {
+                binding.viewAlpha.visibility = android.view.View.GONE
+                binding.tvCouponUsedComplete.visibility = android.view.View.GONE
+            } else {
+                binding.viewAlpha.visibility = android.view.View.VISIBLE
+                binding.tvCouponUsedComplete.visibility = android.view.View.VISIBLE
+            }
+
             try {
                 //2024-01-26T00:00:00.000+00:00 -> inputFormat
                 val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
@@ -65,9 +73,14 @@ class GifticonListAdapter(private val onClick: (Gifticon) -> Unit, var Gifticons
 
                 if (daysDifference >= 0) {
                     val dDayText = "D-${daysDifference}"
-                    binding.tvDDay.text = dDayText
+                    if (daysDifference == 0L)
+                        binding.tvDDay.text = "D-Day"
+                    else
+                        binding.tvDDay.text = dDayText
+
                 } else {
                     binding.tvDDay.text = "만료"
+                    binding.viewAlpha.visibility = android.view.View.VISIBLE
                 }
             } catch (e: Exception) {
                 // 날짜 파싱에 실패한 경우나 예외 처리
@@ -91,21 +104,6 @@ class GifticonListAdapter(private val onClick: (Gifticon) -> Unit, var Gifticons
     /*fun setOnItemLongClickListener(listener: OnItemLongClickListener) {
         this.itemLongClickListener = listener
     }*/
-
-    fun setAllGifticonList(allGifticonList: List<Gifticon>) {
-        Gifticons = allGifticonList
-        notifyDataSetChanged()
-    }
-
-    fun setAvailableGifticonList(availableGifticonList: List<Gifticon>) {
-        Gifticons = availableGifticonList
-        notifyDataSetChanged()
-    }
-
-    fun setUsedGifticonList(usedGifticonList: List<Gifticon>) {
-        Gifticons = usedGifticonList
-        notifyDataSetChanged()
-    }
 
     companion object {
         val diffUtil = object : DiffUtil.ItemCallback<Gifticon>() {

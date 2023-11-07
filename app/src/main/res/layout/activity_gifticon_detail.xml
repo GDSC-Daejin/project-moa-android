@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:fontFamily="@font/pretendard_bold"
-            android:text="스타벅스"
+            tools:text="스타벅스"
             android:textColor="@color/moa_gray_900"
             android:textSize="16sp" />
 
@@ -70,7 +70,7 @@
                 android:clipToOutline="true"
                 android:contentDescription="기프티콘 이미지"
                 android:scaleType="centerCrop"
-                android:src="@drawable/asset_gifticon_starbucks"
+                tools:src="@drawable/asset_gifticon_starbucks"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -81,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/pretendard_medium"
-                android:text="스타벅스 5만원권"
+                tools:text="스타벅스 5만원권"
                 android:textColor="@color/moa_gray_900"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -94,7 +94,7 @@
                 android:layout_height="81dp"
                 android:layout_marginTop="13dp"
                 android:contentDescription="바코드 이미지"
-                android:src="@drawable/asset_barcode_image"
+                tools:src="@drawable/asset_barcode_image"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_coupon_name" />
@@ -104,7 +104,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/pretendard_medium"
-                android:text="1234 1234 1234"
+                tools:text="1234 1234 1234"
                 android:textColor="@color/moa_gray_900"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -151,7 +151,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
                     android:gravity="end"
-                    android:text="2024년 10월 16일"
+                    tools:text="2024년 10월 16일"
                     android:textColor="@color/moa_gray_400"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -197,7 +197,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
                     android:gravity="end"
-                    android:text="스타벅스"
+                    tools:text="스타벅스"
                     android:textColor="@color/moa_gray_400"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -243,7 +243,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
                     android:gravity="end"
-                    android:text="123412341234"
+                    tools:text="123412341234"
                     android:textColor="@color/moa_gray_400"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -501,7 +501,7 @@
                         android:layout_height="match_parent"
                         android:background="@drawable/background_share_room_item"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/asset_share_room01"
+                        tools:src="@drawable/asset_share_room01"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 

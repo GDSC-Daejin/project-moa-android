@@ -159,21 +159,27 @@ class HomeFragment : Fragment() {
         homeShareRoomNameAdapter.submitList(shareRoomDetailList)
     }
 
-    private fun getHomeGifticonListFromServer() {
-        Retrofit2Generator.create(requireActivity()).getAllGifticonList(size = 20).enqueue(object :
+    private fun getHomeGifticonListFromServer(page: Int) {
+        Retrofit2Generator.create(requireActivity()).getRecentGifticonList(size = 30, page = page).enqueue(object :
             Callback<GetGifticonListResponse> {
             override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
                 if (response.isSuccessful) {
-                    Log.d(TAG, "Retrofit onResponse: ${response.body()}")
                     val responseBody = response.body()
+                    responseBody?.data?.dataList?.let { newList ->
+                        if (page == 0) {
+                            // 첫 페이지인 경우 리스트를 새로 채웁니다.
+                            gifticonList.clear()
+                        }
+                        // 새로운 데이터를 리스트에 추가합니다.
+                        val currentPosition = gifticonList.size
+                        gifticonList.addAll(newList)
 
-                    Log.d(TAG, "responseBody category: $responseBody")
-                    if (responseBody != null) {
-                        gifticonList.clear()
-
-                        responseBody.data?.dataList?.let { gifticonList.addAll(it) }
-                        giftAdapter.submitList(gifticonList)
-                        giftAdapter.notifyDataSetChanged()
+                        // 어댑터에 데이터가 변경되었음을 알립니다.
+                        // DiffUtil.Callback 사용을 위한 submitList는 비동기 처리를 하므로 리스트의 사본을 넘깁니다.
+                        giftAdapter.submitList(gifticonList.toList())
+                        // 또는
+                        // DiffUtil을 사용하지 않는 경우
+                        //giftAdapter.notifyItemRangeInserted(currentPosition, newList.size)
                     }
                 } else {
                     Log.e(TAG, "Error: ${response.errorBody()?.string()}")
@@ -214,7 +220,7 @@ class HomeFragment : Fragment() {
         super.onStart()
         Log.d(TAG, "onStart: ")
 
-        getHomeGifticonListFromServer()
+        getHomeGifticonListFromServer(0)
 
         //initHomeRecyclerView()
     }

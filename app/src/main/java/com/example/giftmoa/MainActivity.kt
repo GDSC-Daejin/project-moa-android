@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         Log.d("MainActivity", "refreshToken: $refreshToken")
         Log.d("MainActivity", "accessTokenExpiresIn: $accessTokenExpiresIn")
 
+
         mBinding = ActivityMainBinding.inflate(layoutInflater)
 
         setContentView(mBinding.root)

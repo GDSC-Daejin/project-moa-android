@@ -38,25 +38,37 @@ interface ApiService {
 
     // 사용가능한 기프티콘 리스트
     @GET("/api/v1/gifticon/usable_list")
-    fun getUsableGifticonList(@Query("size") size: Int?): Call<GetGifticonListResponse>
+    fun getUsableGifticonList(
+        @Query("size") size: Int?,
+        @Query("page") page: Int?
+    ): Call<GetGifticonListResponse>
 
     // 사용불가한 기프티콘 리스트
     @GET("/api/v1/gifticon/disabled_list")
-    fun getUsedGifticonList(@Query("size") size: Int?): Call<GetGifticonListResponse>
+    fun getUsedGifticonList(
+        @Query("size") size: Int?,
+        @Query("page") page: Int?
+    ): Call<GetGifticonListResponse>
 
     // 전체 기프티콘 리스트
     @GET("/api/v1/gifticon/all_list")
-    fun getAllGifticonList(@Query("size") size: Int?): Call<GetGifticonListResponse>
+    fun getAllGifticonList(
+        @Query("size") size: Int?,
+        @Query("page") page: Int?
+    ): Call<GetGifticonListResponse>
 
     // 최근 기프티콘 리스트
     @GET("/api/v1/gifticon/recent_list")
-    fun getRecentGifticonList(@Query("size") size: Int?): Call<GetGifticonListResponse>
+    fun getRecentGifticonList(
+        @Query("size") size: Int?,
+        @Query("page") page: Int?
+    ): Call<GetGifticonListResponse>
 
     // 카테고리별 기프티콘 리스트
     @GET("/api/v1/gifticon/category_list")
     fun getCategoryGifticonList(
         @Query("categoryId") categoryId: Long,
-        @Query("size") size: Int?
+        @Query("size") size: Int?, @Query("page") page: Int?
     ): Call<GetGifticonListResponse>
 
     // 금액권 사용기록 가져오기

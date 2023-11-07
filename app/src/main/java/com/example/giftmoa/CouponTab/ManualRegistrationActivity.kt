@@ -3,25 +3,45 @@ package com.example.giftmoa.CouponTab
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.giftmoa.Adapter.CategoryAdapter
 import com.example.giftmoa.BottomMenu.CategoryListener
 import com.example.giftmoa.BottomSheetFragment.CategoryBottomSheet
+import com.example.giftmoa.Data.AddCategoryRequest
+import com.example.giftmoa.Data.AddCategoryResponse
+import com.example.giftmoa.Data.AddGifticonRequest
 import com.example.giftmoa.Data.AutoRegistrationData
 import com.example.giftmoa.Data.Category
 import com.example.giftmoa.Data.CategoryItem
+import com.example.giftmoa.Data.GetCategoryListResponse
+import com.example.giftmoa.Data.GetGifticonDetailResponse
+import com.example.giftmoa.Data.Gifticon
+import com.example.giftmoa.Data.GifticonDetail
+import com.example.giftmoa.Data.GifticonDetailData
 import com.example.giftmoa.Data.GifticonDetailItem
+import com.example.giftmoa.Data.UpdateGifticonRequest
+import com.example.giftmoa.Data.UpdateGifticonResponse
 import com.example.giftmoa.HomeTab.CouponViewModel
 import com.example.giftmoa.R
+import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.ActivityManualRegistrationBinding
 import com.example.giftmoa.utils.AssetLoader
+import com.example.giftmoa.utils.CustomCropTransformation
 import com.example.giftmoa.utils.FormatUtil
+import com.example.giftmoa.utils.ImageUtil
 import com.google.android.material.chip.Chip
 import com.google.gson.Gson
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
 
@@ -31,32 +51,32 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
     private val categoryList = mutableListOf<CategoryItem>()
     private lateinit var categoryAdapter: CategoryAdapter
 
-    private lateinit var couponViewModel: CouponViewModel
-
     private var gifticon: GifticonDetailItem? = null
 
+    //private var gifticonId: Long? = null
+
     private var isEdit = false
+
+    private var gifticonDetail: GifticonDetail? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        couponViewModel =
-            ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(
-                CouponViewModel::class.java
-            )
-
         binding = ActivityManualRegistrationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        gifticon = if (Build.VERSION.SDK_INT >= 33) {
+        /*gifticon = if (Build.VERSION.SDK_INT >= 33) {
             intent.getParcelableExtra("gifticon", GifticonDetailItem::class.java)
         } else {
             intent.getParcelableExtra<GifticonDetailItem>("gifticon")
         }
+        isEdit = intent.getBooleanExtra("isEdit", false)*/
+
+        val gifticonId = intent.getLongExtra("gifticonId", 0)
         isEdit = intent.getBooleanExtra("isEdit", false)
 
-        if (gifticon != null && isEdit) {
-            binding.tvToolbarTitle.text = "기프티콘 수정"
+        if (gifticonId != null && isEdit) {
+            /*binding.tvToolbarTitle.text = "기프티콘 수정"
             binding.btnConfirm.text = "수정"
 
             binding.etCouponName.setText(gifticon!!.name)
@@ -68,15 +88,14 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
                 binding.tvCouponAmountUnit.visibility = android.view.View.VISIBLE
                 binding.switchCouponAmount.isChecked = true
                 binding.etCouponAmount.setText(gifticon!!.amount.toString())
-            }
+            }*/
+            getGiftionDetailFromServer(gifticonId)
         } else {
             binding.switchCouponAmount.isClickable = true
         }
+        getCategoryListFromServer()
 
         categoryAdapter = CategoryAdapter()
-
-        getJsonData()
-
 
         binding.switchCouponAmount.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -91,9 +110,102 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
         binding.ivAddCategory.setOnClickListener {
             showCategoryBottomSheet(categoryList)
         }
+
+        binding.btnConfirm.setOnClickListener {
+            if (gifticonId != null && isEdit) {
+                editGifticon(gifticonDetail!!)
+            } else {
+                //updateGifticon = registerGifticon2()
+                addGifticon()
+            }
+            //couponViewModel.addData(updateGifticon)
+        }
     }
 
-    private fun editGifticon(gifticon: GifticonDetailItem) {
+    private fun getGiftionDetailFromServer(gifticonId: Long) {
+        Retrofit2Generator.create(this).getGifticonDetail(gifticonId = gifticonId).enqueue(object :
+            Callback<GetGifticonDetailResponse> {
+            override fun onResponse(call: Call<GetGifticonDetailResponse>, response: Response<GetGifticonDetailResponse>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "Retrofit onResponse: ${response.body()}")
+                    val responseBody = response.body()
+
+                    if (responseBody != null) {
+                        if (responseBody.data != null) {
+                            gifticonDetail = responseBody.data.gifticon
+
+                            binding.tvToolbarTitle.text = "기프티콘 수정"
+                            binding.btnConfirm.text = "수정"
+
+                            binding.etCouponName.setText(gifticonDetail!!.name)
+                            binding.etBarcodeNumber.setText(gifticonDetail!!.barcodeNumber.toString())
+                            binding.etExchangePlace.setText(gifticonDetail!!.exchangePlace)
+                            binding.etDueDate.setText(gifticonDetail!!.dueDate?.let { FormatUtil().DateToString(it) })
+                            binding.etOrderNumber.setText(gifticonDetail!!.orderNumber)
+                            if (gifticonDetail!!.gifticonType == "MONEY") {
+                                binding.etCouponAmount.visibility = android.view.View.VISIBLE
+                                binding.tvCouponAmountUnit.visibility = android.view.View.VISIBLE
+                                binding.switchCouponAmount.isChecked = true
+                                binding.etCouponAmount.setText(gifticon!!.amount.toString())
+                            }
+                            // giftcionDetail의 카테고리 이름을 가져와서 해당 카테고리 chip을 선택
+                            for (i in 0 until binding.chipGroupCategory.childCount) {
+                                val childView = binding.chipGroupCategory.getChildAt(i)
+                                if (childView is Chip) {
+                                    val chip = childView as Chip
+                                    if (chip.text == gifticonDetail!!.category?.categoryName) {
+                                        chip.isChecked = true
+                                        break
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
+                } else {
+                    Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<GetGifticonDetailResponse>, t: Throwable) {
+                Log.e(TAG, "Retrofit onFailure: ", t)
+            }
+        })
+    }
+
+    private fun getCategoryListFromServer() {
+        Retrofit2Generator.create(this).getCategoryList().enqueue(object : Callback<GetCategoryListResponse> {
+            override fun onResponse(call: Call<GetCategoryListResponse>, response: Response<GetCategoryListResponse>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "Retrofit onResponse: ${response.body()}")
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        val resposeBody = responseBody.data
+
+                        Log.d(TAG, "categories: $resposeBody")
+                        if (resposeBody != null) {
+                            for (category in resposeBody) {
+                                if (category.categoryName == null) continue
+                                categoryList.add(category)
+                                val chip = category.categoryName?.let { createNewChip(it) }
+                                val positionToInsert = binding.chipGroupCategory.childCount - 1
+                                binding.chipGroupCategory.addView(chip, positionToInsert)
+                            }
+                        }
+                    }
+                } else {
+                    Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<GetCategoryListResponse>, t: Throwable) {
+                Log.e(TAG, "Retrofit onFailure: ", t)
+            }
+        })
+    }
+
+    private fun editGifticon(gifticon: GifticonDetail) {
         // 클릭된 카테고리 chip의 text를 가져옴
         val selectedCategory = binding.chipGroupCategory.findViewById<Chip>(binding.chipGroupCategory.checkedChipId)
         val categoryName = selectedCategory?.text
@@ -107,28 +219,62 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
             }
         }
 
-        val updatedGifticon = GifticonDetailItem(
-            id = gifticon.id,
+        val gifticonType = if (binding.switchCouponAmount.isChecked) "MONEY" else "GENERAL"
+
+        val updatedGifticon = UpdateGifticonRequest(
+            id = gifticon.gifticonId,
             name = binding.etCouponName.text.toString(),
             barcodeNumber = binding.etBarcodeNumber.text.toString(),
+            gifticonImagePath = gifticon.gifticonImagePath,
             exchangePlace = binding.etExchangePlace.text.toString(),
             dueDate = gifticon.dueDate,
-            category = Category(id = categoryId, categoryName = categoryName.toString()),
-            amount = if (binding.switchCouponAmount.isChecked) binding.etCouponAmount.text.toString().toLong() else null,
+            orderNumber = binding.etOrderNumber.text.toString(),
+            gifticonType = gifticonType,
+            gifticonMoney = if (binding.switchCouponAmount.isChecked) binding.etCouponAmount.text.toString() else null,
+            categoryId = categoryId,
         )
 
         Log.d(TAG, "editGifticon: $updatedGifticon")
 
+        /*Log.d(TAG, "editGifticon: $updatedGifticon")
+
         val data = Intent().apply {
             putExtra("updatedGifticon", updatedGifticon)
             putExtra("isEdit", isEdit)
         }
         setResult(RESULT_OK, data)
 
-        finish()
+        finish()*/
+        updateGifticonToServer(updatedGifticon)
     }
 
-    private fun registerGifticon() {
+    private fun updateGifticonToServer(gifticon: UpdateGifticonRequest) {
+        Retrofit2Generator.create(this).updateGifticon(gifticon).enqueue(object :
+            Callback<UpdateGifticonResponse> {
+            override fun onResponse(call: Call<UpdateGifticonResponse>, response: Response<UpdateGifticonResponse>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "Retrofit onResponse: ${response.body()}")
+                    val responseBody = response.body()
+
+                    Log.d(TAG, "responseBody gifticon: $responseBody")
+
+                    // 2초 후에 화면 종료
+                   /* Handler(Looper.getMainLooper()).postDelayed({
+                        finish()
+                    }, 2000)*/
+                    finish()
+                } else {
+                    Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<UpdateGifticonResponse>, t: Throwable) {
+                Log.e(TAG, "Retrofit onFailure: ", t)
+            }
+        })
+    }
+
+    private fun addGifticon() {
         // 클릭된 카테고리 chip의 text를 가져옴
         val selectedCategory = binding.chipGroupCategory.findViewById<Chip>(binding.chipGroupCategory.checkedChipId)
         val categoryName = selectedCategory?.text
@@ -142,29 +288,53 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
             }
         }
 
-        val updatedGifticon = GifticonDetailItem(
+        val updatedGifticon = AddGifticonRequest(
             name = binding.etCouponName.text.toString(),
             barcodeNumber = binding.etBarcodeNumber.text.toString(),
             exchangePlace = binding.etExchangePlace.text.toString(),
             dueDate = FormatUtil().StringToDate(binding.etDueDate.text.toString(), TAG),
-            gifticonType = if (binding.switchCouponAmount.isChecked) "MONEY" else "GENERAL",
             orderNumber = binding.etOrderNumber.text.toString(),
-            category = Category(id = categoryId, categoryName = categoryName.toString()),
-            amount = if (binding.switchCouponAmount.isChecked) binding.etCouponAmount.text.toString().toLong() else null,
+            gifticonType = if (binding.switchCouponAmount.isChecked) "MONEY" else "GENERAL",
+            gifticonMoney = if (binding.switchCouponAmount.isChecked) binding.etCouponAmount.text.toString() else null,
+            categoryId = categoryId,
         )
 
         Log.d(TAG, "registerGifticon: $updatedGifticon")
 
-        val data = Intent().apply {
+        /*val data = Intent().apply {
             putExtra("updatedGifticon", updatedGifticon)
             putExtra("isEdit", isEdit)
         }
         setResult(RESULT_OK, data)
 
-        finish()
+        finish()*/
+        uploadGifticonToServer(updatedGifticon)
     }
 
-    private fun getJsonData() {
+    private fun uploadGifticonToServer(gifticon: AddGifticonRequest) {
+        Retrofit2Generator.create(this).addGifticon(gifticon).enqueue(object :
+            Callback<UpdateGifticonResponse> {
+            override fun onResponse(call: Call<UpdateGifticonResponse>, response: Response<UpdateGifticonResponse>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "Retrofit onResponse: ${response.body()}")
+                    val responseBody = response.body()
+
+                    Log.d(TAG, "responseBody gifticon: $responseBody")
+
+                    finish()
+                } else {
+                    Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<UpdateGifticonResponse>, t: Throwable) {
+                Log.e(TAG, "Retrofit onFailure: ", t)
+            }
+        })
+    }
+
+
+    /*private fun getJsonData() {
         val assetLoader = AssetLoader()
         val autoRegistrationJsonString = assetLoader.getJsonString(this, "autoRegistration.json")
         //Log.d(TAG, autoRegistrationJsonString ?: "null")
@@ -183,7 +353,7 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
 
             categoryAdapter.submitList(categoryList)
         }
-    }
+    }*/
 
     private fun createNewChip(text: String): Chip {
         val chip = layoutInflater.inflate(R.layout.category_chip_layout, null, false) as Chip
@@ -216,12 +386,35 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
     }
 
     override fun onCategoryUpdated(categoryName: String) {
-        Log.d(TAG, "onCategoryUpdated: $categoryName")
-        val chip = createNewChip(categoryName)
-        val positionToInsert = binding.chipGroupCategory.childCount - 1
-        binding.chipGroupCategory.addView(chip, positionToInsert)
-        // categoryList에 추가
-        categoryList.add(CategoryItem(0, categoryName))
+        val categoryRequest = AddCategoryRequest(categoryName)
+        // Retrofit을 이용해서 서버에 카테고리 추가 요청
+        // 서버에서 카테고리 추가가 완료되면 아래 코드를 실행
+        Retrofit2Generator.create(this).addCategory(categoryRequest).enqueue(object : Callback<AddCategoryResponse> {
+            override fun onResponse(call: Call<AddCategoryResponse>, response: Response<AddCategoryResponse>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "Retrofit onResponse: ${response.body()}")
+                    val responseBody = response.body()
+
+                    Log.d(TAG, "responseBody category: $responseBody")
+                    if (responseBody != null) {
+                        val category = responseBody.data
+                        // categoryList에 추가
+                        if (category != null) {
+                            val chip = category.categoryName?.let { createNewChip(it) }
+                            val positionToInsert = binding.chipGroupCategory.childCount - 1
+                            binding.chipGroupCategory.addView(chip, positionToInsert)
+                            categoryList.add(category)
+                        }
+                    }
+                } else {
+                    Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<AddCategoryResponse>, t: Throwable) {
+                Log.e(TAG, "Retrofit onFailure: ", t)
+            }
+        })
     }
 
     override fun onCategoryDeleted(categoryName: String) {
@@ -234,30 +427,14 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
                 // categoryList에서 해당 카테고리 삭제
                 categoryList.remove(category)
                 deleteChip(categoryName)
+                Log.d(TAG, "onCategoryDeleted: $categoryId")
+                Log.d(TAG, "onCategoryDeleted: $categoryList")
                 break
             }
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        Log.d(TAG, "onStart: ")
-
-        var updateGifticon: GifticonDetailItem
-
-        binding.btnConfirm.setOnClickListener {
-            if (gifticon != null && isEdit) {
-                updateGifticon = editGifticon2(gifticon!!)
-            } else {
-                updateGifticon = registerGifticon2()
-            }
-            //couponViewModel.addData(updateGifticon)
-
-            finish()
-        }
-    }
-
-    private fun editGifticon2(gifticon: GifticonDetailItem): GifticonDetailItem {
+    /*private fun editGifticon2(gifticon: GifticonDetailItem): GifticonDetailItem {
         // 클릭된 카테고리 chip의 text를 가져옴
         val selectedCategory = binding.chipGroupCategory.findViewById<Chip>(binding.chipGroupCategory.checkedChipId)
         val categoryName = selectedCategory?.text
@@ -284,9 +461,9 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
         Log.d(TAG, "editGifticon: $updatedGifticon")
 
         return updatedGifticon
-    }
+    }*/
 
-    private fun registerGifticon2(): GifticonDetailItem {
+    /*private fun registerGifticon2(): GifticonDetailItem {
         // 클릭된 카테고리 chip의 text를 가져옴
         val selectedCategory = binding.chipGroupCategory.findViewById<Chip>(binding.chipGroupCategory.checkedChipId)
         val categoryName = selectedCategory?.text
@@ -314,5 +491,5 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
         Log.d(TAG, "registerGifticon: $updatedGifticon")
 
         return updatedGifticon
-    }
+    }*/
 }

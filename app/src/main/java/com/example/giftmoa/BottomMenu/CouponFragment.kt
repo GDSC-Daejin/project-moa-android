@@ -184,7 +184,7 @@ class CouponFragment : Fragment(), CategoryListener {
         }*/
 
         // CouponFragment에서 쿠폰 추가 또는 수정을 처리하는 부분
-        manualAddGifticonResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        /*manualAddGifticonResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val updatedGifticon = if (Build.VERSION.SDK_INT >= 33) {
                     result.data?.getParcelableExtra("updatedGifticon", GifticonDetailItem::class.java)
@@ -206,11 +206,11 @@ class CouponFragment : Fragment(), CategoryListener {
                     }
                 }
             }
-        }
+        }*/
 
         getJsonData()
 
-        getCategoryListFromServer()
+
 
         //distributeDataToFragments(homeTabAdapter)
 
@@ -436,7 +436,7 @@ class CouponFragment : Fragment(), CategoryListener {
         return BoundingBox(minX, maxX, minY, maxY)
     }
 
-    private fun showCategoryBottomSheet(cateogoryList: List<CategoryItem>) {
+    private fun showCategoryBottomSheet(categoryList: List<CategoryItem>) {
         val categoryBottomSheet = CategoryBottomSheet(categoryList, this)
         categoryBottomSheet.setStyle(DialogFragment.STYLE_NORMAL, R.style.RoundCornerBottomSheetDialogTheme)
         categoryBottomSheet.show(requireActivity().supportFragmentManager, categoryBottomSheet.tag)
@@ -458,7 +458,7 @@ class CouponFragment : Fragment(), CategoryListener {
                 } else {
                     // 그 외의 경우 usedGifticonList에 추가
                     usedGifticonList.add(gifticon)
-                }
+                }getCategoryListFromServer()
             }*/
         }
     }
@@ -625,9 +625,11 @@ class CouponFragment : Fragment(), CategoryListener {
                             }
 
                             "수동 등록" -> {
-                                manualAddGifticonResult.launch(Intent(requireActivity(), ManualRegistrationActivity::class.java).apply {
+                                val intent = Intent(requireActivity(), ManualRegistrationActivity::class.java)
+                                startActivity(intent)
+                                /*manualAddGifticonResult.launch(Intent(requireActivity(), ManualRegistrationActivity::class.java).apply {
                                     putExtra("isEdit", false)
-                                })
+                                })*/
                             }
                         }
                     }
