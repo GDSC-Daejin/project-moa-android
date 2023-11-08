@@ -128,6 +128,12 @@ class ShareRoomGifticonAdapter : RecyclerView.Adapter<ShareRoomGifticonAdapter.S
                 setMultipleSelection(binding, itemData.gifticonId, clickedPosition)
                 //onItemClickListener?.let { it(expense) }            }
             }*/
+
+            binding.root.setOnClickListener {
+                itemClickListener.onClick(it, position, shareRoomGifticonItemData[position].gifticonId.toString())
+                pos = position
+                setMultipleSelection(binding, null, pos)
+            }
         }
     }
 
@@ -139,11 +145,11 @@ class ShareRoomGifticonAdapter : RecyclerView.Adapter<ShareRoomGifticonAdapter.S
 
     override fun onBindViewHolder(holder: ShareViewHolder, position: Int) {
         holder.bind(shareRoomGifticonItemData[holder.adapterPosition], position)
-        holder.itemView.setOnClickListener {
+        /*holder.itemView.setOnClickListener {
             itemClickListener.onClick(it, holder.adapterPosition, shareRoomGifticonItemData[holder.adapterPosition].gifticonId.toString())
             pos = holder.adapterPosition
             setMultipleSelection(binding, null, pos)
-        }
+        }*/
     }
 
     override fun getItemCount(): Int {
@@ -171,7 +177,6 @@ class ShareRoomGifticonAdapter : RecyclerView.Adapter<ShareRoomGifticonAdapter.S
 
     fun setItemClickListener(itemClickListener: ShareRoomGifticonAdapter.ItemClickListener) {
         this.itemClickListener = itemClickListener
-        setMultipleSelection(binding, null, pos)
     }
 
     private fun setMultipleSelection(binding: ItemGifticonBinding, s: Int?, adapterPosition : Int) {

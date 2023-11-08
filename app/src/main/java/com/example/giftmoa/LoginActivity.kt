@@ -77,7 +77,6 @@ class LoginActivity : AppCompatActivity() {
                 //TextMsg(this, "카카오계정으로 로그인 실패 : ${error}")
                 Log.e("ERROR" , "${error}")
             } else if (token != null) {
-
                 Log.d("[카카오로그인]","로그인에 성공하였습니다.\n${token.accessToken}")
                 UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
                     UserApiClient.instance.me { user, error ->
@@ -86,8 +85,7 @@ class LoginActivity : AppCompatActivity() {
                                 "me: ${user!!.kakaoAccount!!.name}")*/
 
                         val sharedPreference = SaveSharedPreference()
-                        sharedPreference.setToken(this@LoginActivity, token.accessToken)
-                        sharedPreference.setName(this@LoginActivity, user!!.kakaoAccount!!.name)
+
 
                         CoroutineScope(Dispatchers.IO).launch {
                             service.kakaoLogin(token.accessToken).enqueue(object : retrofit2.Callback<KakaoLoginUserData> {
@@ -101,10 +99,13 @@ class LoginActivity : AppCompatActivity() {
                                             .connectTimeout(1, TimeUnit.SECONDS)
                                             .readTimeout(30, TimeUnit.SECONDS)
                                             .writeTimeout(15, TimeUnit.SECONDS)
-                                            .addInterceptor(HeaderInterceptor(response.body()!!.data.accessToken))
+                                            .addInterceptor(HeaderInterceptor(token.accessToken))
                                         builder.build()
-
-
+                                        intent.apply {
+                                            putExtra("accessToken", sharedPreference.setToken(this@LoginActivity, response.body()!!.data.accessToken).toString())
+                                            putExtra("expireDate", sharedPreference.setExpireDate(this@LoginActivity, response.body()!!.data.accessTokenExpiresIn.toString()).toString())
+                                            putExtra("userName", sharedPreference.setName(this@LoginActivity, user!!.kakaoAccount!!.name).toString())
+                                        }
                                     } else {
                                         println("faafa")
                                         Log.d("test", response.errorBody()?.string()!!)
@@ -118,14 +119,6 @@ class LoginActivity : AppCompatActivity() {
                             })
                         }
 
-                        /*//TODO: 최종적으로 카카오로그인 및 유저정보 가져온 결과
-                        UserApiClient.instance.me { user, error ->
-                            TextMsg(this, "카카오계정으로 로그인 성공 \n\n " +
-                                    "token: ${token.accessToken} \n\n " +
-                                    "me: ${user}")
-
-                            Log.e("TEST", "${token.idToken}")
-                        }*/
                         val intent = Intent(this@LoginActivity, MainActivity::class.java)
                         startActivity(intent)
                         this.finish()

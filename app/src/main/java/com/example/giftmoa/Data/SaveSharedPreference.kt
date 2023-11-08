@@ -7,7 +7,7 @@ import androidx.preference.PreferenceManager
 class SaveSharedPreference {
     private val acctoken = "token"
     private val expireDate = "expireDate"
-    private val name = "name"
+    private val userName = "name"
 
     fun getSharedPreferences(ctx: Context?): SharedPreferences {
         return PreferenceManager.getDefaultSharedPreferences(ctx!!)
@@ -15,11 +15,11 @@ class SaveSharedPreference {
 
     fun setName(ctx: Context?, name: String?) {
         val editor = getSharedPreferences(ctx).edit()
-        editor.putString(name, name)
+        editor.putString(userName, name)
         editor.apply()
     }
     fun getName(ctx: Context?): String? {
-        return getSharedPreferences(ctx).getString(name, "")
+        return getSharedPreferences(ctx).getString(userName, "")
     }
 
 

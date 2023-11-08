@@ -5,15 +5,23 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.ViewTreeObserver
 import android.widget.Toast
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.giftmoa.Data.Data1
 import com.example.giftmoa.Data.GetKakaoLoginResponse
+import com.example.giftmoa.Data.SaveSharedPreference
 import com.example.giftmoa.databinding.ActivityLoginBinding
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.AuthError
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,6 +30,10 @@ class Login2Activity: AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private val TAG = "LoginActivity"
+
+    private val sharedPreference = SaveSharedPreference()
+
+    private var isReady = false
 
     // 카카오계정으로 로그인 공통 callback 구성
     // 카카오톡으로 로그인 할 수 없어 카카오계정으로 로그인할 경우 사용됨
@@ -41,6 +53,7 @@ class Login2Activity: AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        initSplashScreen()
         super.onCreate(savedInstanceState)
 
         binding  = ActivityLoginBinding.inflate(layoutInflater)
@@ -64,6 +77,10 @@ class Login2Activity: AppCompatActivity() {
                         // 카카오톡에 연결된 카카오계정이 없는 경우, 카카오계정으로 로그인 시도
                         UserApiClient.instance.loginWithKakaoAccount(this, callback = callback)
                     } else if (token != null) {
+                        UserApiClient.instance.me { user, error ->
+                            sharedPreference.setName(this@Login2Activity, user!!.kakaoAccount!!.name).toString()
+                        }
+
                         Toast.makeText(this, "카카오톡으로 로그인 성공", Toast.LENGTH_SHORT).show()
 
                         Log.i(TAG, "accessToken: ${token}")
@@ -110,5 +127,34 @@ class Login2Activity: AppCompatActivity() {
             putLong("accessTokenExpiresIn", data.accessTokenExpiresIn)
             apply() // 비동기적으로 데이터를 저장
         }
+    }
+
+    private fun initData() {
+        // 별도의 데이터 처리가 없기 때문에 3초의 딜레이를 줌.
+        // 선행되어야 하는 작업이 있는 경우, 이곳에서 처리 후 isReady를 변경.
+        CoroutineScope(Dispatchers.IO).launch {
+            delay(1000)
+        }
+        isReady = true
+    }
+    private fun initSplashScreen() {
+        initData()
+        val splashScreen = installSplashScreen()
+        val content: View = findViewById(android.R.id.content)
+        // SplashScreen이 생성되고 그려질 때 계속해서 호출된다.
+        content.viewTreeObserver.addOnPreDrawListener(
+            object : ViewTreeObserver.OnPreDrawListener {
+                override fun onPreDraw(): Boolean {
+                    return if (isReady) {
+                        // 3초 후 Splash Screen 제거
+                        content.viewTreeObserver.removeOnPreDrawListener(this)
+                        true
+                    } else {
+                        // The content is not ready
+                        false
+                    }
+                }
+            }
+        )
     }
 }

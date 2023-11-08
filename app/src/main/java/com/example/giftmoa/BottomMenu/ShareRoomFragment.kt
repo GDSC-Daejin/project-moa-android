@@ -25,6 +25,9 @@ import com.example.giftmoa.databinding.FragmentShareRoomBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -97,6 +100,9 @@ class ShareRoomFragment : Fragment() {
 
 
        sBinding.shareCreateBtn.setOnClickListener {
+           println(identification)
+           println(saveSharedPreference.getToken(requireActivity()).toString())
+
             val layoutInflater = LayoutInflater.from(activity)
             val view = layoutInflater.inflate(R.layout.dialog_layout, null)
             val alertDialog = AlertDialog.Builder(activity, R.style.CustomAlertDialog)
@@ -172,19 +178,76 @@ class ShareRoomFragment : Fragment() {
     }
 
     private fun setRoomData() {
+        val saveSharedPreference = SaveSharedPreference()
+        val token = saveSharedPreference.getToken(requireActivity()).toString()
+        val getExpireDate = saveSharedPreference.getExpireDate(requireActivity()).toString()
+        /*var interceptor = HttpLoggingInterceptor()
+    interceptor = interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+    val client = OkHttpClient.Builder().addInterceptor(interceptor).build()*/
+
+        /*val retrofit = Retrofit.Builder().baseUrl("url 주소")
+            .addConverterFactory(GsonConverterFactory.create())
+            //.client(client) 이걸 통해 통신 오류 log찍기 가능
+            .build()
+        val service = retrofit.create(MioInterface::class.java)*/
+        //통신로그
+
+        /*val loggingInterceptor = HttpLoggingInterceptor()
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+        val clientBuilder = OkHttpClient.Builder().addInterceptor(loggingInterceptor).build()*/
+        //통신
+        val SERVER_URL = BuildConfig.server_URL
+        val retrofit = Retrofit.Builder().baseUrl(SERVER_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+        //.client(clientBuilder)
+
+        //Authorization jwt토큰 로그인
+        val interceptor = Interceptor { chain ->
+
+            var newRequest: Request
+            if (token != null && token != "") { // 토큰이 없는 경우
+                // Authorization 헤더에 토큰 추가
+                newRequest =
+                    chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
+                /*val expireDate: Long = getExpireDate.toLong()
+                if (expireDate <= System.currentTimeMillis()) { // 토큰 만료 여부 체크
+                    //refresh 들어갈 곳
+                    newRequest =
+                        chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
+                    return@Interceptor chain.proceed(newRequest)
+                }*/
+            } else newRequest = chain.request()
+            chain.proceed(newRequest)
+        }
+        val builder = OkHttpClient.Builder()
+        builder.interceptors().add(interceptor)
+        val client: OkHttpClient = builder.build()
+        retrofit.client(client)
+        val retrofit2: Retrofit = retrofit.build()
+        val api = retrofit2.create(MoaInterface::class.java)
+
+        println("token" + token)
         CoroutineScope(Dispatchers.IO).launch {
-            service.getMyShareRoom().enqueue(object : Callback<ShareRoomGetTeamData> {
+            api.getMyShareRoom().enqueue(object : Callback<ShareRoomGetTeamData> {
                 override fun onResponse(
                     call: Call<ShareRoomGetTeamData>,
                     response: Response<ShareRoomGetTeamData>
                 ) {
                     if (response.isSuccessful) {
+                        Log.e("TEST", "setSucccccc")
                         println("setSuc")
-
                         shareRoomAllData.clear()
 
-                        for (i in response.body()!!.data.indices) {
 
+
+                        for (i in response.body()!!.data.indices) {
+                            /*var teamLeaderNickName = ""
+                            teamLeaderNickName = try {
+                                response.body()!!.data[i].teamLeaderNickName
+                            } catch (e : java.lang.NullPointerException) {
+                                Log.d("null", e.toString())
+                                "null"
+                            }*/
                             shareRoomAllData.add(GetTeamData(
                                 response.body()!!.data[i].id,
                                 response.body()!!.data[i].teamCode,
