@@ -7,6 +7,8 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.giftmoa.Data.GetKakaoLoginResponse
 import com.example.giftmoa.Data.RefreshTokenRequest
+import com.example.giftmoa.databinding.ActivityMyProfileBinding
+import com.example.giftmoa.databinding.ActivitySplashBinding
 import com.kakao.sdk.auth.AuthApiClient
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.util.Utility
@@ -17,9 +19,13 @@ import retrofit2.Response
 
 class SplashActivity: AppCompatActivity() {
 
+    private lateinit var binding: ActivitySplashBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //KakaoSdk.init(this, "ddf76b216d0d2c4c13a9f777aac121a5")
+
+        binding = ActivitySplashBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         var keyHash = Utility.getKeyHash(this)
         Log.e("HashKey", keyHash)

@@ -14,6 +14,7 @@ import com.example.giftmoa.Data.GetMyProfileResponse
 import com.example.giftmoa.Data.LogoutUserResponse
 import com.example.giftmoa.Data.MyProfileData
 import com.example.giftmoa.Data.RefreshTokenRequest
+import com.example.giftmoa.Login2Activity
 import com.example.giftmoa.LoginActivity
 import com.example.giftmoa.MyProfileActivity
 import com.example.giftmoa.Retrofit2Generator
@@ -73,7 +74,7 @@ class AccountFragment : Fragment() {
             Log.d(TAG, "onCreateView: $requestBody")
 
             Toast.makeText(requireActivity(), "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(requireActivity(), LoginActivity::class.java))
+            startActivity(Intent(requireActivity(), Login2Activity::class.java))
             requireActivity().finish()
 
             //logout(requestBody)
@@ -81,7 +82,7 @@ class AccountFragment : Fragment() {
 
         binding.tvWithdrawal.setOnClickListener {
             Toast.makeText(requireActivity(), "회원탈퇴 되었습니다.", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(requireActivity(), LoginActivity::class.java))
+            startActivity(Intent(requireActivity(), Login2Activity::class.java))
             requireActivity().finish()
 
             //withdraw()

@@ -180,7 +180,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun getHomeGifticonListFromServer(page: Int) {
-        Retrofit2Generator.create(requireActivity()).getRecentGifticonList(size = 30, page = page).enqueue(object :
+        Retrofit2Generator.create(requireActivity()).getRecentGifticonList(size = 6, page = page).enqueue(object :
             Callback<GetGifticonListResponse> {
             override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
                 if (response.isSuccessful) {

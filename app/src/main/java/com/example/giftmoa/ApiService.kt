@@ -34,7 +34,7 @@ interface ApiService {
 
     // 기프티콘 삭제
     @DELETE("/api/v1/gifticon/{gifticonId}")
-    fun deleteGifticon(@Path("gifticonId") gifticonId: Long): Call<UpdateGifticonResponse>
+    fun deleteGifticon(@Path("gifticonId") gifticonId: Long): Call<LogoutUserResponse>
 
     // 기프티콘 사용 완료(다시 누르면 취소)
     @PUT("/api/v1/gifticon/use/{gifticonId}")
@@ -48,7 +48,7 @@ interface ApiService {
     ): Call<GetGifticonListResponse>
 
     // 사용불가한 기프티콘 리스트
-    @GET("/api/v1/gifticon/disabled_list")
+    @GET("/api/v1/gifticon/disable_list")
     fun getUsedGifticonList(
         @Query("size") size: Int?,
         @Query("page") page: Int?

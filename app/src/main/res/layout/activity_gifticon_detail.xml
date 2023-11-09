@@ -609,7 +609,7 @@
             android:layout_weight="1"
             android:background="@drawable/background_enabled_button"
             android:fontFamily="@font/pretendard_medium"
-            android:text="사용 완료"
+            tools:text="사용 완료"
             android:textColor="@color/moa_gray_white"
             android:textSize="16sp" />
 

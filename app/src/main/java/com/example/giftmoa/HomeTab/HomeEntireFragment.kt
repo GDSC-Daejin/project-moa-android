@@ -34,9 +34,11 @@ import com.example.giftmoa.CouponTab.ManualRegistrationActivity
 import com.example.giftmoa.Data.AddCategoryRequest
 import com.example.giftmoa.Data.AddCategoryResponse
 import com.example.giftmoa.Data.CategoryItem
+import com.example.giftmoa.Data.Data1
 import com.example.giftmoa.Data.GetCategoryListResponse
 import com.example.giftmoa.Data.GetGifticonListResponse
 import com.example.giftmoa.Data.Gifticon
+import com.example.giftmoa.Data.LogoutUserResponse
 import com.example.giftmoa.Data.UpdateGifticonRequest
 import com.example.giftmoa.Data.UpdateGifticonResponse
 
@@ -227,7 +229,7 @@ class HomeEntireFragment : Fragment(), CategoryListener {
 
                         // 어댑터에 데이터가 변경되었음을 알립니다.
                         // DiffUtil.Callback 사용을 위한 submitList는 비동기 처리를 하므로 리스트의 사본을 넘깁니다.
-                        giftAdapter.submitList(gifticonList.toList())
+                        giftAdapter.submitList(gifticonList.toList().sortedBy { it.dueDate })
                         // 또는
                         // DiffUtil을 사용하지 않는 경우
                         //giftAdapter.notifyItemRangeInserted(currentPosition, newList.size)
@@ -293,25 +295,28 @@ class HomeEntireFragment : Fragment(), CategoryListener {
         })
     }
 
-    private fun deleteGifticon(gifticonId: Long, gifticonItem: Gifticon) {
-        Retrofit2Generator.create(requireActivity()).deleteGifticon(gifticonId).enqueue(object : Callback<UpdateGifticonResponse> {
-            override fun onResponse(call: Call<UpdateGifticonResponse>, response: Response<UpdateGifticonResponse>) {
-                if (response.isSuccessful) {
-                    Log.d(TAG, "Retrofit onResponse: ${response.body()}")
-                    val responseBody = response.body()
-                    Log.d(TAG, "responseBody: $responseBody")
-                    gifticonList.remove(gifticonItem)
-                    giftAdapter.submitList(gifticonList.toList())
+    private fun deleteGifticon( gifticon: Gifticon) {
+        Log.d(TAG, "deleteGifticon: ${gifticon.id}")
+        gifticon.id?.let {
+            Retrofit2Generator.create(requireActivity()).deleteGifticon(it).enqueue(object : Callback<LogoutUserResponse> {
+                override fun onResponse(call: Call<LogoutUserResponse>, response: Response<LogoutUserResponse>) {
+                    if (response.isSuccessful) {
+                        Log.d(TAG, "Retrofit onResponse: ${response.body()}")
+                        val responseBody = response.body()
+                        Log.d(TAG, "responseBody: $responseBody")
+                        gifticonList.remove(gifticon)
+                        giftAdapter.submitList(gifticonList.toList())
 
-                } else {
-                    Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                    } else {
+                        Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<UpdateGifticonResponse>, t: Throwable) {
-                Log.e(TAG, "Retrofit onFailure: ", t)
-            }
-        })
+                override fun onFailure(call: Call<LogoutUserResponse>, t: Throwable) {
+                    Log.e(TAG, "Retrofit onFailure: ", t)
+                }
+            })
+        }
     }
 
     private fun createNewChip(text: String): Chip {
@@ -452,7 +457,10 @@ class HomeEntireFragment : Fragment(), CategoryListener {
                                 }
 
                                 "삭제하기" -> {
-                                    gifticon.id?.let { deleteGifticon(it, gifticon) }
+                                    //deleteGifticon(gifticon)
+                                    gifticonList.remove(gifticon)
+                                    giftAdapter.submitList(gifticonList.toList())
+                                    giftAdapter.notifyDataSetChanged()
                                 }
                             }
                         }

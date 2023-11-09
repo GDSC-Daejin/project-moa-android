@@ -132,6 +132,8 @@ class GifticonDetailActivity: AppCompatActivity() {
 
                             if (gifticonDetail?.gifticon?.gifticonType == "MONEY") {
                                 binding.llCouponMoneyInfo.visibility = android.view.View.VISIBLE
+                                val formattedAmount = gifticonDetail?.gifticon?.gifticonMoney?.toLongOrNull()?.let { String.format("%,d", it) }
+                                binding.etCouponRemainAmount.setText(formattedAmount)
                             } else {
                                 binding.llCouponMoneyInfo.visibility = android.view.View.GONE
                             }
@@ -185,10 +187,10 @@ class GifticonDetailActivity: AppCompatActivity() {
                             }
                             binding.rvCouponUsageHistory.visibility = android.view.View.VISIBLE
 
-                            // usageHistroyList 가장 마지막의 leftprice를 가져와서 etCouponRemainAmount에 넣어줌
+                            /*// usageHistroyList 가장 마지막의 leftprice를 가져와서 etCouponRemainAmount에 넣어줌
                             val lastLeftPrice = usageHistoryList[usageHistoryList.size - 1].leftPrice
                             val formattedAmount = gifticonDetail?.gifticon?.gifticonMoney?.toLongOrNull()?.let { String.format("%,d", it) }
-                            binding.etCouponRemainAmount.setText(formattedAmount)
+                            binding.etCouponRemainAmount.setText(formattedAmount)*/
 
                             usageHistoryAdapter.submitList(usageHistoryList)
                             //usageHistoryAdapter.notifyDataSetChanged()

@@ -2,8 +2,8 @@
     <!-- Base application theme. -->
     <style name="Theme.GiftMoa" parent="Theme.AppCompat.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimary">@color/moa_gray_900</item>
+        <item name="colorPrimaryVariant">@color/moa_gray_900</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
@@ -47,6 +47,7 @@
     </style>
 
     <style name="Theme.GiftMoa.Splash">
-        <item name="android:windowBackground">@mipmap/ic_launcher</item>
+        <!--<item name="background">@color/moa_carrot_700</item>-->
+        <item name="android:windowBackground">@drawable/splash_icon</item>
     </style>
 </resources>

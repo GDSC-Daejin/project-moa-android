@@ -28,6 +28,7 @@ import com.example.giftmoa.Data.Gifticon
 import com.example.giftmoa.utils.AssetLoader
 import com.example.giftmoa.Data.GifticonDetailItem
 import com.example.giftmoa.Data.StorageData
+import com.example.giftmoa.Data.UpdateGifticonResponse
 import com.example.giftmoa.GifticonDetailActivity
 import com.example.giftmoa.GridSpacingItemDecoration
 import com.example.giftmoa.R
@@ -121,7 +122,7 @@ class HomeAvailableFragment : Fragment(), CategoryListener {
 
                                 "삭제하기" -> {
                                     gifticonList.remove(gifticon)
-                                    giftAdapter.submitList(gifticonList)
+                                    giftAdapter.submitList(gifticonList.toList())
                                     giftAdapter.notifyDataSetChanged()
                                 }
                             }
@@ -312,6 +313,22 @@ class HomeAvailableFragment : Fragment(), CategoryListener {
             }
         })
     }
+
+    /*private fun deleteGifticon(gifticonId: Long) {
+        Retrofit2Generator.create(requireActivity()).deleteGifticon(gifticonId).enqueue(object : Callback<UpdateGifticonResponse> {
+            override fun onResponse(call: Call<UpdateGifticonResponse>, response: Response<UpdateGifticonResponse>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "Retrofit onResponse: ${response.body()}")
+                } else {
+                    Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<UpdateGifticonResponse>, t: Throwable) {
+                Log.e(TAG, "Retrofit onFailure: ", t)
+            }
+        })
+    }*/
 
     private fun createNewChip(text: String): Chip {
         val chip = layoutInflater.inflate(R.layout.category_chip_layout, null, false) as Chip
