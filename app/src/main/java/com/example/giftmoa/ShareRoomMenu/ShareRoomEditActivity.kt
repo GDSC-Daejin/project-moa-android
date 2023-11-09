@@ -15,6 +15,7 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -79,10 +80,6 @@ class ShareRoomEditActivity : AppCompatActivity() {
         val charSet = ('0'..'9') + ('a'..'z') + ('A'..'Z')
         val rangeRandom = List(10) {charSet.random()}.joinToString("")
         inviteCode = rangeRandom.toString()
-        /*mBinding.editNext.apply {
-            setBackgroundResource(R.drawable.round_btn_update_layout)
-            setTextColor(ContextCompat.getColor(this@NoticeBoardEditActivity ,R.color.mio_gray_3))
-        }*/
 
         if (type == "ADD") {
 
@@ -163,19 +160,16 @@ class ShareRoomEditActivity : AppCompatActivity() {
                         var newRequest: Request
                         if (token != null && token != "") { // 토큰이 없는 경우
                             // Authorization 헤더에 토큰 추가
-                            /*newRequest =
+                            newRequest =
                                 chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
-                            */
-                            /*val expireDate: Long = getExpireDate.toLong()
+
+                            val expireDate: Long = getExpireDate.toLong()
                             if (expireDate <= System.currentTimeMillis()) { // 토큰 만료 여부 체크
                                 //refresh 들어갈 곳
                                 newRequest =
                                     chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
                                 return@Interceptor chain.proceed(newRequest)
-                            }*/
-                            newRequest =
-                                chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
-                            return@Interceptor chain.proceed(newRequest)
+                            }
                         } else newRequest = chain.request()
                         chain.proceed(newRequest)
                     }
@@ -254,19 +248,27 @@ class ShareRoomEditActivity : AppCompatActivity() {
         }
     }
 
-    /*private fun getRealPathFromURI(uri : Uri) :String {
+    private fun getRealPathFromURI(uri : Uri) :String {
         val buildName = Build.MANUFACTURER
         if (buildName.equals("Xiaomi")) {
             return uri.path!!
         }
-        val col = 0
-        val proj
-    }*/
+        var col = 0
+        val proj = arrayOf(MediaStore.Images.Media.DATA)
+        val cursor = contentResolver.query(uri, proj, null, null, null)
+
+        if (cursor!!.moveToFirst()) {
+            col = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+        }
+        val result = cursor.getString(col)
+        cursor.close()
+        return result
+    }
 
     private val imageResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == RESULT_OK) {
             val imageUri = it.data?.data
-            imageFile = imageUri
+            imageFile = getRealPathFromURI(imageUri!!).toUri()
             imageUri?.let {
                 CoroutineScope(Main).launch {
                     Glide.with(this@ShareRoomEditActivity)

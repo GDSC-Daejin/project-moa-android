@@ -19,13 +19,15 @@ import com.example.giftmoa.BuildConfig
 import com.example.giftmoa.Data.*
 import com.example.giftmoa.MoaInterface
 import com.example.giftmoa.R
-import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.ShareRoomMenu.ShareRoomEditActivity
 import com.example.giftmoa.ShareRoomMenu.ShareRoomReadActivity
 import com.example.giftmoa.databinding.FragmentShareRoomBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -51,7 +53,7 @@ class ShareRoomFragment : Fragment() {
 
     private lateinit var sBinding : FragmentShareRoomBinding
     private var sAdapter : ShareRoomAdapter? = null
-    private var shareRoomAllData = ArrayList<Team>()
+    private var shareRoomAllData = ArrayList<GetTeamData>()
     private var manager : LinearLayoutManager = LinearLayoutManager(activity)
     private val saveSharedPreference = SaveSharedPreference()
     private var identification = ""
@@ -90,7 +92,7 @@ class ShareRoomFragment : Fragment() {
 
                 val intent = Intent(activity, ShareRoomReadActivity::class.java).apply {
                     putExtra("type", "READ")
-                    //putExtra("data", temp)
+                    putExtra("data", temp)
                 }
                 startActivity(intent)
             }
@@ -136,7 +138,7 @@ class ShareRoomFragment : Fragment() {
 
                 dialogOk.setOnClickListener {
                     val inviteCode = dialogET.text.toString()
-                    //setJoinShareRoomData(inviteCode)
+                    setJoinShareRoomData(inviteCode)
                     alertDialog1.dismiss()
                 }
                 alertDialog1.show()
@@ -176,50 +178,76 @@ class ShareRoomFragment : Fragment() {
     }
 
     private fun setRoomData() {
-        Retrofit2Generator.create(requireActivity()).getMyTeamList().enqueue(object : Callback<GetMyTeamListResponse> {
-            override fun onResponse(
-                call: Call<GetMyTeamListResponse>,
-                response: Response<GetMyTeamListResponse>
-            ) {
-                if (response.isSuccessful) {
-                    println("setSuc")
+        val saveSharedPreference = SaveSharedPreference()
+        val token = saveSharedPreference.getToken(requireActivity()).toString()
+        val getExpireDate = saveSharedPreference.getExpireDate(requireActivity()).toString()
+        /*var interceptor = HttpLoggingInterceptor()
+    interceptor = interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+    val client = OkHttpClient.Builder().addInterceptor(interceptor).build()*/
 
-                    shareRoomAllData.clear()
+        /*val retrofit = Retrofit.Builder().baseUrl("url 주소")
+            .addConverterFactory(GsonConverterFactory.create())
+            //.client(client) 이걸 통해 통신 오류 log찍기 가능
+            .build()
+        val service = retrofit.create(MioInterface::class.java)*/
+        //통신로그
 
-                    for (i in response.body()!!.data?.indices!!) {
+        /*val loggingInterceptor = HttpLoggingInterceptor()
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+        val clientBuilder = OkHttpClient.Builder().addInterceptor(loggingInterceptor).build()*/
+        //통신
+        val SERVER_URL = BuildConfig.server_URL
+        val retrofit = Retrofit.Builder().baseUrl(SERVER_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+        //.client(clientBuilder)
 
-                        shareRoomAllData.add(Team(
-                            response.body()!!.data?.get(i)!!.id,
-                            response.body()!!.data?.get(i)!!.teamCode,
-                            response.body()!!.data?.get(i)!!.teamName,
-                            response.body()!!.data?.get(i)!!.teamImage,
-                            response.body()!!.data?.get(i)!!.teamLeaderNickname,
-                            response.body()!!.data?.get(i)!!.teamMembers
-                        ))
-                    }
-                    sAdapter!!.notifyDataSetChanged()
-                } else {
+        //Authorization jwt토큰 로그인
+        val interceptor = Interceptor { chain ->
 
-                }
-            }
+            var newRequest: Request
+            if (token != null && token != "") { // 토큰이 없는 경우
+                // Authorization 헤더에 토큰 추가
+                newRequest =
+                    chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
+                /*val expireDate: Long = getExpireDate.toLong()
+                if (expireDate <= System.currentTimeMillis()) { // 토큰 만료 여부 체크
+                    //refresh 들어갈 곳
+                    newRequest =
+                        chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
+                    return@Interceptor chain.proceed(newRequest)
+                }*/
+            } else newRequest = chain.request()
+            chain.proceed(newRequest)
+        }
+        val builder = OkHttpClient.Builder()
+        builder.interceptors().add(interceptor)
+        val client: OkHttpClient = builder.build()
+        retrofit.client(client)
+        val retrofit2: Retrofit = retrofit.build()
+        val api = retrofit2.create(MoaInterface::class.java)
 
-            override fun onFailure(call: Call<GetMyTeamListResponse>, t: Throwable) {
-                TODO("Not yet implemented")
-            }
-        })
-        /*CoroutineScope(Dispatchers.IO).launch {
-            service.getMyShareRoom().enqueue(object : Callback<ShareRoomGetTeamData> {
+        println("token" + token)
+        CoroutineScope(Dispatchers.IO).launch {
+            api.getMyShareRoom().enqueue(object : Callback<ShareRoomGetTeamData> {
                 override fun onResponse(
                     call: Call<ShareRoomGetTeamData>,
                     response: Response<ShareRoomGetTeamData>
                 ) {
                     if (response.isSuccessful) {
+                        Log.e("TEST", "setSucccccc")
                         println("setSuc")
-
                         shareRoomAllData.clear()
 
-                        for (i in response.body()!!.data.indices) {
 
+
+                        for (i in response.body()!!.data.indices) {
+                            /*var teamLeaderNickName = ""
+                            teamLeaderNickName = try {
+                                response.body()!!.data[i].teamLeaderNickName
+                            } catch (e : java.lang.NullPointerException) {
+                                Log.d("null", e.toString())
+                                "null"
+                            }*/
                             shareRoomAllData.add(GetTeamData(
                                 response.body()!!.data[i].id,
                                 response.body()!!.data[i].teamCode,
@@ -244,10 +272,10 @@ class ShareRoomFragment : Fragment() {
                 }
 
             })
-        }*/
+        }
     }
 
-    /*private fun setJoinShareRoomData(inviteCode : String) {
+    private fun setJoinShareRoomData(inviteCode : String) {
         val temp = TeamJoinData(inviteCode)
         CoroutineScope(Dispatchers.IO).launch {
             service.joinShareRoom(temp).enqueue(object : Callback<ShareRoomResponseData> {
@@ -283,7 +311,7 @@ class ShareRoomFragment : Fragment() {
 
             })
         }
-    }*/
+    }
 
 
     private val requestActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { it ->

@@ -13,10 +13,14 @@ import com.example.giftmoa.*
 import com.example.giftmoa.Adapter.ShareRoomGifticonAdapter
 import com.example.giftmoa.BottomMenu.CategoryListener
 import com.example.giftmoa.BottomSheetFragment.CategoryBottomSheet
+import com.example.giftmoa.BottomSheetFragment.SortBottomSheet
 import com.example.giftmoa.Data.*
 import com.example.giftmoa.GridSpacingItemDecoration
 import com.example.giftmoa.databinding.FragmentShareUsedBinding
 import com.google.android.material.chip.Chip
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -45,14 +49,14 @@ class ShareUsedFragment : Fragment(), CategoryListener {
         .build()
     val service: MoaInterface = retrofit.create(MoaInterface::class.java)
 
-    private lateinit var giftAdapter: ShareRoomGifticonAdapter
+    private var giftAdapter: ShareRoomGifticonAdapter? = null
 
     var gifticonList = ArrayList<ShareRoomGifticon>()
 
     private var categoryList = mutableListOf<CategoryItem>()
 
-    private var gridManager = GridLayoutManager(requireActivity(), 2, GridLayoutManager.VERTICAL, false)
-
+    private var gridManager = GridLayoutManager(activity, 2, GridLayoutManager.VERTICAL, false)
+    private var getBottomSheetData = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -66,22 +70,80 @@ class ShareUsedFragment : Fragment(), CategoryListener {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentShareUsedBinding.inflate(inflater, container, false)
+        initUsedRecyclerview()
+        getCategoryListFromServer()
 
+        binding.ivAddCategory.setOnClickListener {
+            showCategoryBottomSheet(categoryList)
+        }
 
+        binding.tvSort.setOnClickListener {
+            val bottomSheet = SortBottomSheet()
+            bottomSheet.show(requireActivity().supportFragmentManager, bottomSheet.tag)
+            bottomSheet.apply {
+                setCallback(object : SortBottomSheet.OnSendFromBottomSheetDialog{
+                    override fun sendValue(value: String) {
+                        Log.d("test", "BottomSheetDialog -> 액티비티로 전달된 값 : $value")
+                        getBottomSheetData = value
+                        when (value) {
+                            "최신 순" -> {
+                                binding.tvSort.text = "최신 순"
+
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    val page = 0
+                                    Retrofit2Generator.create(requireActivity()).getRecentGifticonList(size = 30, page = page).enqueue(object :
+                                        Callback<GetGifticonListResponse> {
+                                        override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
+                                            if (response.isSuccessful) {
+                                                val responseBody = response.body()
+                                                responseBody?.data?.dataList?.let { newList ->
+                                                    if (page == 0) {
+                                                        // 첫 페이지인 경우 리스트를 새로 채웁니다.
+                                                        gifticonList.clear()
+                                                    }
+                                                    // 새로운 데이터를 리스트에 추가합니다.
+                                                    val currentPosition = gifticonList.size
+                                                    gifticonList.addAll(listOf(newList as ShareRoomGifticon))
+
+                                                    giftAdapter!!.notifyDataSetChanged()
+                                                }
+                                            } else {
+                                                Log.e("ERROR", "Error: ${response.errorBody()?.string()}")
+                                            }
+                                        }
+
+                                        override fun onFailure(call: Call<GetGifticonListResponse>, t: Throwable) {
+                                            Log.e("ERROR", "Retrofit onFailure: ", t)
+                                        }
+                                    })
+                                }
+                            }
+
+                            "마감임박 순" -> {
+                                binding.tvSort.text = "마감임박 순"
+                                gifticonList.sortBy { it.dueDate }
+                                giftAdapter!!.notifyDataSetChanged()
+                            }
+                        }
+                    }
+                })
+            }
+        }
         return binding.root
     }
 
-    private fun initShareEntireRecyclerView() {
+    private fun initUsedRecyclerview() {
         getAvailableListFromServer(0)
+        println("used")
         binding.giftRv.apply {
+            giftAdapter = ShareRoomGifticonAdapter()
             adapter = giftAdapter
+            giftAdapter!!.shareRoomGifticonItemData = gifticonList
             layoutManager = gridManager
             binding.giftRv.addItemDecoration(
                 GridSpacingItemDecoration(spanCount = 2, spacing = 10f.fromDpToPx())
             )
         }
-        giftAdapter.shareRoomGifticonItemData = gifticonList
-        giftAdapter.setHasStableIds(true)
     }
 
     private fun Float.fromDpToPx(): Int =

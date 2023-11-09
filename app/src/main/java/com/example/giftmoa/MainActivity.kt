@@ -13,6 +13,7 @@ import com.example.giftmoa.BottomMenu.AccountFragment
 import com.example.giftmoa.BottomMenu.CouponFragment
 import com.example.giftmoa.BottomMenu.HomeFragment
 import com.example.giftmoa.BottomMenu.ShareRoomFragment
+import com.example.giftmoa.Data.SaveSharedPreference
 import com.example.giftmoa.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -23,7 +24,7 @@ class MainActivity : AppCompatActivity() {
     val TAG_COUPON = "coupon_fragment"
 
     private var backPressedTime: Long = 0
-
+    private val sharedPreference = SaveSharedPreference()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -32,6 +33,8 @@ class MainActivity : AppCompatActivity() {
         val accessToken = sharedPref.getString("accessToken", null) // 기본값은 null
         val refreshToken = sharedPref.getString("refreshToken", null) // 기본값은 null
         val accessTokenExpiresIn = sharedPref.getLong("accessTokenExpiresIn", -1) // 기본값은 -1
+        sharedPreference.setToken(this@MainActivity, accessToken).toString()
+        sharedPreference.setExpireDate(this@MainActivity, accessTokenExpiresIn.toString()).toString()
 
         Log.d("MainActivity", "grantType: $grantType")
         Log.d("MainActivity", "accessToken: $accessToken")

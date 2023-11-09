@@ -29,9 +29,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 class ShareGifticonActivity : AppCompatActivity() {
     private lateinit var sBinding : ActivityShareGifticonBinding
 
-    private lateinit var giftAdapter: ShareRoomGifticonAdapter
-
     var gifticonList = ArrayList<ShareRoomGifticon>()
+
+    private var giftAdapter: ShareRoomGifticonAdapter? = null
 
     private var categoryList = mutableListOf<CategoryItem>()
 
@@ -50,35 +50,12 @@ class ShareGifticonActivity : AppCompatActivity() {
 
         teamId = intent.getIntExtra("teamId", 0).toInt()
 
-        giftAdapter!!.setItemClickListener(object : ShareRoomGifticonAdapter.ItemClickListener {
-            override fun onClick(view: View, position: Int, itemId: String) {
-                selectGifticonList.add(gifticonList[position])
-
-                sBinding.shareSelectLl.visibility = View.VISIBLE
-                sBinding.shareSelectTv.text = selectGifticonList.size.toString() +"개 쿠폰 선택됨"
-            }
-        })
-
         sBinding.shareGifticonTv.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
                 val saveSharedPreference = SaveSharedPreference()
                 val token = saveSharedPreference.getToken(this@ShareGifticonActivity).toString()
                 val getExpireDate = saveSharedPreference.getExpireDate(this@ShareGifticonActivity).toString()
-                /*var interceptor = HttpLoggingInterceptor()
-            interceptor = interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-            val client = OkHttpClient.Builder().addInterceptor(interceptor).build()*/
 
-                /*val retrofit = Retrofit.Builder().baseUrl("url 주소")
-                    .addConverterFactory(GsonConverterFactory.create())
-                    //.client(client) 이걸 통해 통신 오류 log찍기 가능
-                    .build()
-                val service = retrofit.create(MioInterface::class.java)*/
-                //통신로그
-
-                /*val loggingInterceptor = HttpLoggingInterceptor()
-                loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-                val clientBuilder = OkHttpClient.Builder().addInterceptor(loggingInterceptor).build()*/
-                //통신
                 val SERVER_URL = BuildConfig.server_URL
                 val retrofit = Retrofit.Builder().baseUrl(SERVER_URL)
                     .addConverterFactory(GsonConverterFactory.create())
@@ -92,13 +69,13 @@ class ShareGifticonActivity : AppCompatActivity() {
                         // Authorization 헤더에 토큰 추가
                         newRequest =
                             chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
-                        /*val expireDate: Long = getExpireDate.toLong()
+                        val expireDate: Long = getExpireDate.toLong()
                         if (expireDate <= System.currentTimeMillis()) { // 토큰 만료 여부 체크
                             //refresh 들어갈 곳
                             newRequest =
                                 chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
                             return@Interceptor chain.proceed(newRequest)
-                        }*/
+                        }
                     } else newRequest = chain.request()
                     chain.proceed(newRequest)
                 }
@@ -139,24 +116,25 @@ class ShareGifticonActivity : AppCompatActivity() {
         }
 
 
+
+
     }
 
     private fun initSharedRecyclerView() {
         getAllGifticonListFromServer(0)
         sBinding.shareGifticonRv.apply {
+            giftAdapter = ShareRoomGifticonAdapter()
             adapter = giftAdapter
+            giftAdapter!!.shareRoomGifticonItemData = gifticonList
             layoutManager = gridManager
             sBinding.shareGifticonRv.addItemDecoration(
                 GridSpacingItemDecoration(spanCount = 2, spacing = 10f.fromDpToPx())
             )
         }
-        giftAdapter.shareRoomGifticonItemData = gifticonList
-        giftAdapter.setHasStableIds(true)
     }
 
     private fun Float.fromDpToPx(): Int =
         (this * Resources.getSystem().displayMetrics.density).toInt()
-
 
     private fun getAllGifticonListFromServer(page: Int) {
         Retrofit2Generator.create(this@ShareGifticonActivity).getAllGifticonList(size = 30, page = page).enqueue(object :
@@ -245,5 +223,17 @@ class ShareGifticonActivity : AppCompatActivity() {
             (it.parent as? ViewGroup)?.removeView(it)
         }
         return chip
+    }
+
+    override fun onResume() {
+        super.onResume()
+        giftAdapter!!.setItemClickListener(object : ShareRoomGifticonAdapter.ItemClickListener {
+            override fun onClick(view: View, position: Int, itemId: String) {
+                selectGifticonList.add(gifticonList[position])
+
+                sBinding.shareSelectLl.visibility = View.VISIBLE
+                sBinding.shareSelectTv.text = selectGifticonList.size.toString() +"개 쿠폰 선택됨"
+            }
+        })
     }
 }

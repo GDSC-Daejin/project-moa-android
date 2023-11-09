@@ -27,7 +27,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.giftmoa.Data.GetTeamData
 import com.example.giftmoa.Data.GiftData
 import com.example.giftmoa.Data.ShareRoomData
-import com.example.giftmoa.Data.Team
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.HomeItemBinding
 import com.example.giftmoa.databinding.ShareRoomItemBinding
@@ -38,7 +37,7 @@ import org.w3c.dom.Text
 
 class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(){
     private lateinit var binding : ShareRoomItemBinding
-    var shareRoomItemData = ArrayList<Team>()
+    var shareRoomItemData = ArrayList<GetTeamData>()
     private lateinit var context : Context
     private var inviteCode = ""
 
@@ -54,21 +53,21 @@ class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(
         private var shareCouponCnt = binding.shareCouponCnt*/
 
 
-        fun bind(itemData: Team, position : Int) {
+        fun bind(itemData: GetTeamData, position : Int) {
             this.position = position
 
             if (itemData.teamImage != null) {
-                shareTitle.text = itemData.teamName!!
+                shareTitle.text = itemData.teamName
                 binding.shareTitle.setTextColor(ContextCompat.getColor(context ,R.color.moa_gray_white))
 
                 //shareCouponCnt.text = "공유중인 쿠폰 : ${itemData.shareCouponCount.toString()}"
-                shareNOP.text = "+${itemData.teamMembers!!.size.toString()}"
+                shareNOP.text = "+${itemData.teamMembers.size.toString()}"
                 binding.shareNumberOfPeople.setTextColor(ContextCompat.getColor(context ,R.color.moa_gray_white))
 
             } else {
                 shareTitle.text = itemData.teamName
                 //shareCouponCnt.text = "공유중인 쿠폰 : ${itemData.shareCouponCount.toString()}"
-                shareNOP.text = "+${itemData.teamMembers!!.size.toString()}"
+                shareNOP.text = "+${itemData.teamMembers.size.toString()}"
             }
 
 
@@ -118,11 +117,7 @@ class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(
         holder.bind(shareRoomItemData[holder.adapterPosition], position)
 
         holder.itemView.setOnClickListener {
-            shareRoomItemData[holder.adapterPosition].teamCode?.let { it1 ->
-                itemClickListener.onClick(it, holder.adapterPosition,
-                    it1
-                )
-            }
+            itemClickListener.onClick(it, holder.adapterPosition, shareRoomItemData[holder.adapterPosition].teamCode)
         }
 
         /*binding.shareDeleteBtn.setOnClickListener {

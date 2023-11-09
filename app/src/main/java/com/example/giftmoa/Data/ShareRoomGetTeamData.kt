@@ -21,7 +21,7 @@ data class GetTeamData(
     @SerializedName("teamImage")
     var teamImage : String?,
     @SerializedName("teamLeaderNickName")
-    var teamLeaderNickName : String,
+    var teamLeaderNickName : String?,
     @SerializedName("teamMembers")
     var teamMembers : List<GetTeamMembers>,
 ) : java.io.Serializable {
@@ -35,4 +35,6 @@ data class GetTeamMembers(
     var nickname : String,
     @SerializedName("profileImageUrl")
     var profileImageUrl : String?,
-)
+): java.io.Serializable {
+
+}

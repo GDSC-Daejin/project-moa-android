@@ -51,8 +51,8 @@
         <activity
             android:name=".BottomMenu.LockerActivity"
             android:exported="false" />
-        <!--<activity
-            android:name=".LoginActivity"
+        <activity
+            android:name=".Login2Activity"
             android:exported="true"
             android:theme="@style/Theme.App.Splash">
             <intent-filter>
@@ -60,7 +60,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>-->
+        </activity>
         <activity android:name=".LoginActivity" />
         <activity
             android:name=".MainActivity"
@@ -89,7 +89,7 @@
         <activity android:name=".GifticonRegistrationActivity" />
         <activity android:name=".CouponTab.AutoRegistrationActivity" />
         <activity android:name=".CouponTab.ManualRegistrationActivity" />
-        <activity
+        <!--<activity
             android:name=".SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.GiftMoa.Splash">
@@ -98,10 +98,9 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity>-->
         <activity android:name=".GifticonDetailActivity" />
         <activity android:name=".MyProfileActivity" />
-        <activity android:name=".Login2Activity"  />
+        <!--<activity android:name=".LoginActivity"  />-->
     </application>
-
 </manifest>

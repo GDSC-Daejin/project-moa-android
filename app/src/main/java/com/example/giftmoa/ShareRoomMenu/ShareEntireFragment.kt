@@ -49,15 +49,15 @@ class ShareEntireFragment : Fragment(), CategoryListener {
         .build()
     val service: MoaInterface = retrofit.create(MoaInterface::class.java)
 
-    private lateinit var giftAdapter: ShareRoomGifticonAdapter
+    private var giftAdapter: ShareRoomGifticonAdapter? = null
 
     var gifticonList = ArrayList<ShareRoomGifticon>()
 
     private var categoryList = mutableListOf<CategoryItem>()
 
-    private var gridManager = GridLayoutManager(requireActivity(), 2, GridLayoutManager.VERTICAL, false)
     private var getBottomSheetData = ""
 
+    private var gridManager : GridLayoutManager? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -122,35 +122,8 @@ class ShareEntireFragment : Fragment(), CategoryListener {
 
                             "마감임박 순" -> {
                                 binding.tvSort.text = "마감임박 순"
-
-                                /*CoroutineScope(Dispatchers.IO).launch {
-                                    val page = 0
-                                    Retrofit2Generator.create(requireActivity()).getRecentGifticonList(size = 30, page = page).enqueue(object :
-                                        Callback<GetGifticonListResponse> {
-                                        override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
-                                            if (response.isSuccessful) {
-                                                val responseBody = response.body()
-                                                responseBody?.data?.dataList?.let { newList ->
-                                                    if (page == 0) {
-                                                        // 첫 페이지인 경우 리스트를 새로 채웁니다.
-                                                        gifticonList.clear()
-                                                    }
-                                                    // 새로운 데이터를 리스트에 추가합니다.
-                                                    val currentPosition = gifticonList.size
-                                                    gifticonList.addAll(listOf(newList as ShareRoomGifticon))
-
-                                                    giftAdapter!!.notifyDataSetChanged()
-                                                }
-                                            } else {
-                                                Log.e("ERROR", "Error: ${response.errorBody()?.string()}")
-                                            }
-                                        }
-
-                                        override fun onFailure(call: Call<GetGifticonListResponse>, t: Throwable) {
-                                            Log.e("ERROR", "Retrofit onFailure: ", t)
-                                        }
-                                    })
-                                }*/
+                                gifticonList.sortBy { it.dueDate }
+                                giftAdapter!!.notifyDataSetChanged()
                             }
                         }
                     }
@@ -164,15 +137,16 @@ class ShareEntireFragment : Fragment(), CategoryListener {
 
     private fun initShareEntireRecyclerView() {
         getAllGifticonListFromServer(0)
+        println("entire")
         binding.giftRv.apply {
+            giftAdapter = ShareRoomGifticonAdapter()
             adapter = giftAdapter
+            giftAdapter!!.shareRoomGifticonItemData = gifticonList
             layoutManager = gridManager
             binding.giftRv.addItemDecoration(
                 GridSpacingItemDecoration(spanCount = 2, spacing = 10f.fromDpToPx())
             )
         }
-        giftAdapter.shareRoomGifticonItemData = gifticonList
-        giftAdapter.setHasStableIds(true)
     }
 
     private fun Float.fromDpToPx(): Int =
@@ -335,6 +309,11 @@ class ShareEntireFragment : Fragment(), CategoryListener {
                 break
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        gridManager = GridLayoutManager(requireActivity(), 2, GridLayoutManager.VERTICAL, false)
     }
 
     companion object {
