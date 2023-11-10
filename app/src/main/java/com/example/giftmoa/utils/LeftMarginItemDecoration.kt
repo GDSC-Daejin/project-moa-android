@@ -1,4 +1,4 @@
-package com.example.giftmoa
+package com.example.giftmoa.utils
 
 import android.graphics.Rect
 import android.view.View

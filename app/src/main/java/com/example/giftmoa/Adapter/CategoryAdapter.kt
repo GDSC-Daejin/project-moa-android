@@ -9,12 +9,6 @@ import com.example.giftmoa.Data.CategoryItem
 import com.example.giftmoa.databinding.ItemCategoryBinding
 class CategoryAdapter: ListAdapter<CategoryItem, CategoryAdapter.ViewHolder>(diffUtil) {
 
-    interface OnItemClickListener {
-        fun onItemClick(position: Int) {}
-    }
-
-    var itemClickListener: OnItemClickListener? = null
-
     inner class ViewHolder(private val binding: ItemCategoryBinding): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(category: CategoryItem) {

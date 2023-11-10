@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -17,29 +16,20 @@ import com.example.giftmoa.Adapter.GifticonListAdapter
 import com.example.giftmoa.Adapter.HomeShareRoomNameAdapter
 import com.example.giftmoa.Adapter.HomeSharedGifticonAdapter
 import com.example.giftmoa.Adapter.HomeUsedGiftAdapter
-import com.example.giftmoa.Data.AddCategoryResponse
 import com.example.giftmoa.Data.GetGifticonListResponse
 import com.example.giftmoa.Data.GetMyTeamListResponse
 import com.example.giftmoa.Data.GetTeamGifticonListResponse
-import com.example.giftmoa.utils.AssetLoader
 import com.example.giftmoa.Data.GiftData
 import com.example.giftmoa.Data.Gifticon
-import com.example.giftmoa.Data.GifticonDetailItem
-import com.example.giftmoa.Data.HomeData
-import com.example.giftmoa.Data.ShareRoomDetailItem
 import com.example.giftmoa.Data.Team
 import com.example.giftmoa.Data.TeamGifticon
 import com.example.giftmoa.Data.UsedGiftData
 import com.example.giftmoa.GifticonDetailActivity
 import com.example.giftmoa.GridSpacingItemDecoration
-import com.example.giftmoa.LeftMarginItemDecoration
+import com.example.giftmoa.utils.LeftMarginItemDecoration
 import com.example.giftmoa.R
 import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.FragmentHomeBinding
-import com.google.gson.Gson
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -66,20 +56,15 @@ class HomeFragment : Fragment() {
 
     private lateinit var giftAdapter : GifticonListAdapter
 
-    private var giftAllData = ArrayList<GiftData>()
     private var gridManager = GridLayoutManager(activity, 2)
-    //private val tabTextList = listOf("전체", "사용가능", "사용완료")
+
     private var gifticonList = mutableListOf<Gifticon>()
 
     private var shareRoomDetailList = mutableListOf<Team>()
     private var teamGifticonList = mutableListOf<TeamGifticon>()
 
-    private var usedGiftAdapter : HomeUsedGiftAdapter? = null
     private lateinit var homeSharedGifticonAdapter: HomeSharedGifticonAdapter
     private lateinit var homeShareRoomNameAdapter: HomeShareRoomNameAdapter
-
-    private var usedGiftAllData = ArrayList<UsedGiftData>()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

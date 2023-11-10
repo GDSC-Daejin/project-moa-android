@@ -1,10 +1,8 @@
 package com.example.giftmoa.BottomMenu
 
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -14,43 +12,19 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentPagerAdapter
-import androidx.lifecycle.ViewModelProvider
-import androidx.viewpager.widget.ViewPager
-import androidx.viewpager2.widget.ViewPager2
-import com.example.giftmoa.Adapter.GifticonListAdapter
 import com.example.giftmoa.Adapter.HomeTabAdapter
-import com.example.giftmoa.utils.AssetLoader
 import com.example.giftmoa.CouponTab.AutoRegistrationActivity
 import com.example.giftmoa.BottomSheetFragment.BottomSheetFragment
-import com.example.giftmoa.BottomSheetFragment.CategoryBottomSheet
-import com.example.giftmoa.BottomSheetFragment.SortBottomSheet
 import com.example.giftmoa.BuildConfig
 import com.example.giftmoa.Data.BoundingBox
 import com.example.giftmoa.Data.CategoryItem
 import com.example.giftmoa.Data.GifticonDetailItem
 import com.example.giftmoa.Data.ParsedGifticon
-import com.example.giftmoa.Data.StorageData
 import com.example.giftmoa.GifticonRegistrationActivity
-import com.example.giftmoa.HomeTab.HomeEntireFragment
 import com.example.giftmoa.CouponTab.ManualRegistrationActivity
-import com.example.giftmoa.Data.AddCategoryRequest
-import com.example.giftmoa.Data.AddCategoryResponse
-import com.example.giftmoa.Data.GetCategoryListResponse
-import com.example.giftmoa.Data.GetKakaoLoginResponse
-import com.example.giftmoa.HomeTab.CouponViewModel
-import com.example.giftmoa.MainActivity
-import com.example.giftmoa.R
-import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.FragmentCouponBinding
 import com.example.giftmoa.utils.FileGalleryPermissionUtil
-import com.google.android.material.chip.Chip
 import com.google.android.material.tabs.TabLayoutMediator
-import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -95,7 +69,7 @@ class CouponFragment : Fragment() {
 
     private val TAG = "CouponFragment"
 
-    private lateinit var viewModel: CouponViewModel
+    //private lateinit var viewModel: CouponViewModel
 
 
     private val tabTextList = listOf("전체", "사용가능", "사용완료")

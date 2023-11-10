@@ -15,12 +15,6 @@ import com.example.giftmoa.databinding.ItemShareRoomBinding
 
 class UsageHistoryAdapter: ListAdapter<GifticonHistoryData, UsageHistoryAdapter.ViewHolder>(diffUtil) {
 
-    interface OnItemClickListener {
-        fun onItemClick(position: Int) {}
-    }
-
-    var itemClickListener: OnItemClickListener? = null
-
     inner class ViewHolder(private val binding: ItemGifticonUsageHistoryBinding): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(usageHistory: GifticonHistoryData) {

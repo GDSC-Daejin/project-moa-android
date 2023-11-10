@@ -11,12 +11,6 @@ import com.example.giftmoa.databinding.ItemShareRoomBinding
 
 class SmallShareRoomAdapter: ListAdapter<ShareRoomItem, SmallShareRoomAdapter.ViewHolder>(diffUtil) {
 
-    interface OnItemClickListener {
-        fun onItemClick(position: Int) {}
-    }
-
-    var itemClickListener: OnItemClickListener? = null
-
     inner class ViewHolder(private val binding: ItemShareRoomBinding): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(shareRoom: ShareRoomItem) {

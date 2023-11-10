@@ -19,12 +19,6 @@ import java.util.Date
 
 class HomeSharedGifticonAdapter(private val onClick: (TeamGifticon) -> Unit, private val context: Context): ListAdapter<TeamGifticon, HomeSharedGifticonAdapter.ViewHolder>(diffUtil) {
 
-    interface OnItemClickListener {
-        fun onItemClick(position: Int) {}
-    }
-
-    var itemClickListener: OnItemClickListener? = null
-
     inner class ViewHolder(private val binding: ItemHomeSharedGifticonBinding): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(gifticon: TeamGifticon) {
