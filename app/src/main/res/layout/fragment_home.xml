@@ -85,7 +85,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:alpha="0.5"
+                        android:alpha="0.35"
                         android:background="@color/moa_gray_900"
                         app:layout_constraintBottom_toBottomOf="@id/iv_share_room_image"
                         app:layout_constraintEnd_toEndOf="@id/iv_share_room_image"

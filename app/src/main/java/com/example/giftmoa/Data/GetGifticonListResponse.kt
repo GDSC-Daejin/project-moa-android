@@ -24,7 +24,7 @@ data class Gifticon(
     @SerializedName("exchangePlace") val exchangePlace: String?,
     @SerializedName("dueDate") val dueDate: String?,
     @SerializedName("gifticonType") val gifticonType: String?,
-    @SerializedName("status") val status: String?,
+    @SerializedName("status") var status: String?,
     @SerializedName("usedDate") val usedDate: String?,
     @SerializedName("author") val author: Author?,
     @SerializedName("category") val category: Category?

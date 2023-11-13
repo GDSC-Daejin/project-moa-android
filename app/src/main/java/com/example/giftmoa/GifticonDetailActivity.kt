@@ -4,16 +4,19 @@ import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.giftmoa.Adapter.UsageHistoryAdapter
 import com.example.giftmoa.Data.GetGifticonDetailResponse
 import com.example.giftmoa.Data.GetGifticonHistoryListResponse
+import com.example.giftmoa.Data.Gifticon
 import com.example.giftmoa.Data.GifticonDetailData
 import com.example.giftmoa.Data.GifticonHistoryData
 import com.example.giftmoa.Data.GifticonHistoryResponse
 import com.example.giftmoa.Data.UpdateGifticonHistoryRequest
+import com.example.giftmoa.HomeTab.GifticonViewModel
 import com.example.giftmoa.databinding.ActivityGifticonDetailBinding
 import com.example.giftmoa.utils.CustomCropTransformation
 import com.example.giftmoa.utils.FormatUtil
@@ -35,11 +38,16 @@ class GifticonDetailActivity: AppCompatActivity() {
 
     private var gifticonId: Long = 0
 
+    private lateinit var gifticonViewModel: GifticonViewModel
+
     private val WHITE: Int = 0xFFFFFFFF.toInt()
     private val BLACK: Int = 0xFF000000.toInt()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        gifticonViewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())[GifticonViewModel::class.java]
+
         binding = ActivityGifticonDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -93,6 +101,14 @@ class GifticonDetailActivity: AppCompatActivity() {
     }
 
     private fun getGiftionDetailFromServer() {
+        binding.viewLoading.visibility = android.view.View.VISIBLE
+        binding.ivProgressBar.visibility = android.view.View.VISIBLE
+
+        Glide.with(this)
+            .asGif()
+            .load(R.drawable.icon_progress_bar)
+            .into(binding.ivProgressBar)
+
         Retrofit2Generator.create(this).getGifticonDetail(gifticonId = gifticonId).enqueue(object :
             Callback<GetGifticonDetailResponse> {
             override fun onResponse(call: Call<GetGifticonDetailResponse>, response: Response<GetGifticonDetailResponse>) {
@@ -103,6 +119,9 @@ class GifticonDetailActivity: AppCompatActivity() {
                     if (responseBody != null) {
                         if (responseBody.data != null) {
                             gifticonDetail = responseBody.data
+
+                            binding.viewLoading.visibility = android.view.View.GONE
+                            binding.ivProgressBar.visibility = android.view.View.GONE
 
                             Log.d(TAG, "gifticonDetail: $gifticonDetail")
 
@@ -253,6 +272,21 @@ class GifticonDetailActivity: AppCompatActivity() {
                         if (gifticon != null) {
                             gifticonDetail = gifticon
                         }
+
+                        val coupon = Gifticon(
+                            id = gifticonId,
+                            name = gifticonDetail?.gifticon?.name,
+                            gifticonImagePath = gifticonDetail?.gifticon?.gifticonImagePath,
+                            exchangePlace = gifticonDetail?.gifticon?.exchangePlace,
+                            dueDate = gifticonDetail?.gifticon?.dueDate,
+                            gifticonType = gifticonDetail?.gifticon?.gifticonType,
+                            status = gifticonDetail?.gifticon?.status,
+                            usedDate = gifticonDetail?.gifticon?.usedDate,
+                            author = gifticonDetail?.gifticon?.author,
+                            category = gifticonDetail?.gifticon?.category
+                        )
+
+                        gifticonViewModel.updateStatusCoupon(coupon)
 
                         if (gifticonDetail?.gifticon?.status == "AVAILABLE") {
                             binding.btnUsedComplete.text = "사용 완료"

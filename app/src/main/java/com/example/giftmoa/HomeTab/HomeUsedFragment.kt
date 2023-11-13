@@ -12,6 +12,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.giftmoa.Adapter.CouponListAdapter
 import com.example.giftmoa.Adapter.GifticonListAdapter
 import com.example.giftmoa.BottomMenu.CategoryListener
 import com.example.giftmoa.BottomMenu.CouponFragment
@@ -25,6 +26,7 @@ import com.example.giftmoa.Data.CategoryItem
 import com.example.giftmoa.Data.GetCategoryListResponse
 import com.example.giftmoa.Data.GetGifticonListResponse
 import com.example.giftmoa.Data.Gifticon
+import com.example.giftmoa.Data.GifticonData
 import com.example.giftmoa.utils.AssetLoader
 import com.example.giftmoa.Data.GifticonDetailItem
 import com.example.giftmoa.Data.StorageData
@@ -66,6 +68,10 @@ class HomeUsedFragment : Fragment(), CategoryListener {
     private var gridManager = GridLayoutManager(activity, 2, GridLayoutManager.VERTICAL, false)
     private var getBottomSheetData = ""
 
+    private lateinit var gifticonViewModel: GifticonViewModel
+
+    private lateinit var couponListAdapter: CouponListAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -74,26 +80,47 @@ class HomeUsedFragment : Fragment(), CategoryListener {
         }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        gifticonViewModel.couponList.observe(viewLifecycleOwner, Observer {
+            binding.giftRv.post(Runnable {
+                couponListAdapter.setUsedCouponsData(it.filter { x -> x.status == "AVAILABLE" })
+            })
+        })
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        gifticonViewModel = ViewModelProvider(requireActivity(), ViewModelProvider.NewInstanceFactory())[GifticonViewModel::class.java]
+
         binding  = FragmentHomeUsedBinding.inflate(inflater, container, false)
 
-        giftAdapter = GifticonListAdapter({ gifticon ->
+        /*giftAdapter = GifticonListAdapter({ gifticon ->
             val intent = Intent(requireActivity(), GifticonDetailActivity::class.java)
             intent.putExtra("gifticonId", gifticon.id)
             startActivity(intent)
-        }, gifticonList?: emptyList<Gifticon>())
+        }, gifticonList?: emptyList<Gifticon>())*/
 
-        getCategoryListFromServer()
+        var usedCouponList = gifticonViewModel.usedCouponList.value
+
+        couponListAdapter = CouponListAdapter({ gifticon ->
+            val intent = Intent(requireActivity(), GifticonDetailActivity::class.java)
+            intent.putExtra("gifticonId", gifticon.id)
+            startActivity(intent)
+        }, usedCouponList ?: emptyList<Gifticon>())
+        couponListAdapter.setHasStableIds(true)
+
+       // getCategoryListFromServer()
 
         initHomeRecyclerView()
 
-        giftAdapter.itemLongClickListener = object : GifticonListAdapter.OnItemLongClickListener {
+        couponListAdapter.itemLongClickListener = object : CouponListAdapter.OnItemLongClickListener {
             override fun onItemLongClick(position: Int) {
                 // 길게 클릭한 아이템에 대한 처리 로직을 여기에 작성
-                val gifticon = giftAdapter.currentList[position]
+                val gifticonId = couponListAdapter.getItemId(position)
 
                 val bottomSheet = GifticonEditDeleteBottomSheet()
                 bottomSheet.show(requireActivity().supportFragmentManager, bottomSheet.tag)
@@ -106,7 +133,7 @@ class HomeUsedFragment : Fragment(), CategoryListener {
                             when (value) {
                                 "수정하기" -> {
                                     val intent = Intent(requireActivity(), ManualRegistrationActivity::class.java)
-                                    intent.putExtra("gifticonId", gifticon.id)
+                                    intent.putExtra("gifticonId", gifticonId)
                                     intent.putExtra("isEdit", true)
                                     startActivity(intent)
                                     /*manualAddGifticonResult.launch(
@@ -120,15 +147,23 @@ class HomeUsedFragment : Fragment(), CategoryListener {
                                 }
 
                                 "삭제하기" -> {
-                                    gifticonList.remove(gifticon)
+                                    /*gifticonList.remove(gifticon)
                                     giftAdapter.submitList(gifticonList)
-                                    giftAdapter.notifyDataSetChanged()
+                                    giftAdapter.notifyDataSetChanged()*/
                                 }
                             }
                         }
                     })
                 }
             }
+        }
+
+        if (gifticonViewModel.usedCouponList.value == null) {
+            binding.tvNoGifticon.visibility = View.VISIBLE
+            binding.tvOfferCouponRegistration.visibility = View.VISIBLE
+        } else {
+            binding.tvNoGifticon.visibility = View.GONE
+            binding.tvOfferCouponRegistration.visibility = View.GONE
         }
 
         binding.ivAddCategory.setOnClickListener {
@@ -194,7 +229,7 @@ class HomeUsedFragment : Fragment(), CategoryListener {
 
     private fun initHomeRecyclerView() {
         binding.giftRv.apply {
-            adapter = giftAdapter
+            adapter = couponListAdapter
             layoutManager = gridManager
             binding.giftRv.addItemDecoration(
                 GridSpacingItemDecoration(spanCount = 2, spacing = 10f.fromDpToPx())
@@ -403,9 +438,9 @@ class HomeUsedFragment : Fragment(), CategoryListener {
         super.onStart()
         Log.d(TAG, "onStart: ")
 
-        val currentPage = 0
+       /* val currentPage = 0
 
-        getUsedGifticonListFromServer(currentPage)
+        getUsedGifticonListFromServer(currentPage)*/
     }
 
     companion object {

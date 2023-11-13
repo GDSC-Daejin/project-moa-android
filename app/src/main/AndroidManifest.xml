@@ -43,15 +43,6 @@
             android:name=".ShareRoomMenu.ShareRoomReadActivity"
             android:exported="false" />
         <activity
-            android:name=".CouponTab.CouponAutoAddActivity"
-            android:exported="false" />
-        <activity
-            android:name=".CouponTab.CouponManualAddActivity"
-            android:exported="false" />
-        <activity
-            android:name=".BottomMenu.LockerActivity"
-            android:exported="false" />
-        <activity
             android:name=".Login2Activity"
             android:exported="true"
             android:theme="@style/Theme.App.Splash">

@@ -17,6 +17,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.giftmoa.Adapter.CouponListAdapter
 import com.example.giftmoa.Adapter.GifticonListAdapter
 import com.example.giftmoa.BottomMenu.CategoryListener
 import com.example.giftmoa.BottomMenu.CouponFragment
@@ -38,6 +39,7 @@ import com.example.giftmoa.Data.Data1
 import com.example.giftmoa.Data.GetCategoryListResponse
 import com.example.giftmoa.Data.GetGifticonListResponse
 import com.example.giftmoa.Data.Gifticon
+import com.example.giftmoa.Data.GifticonData
 import com.example.giftmoa.Data.LogoutUserResponse
 import com.example.giftmoa.Data.UpdateGifticonRequest
 import com.example.giftmoa.Data.UpdateGifticonResponse
@@ -85,6 +87,10 @@ class HomeEntireFragment : Fragment(), CategoryListener {
 
     private lateinit var manualAddGifticonResult: ActivityResultLauncher<Intent>
 
+    private lateinit var gifticonViewModel: GifticonViewModel
+
+    private lateinit var couponListAdapter: CouponListAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,21 +101,44 @@ class HomeEntireFragment : Fragment(), CategoryListener {
         Log.d(TAG, "onCreate: ")
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        gifticonViewModel.couponList.observe(viewLifecycleOwner, Observer {
+            binding.giftRv.post(Runnable {
+                // 여기에서 어댑터에 데이터를 설정
+                /*(binding.giftRv.adapter as? CouponListAdapter)?.setAllCouponsData(coupons)*/
+                couponListAdapter.setAllCouponsData(it)
+            })
+        })
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        gifticonViewModel = ViewModelProvider(requireActivity(), ViewModelProvider.NewInstanceFactory())[GifticonViewModel::class.java]
+
         binding = FragmentHomeEntireBinding.inflate(inflater, container, false)
 
         Log.d(TAG, "onCreateView: ")
 
         //var allGifticonList = couponViewModel.allGifticonList.value
 
-        giftAdapter = GifticonListAdapter({ gifticon ->
+        /*giftAdapter = GifticonListAdapter({ gifticon ->
             val intent = Intent(requireActivity(), GifticonDetailActivity::class.java)
             intent.putExtra("gifticonId", gifticon.id)
             startActivity(intent)
-        }, gifticonList)
+        }, gifticonList)*/
+
+        var allCouponList = gifticonViewModel.allCouponList.value
+
+        couponListAdapter = CouponListAdapter({ gifticon ->
+            val intent = Intent(requireActivity(), GifticonDetailActivity::class.java)
+            intent.putExtra("gifticonId", gifticon.id)
+            startActivity(intent)
+        }, allCouponList ?: emptyList<Gifticon>())
+        couponListAdapter.setHasStableIds(true)
 
         getCategoryListFromServer()
 
@@ -137,6 +166,14 @@ class HomeEntireFragment : Fragment(), CategoryListener {
                     }
                 }
             }*/
+
+        if (gifticonViewModel.allCouponList.value == null) {
+            binding.tvNoGifticon.visibility = View.VISIBLE
+            binding.tvOfferCouponRegistration.visibility = View.VISIBLE
+        } else {
+            binding.tvNoGifticon.visibility = View.GONE
+            binding.tvOfferCouponRegistration.visibility = View.GONE
+        }
 
         binding.ivAddCategory.setOnClickListener {
             showCategoryBottomSheet(categoryList)
@@ -201,7 +238,8 @@ class HomeEntireFragment : Fragment(), CategoryListener {
 
     private fun initHomeRecyclerView() {
         binding.giftRv.apply {
-            adapter = giftAdapter
+            //adapter = giftAdapter
+            adapter = couponListAdapter
             layoutManager = gridManager
             binding.giftRv.addItemDecoration(
                 GridSpacingItemDecoration(spanCount = 2, spacing = 10f.fromDpToPx())
@@ -427,10 +465,10 @@ class HomeEntireFragment : Fragment(), CategoryListener {
         super.onStart()
         Log.d(TAG, "onStart: ")
 
-        giftAdapter.itemLongClickListener = object : GifticonListAdapter.OnItemLongClickListener {
+        couponListAdapter.itemLongClickListener = object : CouponListAdapter.OnItemLongClickListener {
             override fun onItemLongClick(position: Int) {
                 // 길게 클릭한 아이템에 대한 처리 로직을 여기에 작성
-                val gifticon = giftAdapter.currentList[position]
+                val selectedGifticon = couponListAdapter.Coupons[position]
 
                 val bottomSheet = GifticonEditDeleteBottomSheet()
                 bottomSheet.show(requireActivity().supportFragmentManager, bottomSheet.tag)
@@ -443,7 +481,7 @@ class HomeEntireFragment : Fragment(), CategoryListener {
                             when (value) {
                                 "수정하기" -> {
                                     val intent = Intent(requireActivity(), ManualRegistrationActivity::class.java)
-                                    intent.putExtra("gifticonId", gifticon.id)
+                                    intent.putExtra("gifticonId", selectedGifticon.id)
                                     intent.putExtra("isEdit", true)
                                     startActivity(intent)
                                     /*manualAddGifticonResult.launch(
@@ -458,9 +496,10 @@ class HomeEntireFragment : Fragment(), CategoryListener {
 
                                 "삭제하기" -> {
                                     //deleteGifticon(gifticon)
-                                    gifticonList.remove(gifticon)
+                                    /*gifticonList.remove(gifticonId)
                                     giftAdapter.submitList(gifticonList.toList())
-                                    giftAdapter.notifyDataSetChanged()
+                                    giftAdapter.notifyDataSetChanged()*/
+                                    gifticonViewModel.deleteCoupon(selectedGifticon)
                                 }
                             }
                         }
@@ -469,9 +508,9 @@ class HomeEntireFragment : Fragment(), CategoryListener {
             }
         }
 
-        val currentPage = 0
+        /*val currentPage = 0
 
-        getAllGifticonListFromServer(currentPage)
+        getAllGifticonListFromServer(currentPage)*/
     }
 
     override fun onResume() {

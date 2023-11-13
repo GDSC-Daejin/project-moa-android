@@ -49,13 +49,13 @@ class SortBottomSheet : BottomSheetDialogFragment() {
 
         binding.tvRecent.setOnClickListener {
             if (listener == null) return@setOnClickListener
-            listener?.sendValue("최신 순")
+            listener?.sendValue("최신순")
             dismiss()
         }
 
         binding.tvDueDate.setOnClickListener {
             if (listener == null) return@setOnClickListener
-            listener?.sendValue("마감임박 순")
+            listener?.sendValue("마감임박순")
             dismiss()
         }
 

@@ -5,6 +5,8 @@ import android.util.Log
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.example.giftmoa.Adapter.CategoryAdapter
 import com.example.giftmoa.BottomMenu.CategoryListener
 import com.example.giftmoa.BottomSheetFragment.CategoryBottomSheet
@@ -14,10 +16,12 @@ import com.example.giftmoa.Data.AddGifticonRequest
 import com.example.giftmoa.Data.CategoryItem
 import com.example.giftmoa.Data.GetCategoryListResponse
 import com.example.giftmoa.Data.GetGifticonDetailResponse
+import com.example.giftmoa.Data.Gifticon
 import com.example.giftmoa.Data.GifticonDetail
 import com.example.giftmoa.Data.GifticonDetailItem
 import com.example.giftmoa.Data.UpdateGifticonRequest
 import com.example.giftmoa.Data.UpdateGifticonResponse
+import com.example.giftmoa.HomeTab.GifticonViewModel
 import com.example.giftmoa.R
 import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.ActivityManualRegistrationBinding
@@ -43,8 +47,14 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
 
     private var gifticonDetail: GifticonDetail? = null
 
+    private lateinit var gifticonViewModel: GifticonViewModel
+
+    private var gifticonId: Long? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        gifticonViewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())[GifticonViewModel::class.java]
 
         binding = ActivityManualRegistrationBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -56,25 +66,18 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
         }
         isEdit = intent.getBooleanExtra("isEdit", false)*/
 
-        val gifticonId = intent.getLongExtra("gifticonId", 0)
+        gifticonId = intent.getLongExtra("gifticonId", 0)
         isEdit = intent.getBooleanExtra("isEdit", false)
 
         if (isEdit) {
-            /*binding.tvToolbarTitle.text = "기프티콘 수정"
+            binding.tvToolbarTitle.text = "기프티콘 수정"
             binding.btnConfirm.text = "수정"
-
-            binding.etCouponName.setText(gifticon!!.name)
-            binding.etBarcodeNumber.setText(gifticon!!.barcodeNumber.toString())
-            binding.etExchangePlace.setText(gifticon!!.exchangePlace)
-            binding.etDueDate.setText(gifticon!!.dueDate?.let { FormatUtil().DateToString(it) })
-            if (gifticon!!.gifticonType == "MONEY") {
-                binding.etCouponAmount.visibility = android.view.View.VISIBLE
-                binding.tvCouponAmountUnit.visibility = android.view.View.VISIBLE
-                binding.switchCouponAmount.isChecked = true
-                binding.etCouponAmount.setText(gifticon!!.amount.toString())
-            }*/
-            getGiftionDetailFromServer(gifticonId)
+            binding.viewLoading.visibility = android.view.View.VISIBLE
+            binding.ivProgressBar.visibility = android.view.View.VISIBLE
+            gifticonId?.let { getGiftionDetailFromServer(it) }
         } else {
+            binding.viewLoading.visibility = android.view.View.GONE
+            binding.ivProgressBar.visibility = android.view.View.GONE
             binding.switchCouponAmount.isClickable = true
         }
         getCategoryListFromServer()
@@ -85,6 +88,12 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
             if (isChecked) {
                 binding.etCouponAmount.visibility = android.view.View.VISIBLE
                 binding.tvCouponAmountUnit.visibility = android.view.View.VISIBLE
+
+                Glide.with(this)
+                    .asGif()
+                    .load(R.drawable.icon_progress_bar)
+                    .into(binding.ivProgressBar)
+
             } else {
                 binding.etCouponAmount.visibility = android.view.View.GONE
                 binding.tvCouponAmountUnit.visibility = android.view.View.GONE
@@ -95,7 +104,7 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
             showCategoryBottomSheet(categoryList)
         }
 
-        binding.btnConfirm.setOnClickListener {
+        /*binding.btnConfirm.setOnClickListener {
             if (gifticonId != null && isEdit) {
                 editGifticon(gifticonDetail!!)
             } else {
@@ -103,7 +112,7 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
                 addGifticon()
             }
             //couponViewModel.addData(updateGifticon)
-        }
+        }*/
     }
 
     private fun getGiftionDetailFromServer(gifticonId: Long) {
@@ -118,8 +127,8 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
                         if (responseBody.data != null) {
                             gifticonDetail = responseBody.data.gifticon
 
-                            binding.tvToolbarTitle.text = "기프티콘 수정"
-                            binding.btnConfirm.text = "수정"
+                            binding.viewLoading.visibility = android.view.View.GONE
+                            binding.ivProgressBar.visibility = android.view.View.GONE
 
                             binding.etCouponName.setText(gifticonDetail!!.name)
                             binding.etBarcodeNumber.setText(gifticonDetail!!.barcodeNumber.toString())
@@ -305,6 +314,20 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
 
                     Log.d(TAG, "responseBody gifticon: $responseBody")
 
+                    val coupon = Gifticon(
+                        id = responseBody?.data?.gifticonId,
+                        name = responseBody?.data?.name,
+                        gifticonImagePath = responseBody?.data?.gifticonImagePath,
+                        exchangePlace = responseBody?.data?.exchangePlace,
+                        dueDate = responseBody?.data?.dueDate,
+                        gifticonType = responseBody?.data?.gifticonType,
+                        status = responseBody?.data?.status,
+                        usedDate = responseBody?.data?.usedDate,
+                        author = responseBody?.data?.author,
+                        category = responseBody?.data?.category,
+                    )
+                    gifticonViewModel.addCoupon(coupon)
+
                     finish()
                 } else {
                     Log.e(TAG, "Error: ${response.errorBody()?.string()}")
@@ -415,6 +438,19 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
                 Log.d(TAG, "onCategoryDeleted: $categoryList")
                 break
             }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        binding.btnConfirm.setOnClickListener {
+            if (gifticonId != null && isEdit) {
+                editGifticon(gifticonDetail!!)
+            } else {
+                //updateGifticon = registerGifticon2()
+                addGifticon()
+            }
+            //couponViewModel.addData(updateGifticon)
         }
     }
 

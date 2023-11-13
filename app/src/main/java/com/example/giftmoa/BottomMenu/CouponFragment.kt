@@ -12,9 +12,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.example.giftmoa.Adapter.HomeTabAdapter
 import com.example.giftmoa.CouponTab.AutoRegistrationActivity
 import com.example.giftmoa.BottomSheetFragment.BottomSheetFragment
+import com.example.giftmoa.BottomSheetFragment.SortBottomSheet
 import com.example.giftmoa.BuildConfig
 import com.example.giftmoa.Data.BoundingBox
 import com.example.giftmoa.Data.CategoryItem
@@ -22,8 +25,13 @@ import com.example.giftmoa.Data.GifticonDetailItem
 import com.example.giftmoa.Data.ParsedGifticon
 import com.example.giftmoa.GifticonRegistrationActivity
 import com.example.giftmoa.CouponTab.ManualRegistrationActivity
+import com.example.giftmoa.Data.GetGifticonListResponse
+import com.example.giftmoa.HomeTab.GifticonViewModel
+import com.example.giftmoa.R
+import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.FragmentCouponBinding
 import com.example.giftmoa.utils.FileGalleryPermissionUtil
+import com.google.android.material.chip.Chip
 import com.google.android.material.tabs.TabLayoutMediator
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -77,13 +85,15 @@ class CouponFragment : Fragment() {
     private var categoryList = mutableListOf<CategoryItem>()
 
     // 기프티콘 전체 리스트
-    var allGifticonList = mutableListOf<GifticonDetailItem>()
+    var allCouponList = mutableListOf<GifticonDetailItem>()
     // 사용가능한 기프티콘 리스트
-    var availableGifticonList = mutableListOf<GifticonDetailItem>()
+    var availableCouponList = mutableListOf<GifticonDetailItem>()
     // 사용완료한 기프티콘 리스트
-    var usedGifticonList = mutableListOf<GifticonDetailItem>()
+    var usedCouponList = mutableListOf<GifticonDetailItem>()
 
     private var getBottomSheetData = ""
+
+    private lateinit var gifticonViewModel: GifticonViewModel
 
     private val NCP_OCR_URL = BuildConfig.NCP_OCR_URL
     private val imageLoadLauncher = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uriList ->
@@ -111,6 +121,8 @@ class CouponFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        gifticonViewModel = ViewModelProvider(requireActivity(), ViewModelProvider.NewInstanceFactory())[GifticonViewModel::class.java]
+
         _binding = FragmentCouponBinding.inflate(inflater, container, false)
 
         retrofit = Retrofit.Builder()
@@ -131,6 +143,62 @@ class CouponFragment : Fragment() {
             //tab.setIcon(tabIconList[pos])
         }.attach()
 
+        getAllGifticonListFromServer(0)
+
+        binding.tvSort.setOnClickListener {
+            val bottomSheet = SortBottomSheet()
+            bottomSheet.show(requireActivity().supportFragmentManager, bottomSheet.tag)
+            bottomSheet.apply {
+                setCallback(object : SortBottomSheet.OnSendFromBottomSheetDialog{
+                    override fun sendValue(value: String) {
+                        Log.d("test", "BottomSheetDialog -> 액티비티로 전달된 값 : $value")
+                        getBottomSheetData = value
+                        /*when (value) {
+                            "최신순" -> {
+                                binding.tvSort.text = "최신 순"
+                                gifticonList.sortByDescending { it.id }
+                                giftAdapter.submitList(gifticonList.toList())
+                            }
+
+                            "마감임박순" -> {
+                                binding.tvSort.text = "마감임박 순"
+                                gifticonList.sortBy { it.dueDate }
+                                giftAdapter.submitList(gifticonList.toList())
+
+                            }
+                        }*/
+                        binding.tvSort.text = value
+                        gifticonViewModel.sortCouponList(value)
+                    }
+                })
+            }
+        }
+
+        binding.chipGroupCategory.setOnCheckedStateChangeListener { group, checkedId ->
+            val selectedCategory = binding.chipGroupCategory.findViewById<Chip>(binding.chipGroupCategory.checkedChipId)
+            val categoryName = selectedCategory?.text
+
+            var categoryId: Long? = null
+
+            // categoryList에 있는 카테고리 이름과 같은 카테고리를 찾아서 categoryId를 가져옴
+            for (category in categoryList) {
+                if (categoryName == category.categoryName) {
+                    categoryId = category.id
+                }
+            }
+            if (categoryName == "전체") {
+                // 전체 카테고리를 선택한 경우
+                // 전체 기프티콘 리스트를 보여줍니다.
+                gifticonViewModel.filterCouponListByCategoryId(0L)
+            } else {
+                // 전체 카테고리가 아닌 경우
+                // 해당 카테고리에 속한 기프티콘 리스트를 보여줍니다.
+                if (categoryId != null) {
+                    gifticonViewModel.filterCouponListByCategoryId(categoryId)
+                }
+            }
+        }
+
         return root
     }
 
@@ -145,7 +213,11 @@ class CouponFragment : Fragment() {
 
     private fun uploadImageDirectlyToNaverClovaOCR(uri: Uri) {
         binding.viewLoading.visibility = View.VISIBLE
-        binding.progressBar.visibility = View.VISIBLE
+        binding.ivProgressBar.visibility = View.VISIBLE
+        Glide.with(this)
+            .asGif()
+            .load(R.drawable.icon_progress_bar)
+            .into(binding.ivProgressBar)
         try {
             val inputStream = requireActivity().contentResolver.openInputStream(uri)
             val bytes = inputStream?.readBytes() ?: throw IOException("Failed to read bytes from InputStream")
@@ -319,11 +391,38 @@ class CouponFragment : Fragment() {
         }
     }
 
+    private fun getAllGifticonListFromServer(page: Int) {
+        Retrofit2Generator.create(requireActivity()).getAllGifticonList(size = 30, page = page).enqueue(object :
+            Callback<GetGifticonListResponse> {
+            override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    responseBody?.data?.dataList?.let { newList ->
+                        // newList를 gifticonViewModel의 addCoupon함수를 이용해서 넣어준다.
+                        // id가 높은 것 부터 넣어줘야 한다.
+                        newList.sortedByDescending { it.id }.forEach { gifticon ->
+                            gifticonViewModel.addCoupon(gifticon)
+                        }
+                        /*newList.forEach { gifticon ->
+                            gifticonViewModel.addCoupon(gifticon)
+                        }*/
+                    }
+                } else {
+                    Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<GetGifticonListResponse>, t: Throwable) {
+                Log.e(TAG, "Retrofit onFailure: ", t)
+            }
+        })
+    }
+
     override fun onStop() {
         super.onStop()
         Log.d(TAG, "onStop: ")
         binding.viewLoading.visibility = View.GONE
-        binding.progressBar.visibility = View.GONE
+        binding.ivProgressBar.visibility = View.GONE
     }
 
     override fun onDestroyView() {
