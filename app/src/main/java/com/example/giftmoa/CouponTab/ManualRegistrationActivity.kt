@@ -59,7 +59,7 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
         val gifticonId = intent.getLongExtra("gifticonId", 0)
         isEdit = intent.getBooleanExtra("isEdit", false)
 
-        if (gifticonId != null && isEdit) {
+        if (isEdit) {
             /*binding.tvToolbarTitle.text = "기프티콘 수정"
             binding.btnConfirm.text = "수정"
 
@@ -130,7 +130,7 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
                                 binding.etCouponAmount.visibility = android.view.View.VISIBLE
                                 binding.tvCouponAmountUnit.visibility = android.view.View.VISIBLE
                                 binding.switchCouponAmount.isChecked = true
-                                binding.etCouponAmount.setText(gifticon!!.amount.toString())
+                                binding.etCouponAmount.setText(gifticonDetail!!.gifticonMoney.toString())
                             }
                             // giftcionDetail의 카테고리 이름을 가져와서 해당 카테고리 chip을 선택
                             for (i in 0 until binding.chipGroupCategory.childCount) {
