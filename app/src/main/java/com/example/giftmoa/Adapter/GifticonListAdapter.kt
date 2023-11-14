@@ -42,12 +42,13 @@ class GifticonListAdapter(private val onClick: (Gifticon) -> Unit, var Gifticons
                 val cropHeight = 390 // 잘라낼 높이
 
                 Glide.with(binding.ivCouponImage.context)
-                    .asBitmap()
                     .load(gifticon.gifticonImagePath)
-                    .apply(RequestOptions().transform(CustomCropTransformation(cropX, cropY, cropWidth, cropHeight)))
+                    .transform(CustomCropTransformation(cropX, cropY, cropWidth, cropHeight))
                     .into(binding.ivCouponImage)
+
             } else {
                 binding.ivCouponImage.setPadding(100, 100, 100, 100)
+                binding.ivCouponImage.setBackgroundColor(binding.ivCouponImage.context.getColor(R.color.moa_gray_200))
                 binding.ivCouponImage.setImageResource(R.drawable.icon_logo)
             }
 

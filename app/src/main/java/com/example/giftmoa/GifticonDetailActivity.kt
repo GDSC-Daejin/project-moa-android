@@ -1,5 +1,6 @@
 package com.example.giftmoa
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -40,9 +41,6 @@ class GifticonDetailActivity: AppCompatActivity() {
 
     private lateinit var gifticonViewModel: GifticonViewModel
 
-    private val WHITE: Int = 0xFFFFFFFF.toInt()
-    private val BLACK: Int = 0xFF000000.toInt()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -56,7 +54,6 @@ class GifticonDetailActivity: AppCompatActivity() {
         usageHistoryAdapter = UsageHistoryAdapter()
 
         getGiftionDetailFromServer()
-        getUsageHistoryFromServer()
 
         Log.d(TAG, "gifticonDetail: $gifticonDetail")
 
@@ -76,9 +73,6 @@ class GifticonDetailActivity: AppCompatActivity() {
 
                 binding.etCouponRemainAmount.setText(formattedAmount)
                 binding.etCouponUsedAmount.setText("")
-                /*usageHistoryList.add(UsageHistoryItem(4, "Jade", "https://ca.slack-edge.com/T02BE2ERU5A-U02CPD32N3D-g0beff217a80-512", FormatUtil().DateToString("2023-12-26T00:00:00.000Z"), usedAmount.toLong()))
-                usageHistoryAdapter.submitList(usageHistoryList)
-                usageHistoryAdapter.notifyDataSetChanged()*/
 
                 sendUsageHistoryToServer(usedAmount)
             }
@@ -146,8 +140,8 @@ class GifticonDetailActivity: AppCompatActivity() {
 
                             if (gifticonDetail?.gifticon?.gifticonType == "MONEY") {
                                 binding.llCouponMoneyInfo.visibility = android.view.View.VISIBLE
-                                val formattedAmount = gifticonDetail?.gifticon?.gifticonMoney?.toLongOrNull()?.let { String.format("%,d", it) }
-                                binding.etCouponRemainAmount.setText(formattedAmount)
+                                /*val formattedAmount = gifticonDetail?.gifticon?.gifticonMoney?.toLongOrNull()?.let { String.format("%,d", it) }
+                                binding.etCouponRemainAmount.setText(formattedAmount)*/
                             } else {
                                 binding.llCouponMoneyInfo.visibility = android.view.View.GONE
                             }
@@ -172,8 +166,9 @@ class GifticonDetailActivity: AppCompatActivity() {
                                 binding.btnUsedComplete.text = "사용 취소"
                             }
                         }
-                    }
 
+                        getUsageHistoryFromServer()
+                    }
 
                 } else {
                     Log.e(TAG, "Error: ${response.errorBody()?.string()}")
@@ -194,21 +189,29 @@ class GifticonDetailActivity: AppCompatActivity() {
                     Log.d(TAG, "Retrofit onResponse: ${response.body()}")
                     val responseBody = response.body()
 
+                    Log.d(TAG, "responseBody: $responseBody")
+
                     if (responseBody != null) {
                         if (responseBody.data?.isNotEmpty() == true) {
                             for (usageHistory in responseBody.data) {
                                 usageHistoryList.add(usageHistory)
                             }
+
+                            binding.tvNoUsageHistory.visibility = android.view.View.INVISIBLE
                             binding.rvCouponUsageHistory.visibility = android.view.View.VISIBLE
 
-                            /*// usageHistroyList 가장 마지막의 leftprice를 가져와서 etCouponRemainAmount에 넣어줌
-                            val lastLeftPrice = usageHistoryList[usageHistoryList.size - 1].leftPrice
-                            val formattedAmount = gifticonDetail?.gifticon?.gifticonMoney?.toLongOrNull()?.let { String.format("%,d", it) }
-                            binding.etCouponRemainAmount.setText(formattedAmount)*/
+                            // usageHistroyList 가장 마지막의 leftprice를 가져와서 etCouponRemainAmount에 넣어줌
+                            val lastLeftPrice = usageHistoryList[0].leftPrice
+                            val formattedAmount = lastLeftPrice?.let { String.format("%,d", it) }
+                            binding.etCouponRemainAmount.setText(formattedAmount)
 
                             usageHistoryAdapter.submitList(usageHistoryList)
                             //usageHistoryAdapter.notifyDataSetChanged()
                         } else {
+                            val formattedAmount = gifticonDetail?.gifticon?.gifticonMoney?.toLongOrNull()?.let { String.format("%,d", it) }
+                            binding.etCouponRemainAmount.setText(formattedAmount)
+
+                            binding.tvNoUsageHistory.visibility = android.view.View.VISIBLE
                             binding.rvCouponUsageHistory.visibility = android.view.View.GONE
                         }
                     }
@@ -241,11 +244,17 @@ class GifticonDetailActivity: AppCompatActivity() {
 
                         if (usageHistory != null) {
                             usageHistoryList.add(usageHistory)
-                        }
-                        binding.rvCouponUsageHistory.visibility = android.view.View.VISIBLE
+                            binding.tvNoUsageHistory.visibility = android.view.View.INVISIBLE
+                            binding.rvCouponUsageHistory.visibility = android.view.View.VISIBLE
 
-                        usageHistoryAdapter.submitList(usageHistoryList)
-                        usageHistoryAdapter.notifyItemInserted(0)
+                            usageHistoryAdapter.submitList(usageHistoryList.toList().sortedByDescending { it.usedDate })
+                            // 스크롤 위치를 맨 앞으로 이동
+                            binding.rvCouponUsageHistory.scrollToPosition(0)
+                        } else {
+                            binding.rvCouponUsageHistory.visibility = android.view.View.GONE
+                            binding.tvNoUsageHistory.visibility = android.view.View.VISIBLE
+                        }
+
                     }
                 } else {
                     Log.e(TAG, "Error: ${response.errorBody()?.string()}")
@@ -286,7 +295,10 @@ class GifticonDetailActivity: AppCompatActivity() {
                             category = gifticonDetail?.gifticon?.category
                         )
 
-                        gifticonViewModel.updateStatusCoupon(coupon)
+                        val data = Intent().apply {
+                            putExtra("updatedGifticonWithStatus", coupon)
+                        }
+                        setResult(RESULT_OK, data)
 
                         if (gifticonDetail?.gifticon?.status == "AVAILABLE") {
                             binding.btnUsedComplete.text = "사용 완료"

@@ -50,7 +50,7 @@ class GifticonViewModel: ViewModel() {
         setData(datas)
     }
 
-    fun updateStatusCoupon(coupon: Gifticon) {
+    fun updateCouponStatus(coupon: Gifticon) {
         if (coupon.status == "AVAILABLE") {
             coupon.status = "UNAVAILABLE"
         } else {
@@ -60,7 +60,7 @@ class GifticonViewModel: ViewModel() {
     }
 
     fun updateCoupon(coupon: Gifticon) {
-        val index = datas.indexOf(coupon)
+        val index = datas.indexOfFirst { x -> x.id == coupon.id }
         datas[index] = coupon
         setData(datas)
     }
@@ -108,6 +108,11 @@ class GifticonViewModel: ViewModel() {
                 setData(datas.filter { x -> x.category?.id == categoryId }.toList() as ArrayList<Gifticon>)
             }
         }
+    }
+
+    fun clearCouponList() {
+        datas.clear()
+        setData(datas)
     }
 
     private fun setData(data: ArrayList<Gifticon>) {

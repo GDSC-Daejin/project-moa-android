@@ -1,8 +1,10 @@
 package com.example.giftmoa.BottomMenu
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -12,11 +14,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.giftmoa.Adapter.HomeTabAdapter
 import com.example.giftmoa.CouponTab.AutoRegistrationActivity
 import com.example.giftmoa.BottomSheetFragment.BottomSheetFragment
+import com.example.giftmoa.BottomSheetFragment.CategoryBottomSheet
 import com.example.giftmoa.BottomSheetFragment.SortBottomSheet
 import com.example.giftmoa.BuildConfig
 import com.example.giftmoa.Data.BoundingBox
@@ -25,7 +29,15 @@ import com.example.giftmoa.Data.GifticonDetailItem
 import com.example.giftmoa.Data.ParsedGifticon
 import com.example.giftmoa.GifticonRegistrationActivity
 import com.example.giftmoa.CouponTab.ManualRegistrationActivity
+import com.example.giftmoa.Data.AddCategoryRequest
+import com.example.giftmoa.Data.AddCategoryResponse
+import com.example.giftmoa.Data.Author
+import com.example.giftmoa.Data.Category
+import com.example.giftmoa.Data.GetCategoryListResponse
 import com.example.giftmoa.Data.GetGifticonListResponse
+import com.example.giftmoa.Data.Gifticon
+import com.example.giftmoa.Data.LogoutUserResponse
+import com.example.giftmoa.Data.UpdateGifticonRequest
 import com.example.giftmoa.HomeTab.GifticonViewModel
 import com.example.giftmoa.R
 import com.example.giftmoa.Retrofit2Generator
@@ -67,7 +79,7 @@ interface CategoryListener {
     fun onCategoryDeleted(category: String)
 }
 
-class CouponFragment : Fragment() {
+class CouponFragment : Fragment(), CategoryListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -145,6 +157,31 @@ class CouponFragment : Fragment() {
 
         getAllGifticonListFromServer(0)
 
+        getCategoryListFromServer()
+
+        manualAddGifticonResult =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                if (it.resultCode == RESULT_OK) {
+                    val updatedGifticon = if (Build.VERSION.SDK_INT >= 33) {
+                        it.data?.getParcelableExtra(
+                            "updatedGifticon",
+                            Gifticon::class.java
+                        )
+                    } else {
+                        it.data?.getParcelableExtra<Gifticon>("updatedGifticon")
+                    }
+                    val isEdit = it.data?.getBooleanExtra("isEdit", false)
+                    Log.d(TAG, "updatedGifticon: $updatedGifticon")
+                    Log.d(TAG, "isEdit: $isEdit")
+                    if (isEdit == true) {
+                        updatedGifticon?.let { it1 -> gifticonViewModel.updateCoupon(it1) }
+                    } else {
+                        // 기프티콘 추가
+                        updatedGifticon?.let { it1 -> gifticonViewModel.addCoupon(it1) }
+                    }
+                }
+            }
+
         binding.tvSort.setOnClickListener {
             val bottomSheet = SortBottomSheet()
             bottomSheet.show(requireActivity().supportFragmentManager, bottomSheet.tag)
@@ -152,7 +189,7 @@ class CouponFragment : Fragment() {
                 setCallback(object : SortBottomSheet.OnSendFromBottomSheetDialog{
                     override fun sendValue(value: String) {
                         Log.d("test", "BottomSheetDialog -> 액티비티로 전달된 값 : $value")
-                        getBottomSheetData = value
+                        //getBottomSheetData = value
                         /*when (value) {
                             "최신순" -> {
                                 binding.tvSort.text = "최신 순"
@@ -174,6 +211,10 @@ class CouponFragment : Fragment() {
             }
         }
 
+        binding.ivAddCategory.setOnClickListener {
+            showCategoryBottomSheet(categoryList)
+        }
+
         binding.chipGroupCategory.setOnCheckedStateChangeListener { group, checkedId ->
             val selectedCategory = binding.chipGroupCategory.findViewById<Chip>(binding.chipGroupCategory.checkedChipId)
             val categoryName = selectedCategory?.text
@@ -189,13 +230,15 @@ class CouponFragment : Fragment() {
             if (categoryName == "전체") {
                 // 전체 카테고리를 선택한 경우
                 // 전체 기프티콘 리스트를 보여줍니다.
-                gifticonViewModel.filterCouponListByCategoryId(0L)
+                //gifticonViewModel.filterCouponListByCategoryId(0L)
+                gifticonViewModel.clearCouponList()
+                getAllGifticonListFromServer(0)
             } else {
                 // 전체 카테고리가 아닌 경우
                 // 해당 카테고리에 속한 기프티콘 리스트를 보여줍니다.
-                if (categoryId != null) {
-                    gifticonViewModel.filterCouponListByCategoryId(categoryId)
-                }
+                //categoryId?.let { gifticonViewModel.filterCouponListByCategoryId(it) }
+                gifticonViewModel.clearCouponList()
+                categoryId?.let { getCategoryGifticonListFromServer(it, 0) }
             }
         }
 
@@ -274,10 +317,17 @@ class CouponFragment : Fragment() {
     private fun launchAutoRegistrationActivity(result: String, uri: String) {
         val parsedGifticon = extractPlatformFromJson(result, uri)
 
-        val intent = Intent(requireActivity(), AutoRegistrationActivity::class.java)
+        /*val intent = Intent(requireActivity(), AutoRegistrationActivity::class.java)
         // parsedGifticon 객체를 intent에 담아서 AutoRegistrationActivity로 전달
         intent.putExtra("PARSED_GIFTICON", parsedGifticon)
-        startActivity(intent)
+        startActivity(intent)*/
+        manualAddGifticonResult.launch(
+            Intent(
+                requireActivity(),
+                AutoRegistrationActivity::class.java
+            ).apply {
+                putExtra("PARSED_GIFTICON", parsedGifticon)
+            })
     }
 
     private fun extractPlatformFromJson(result: String, uri: String): ParsedGifticon {
@@ -432,11 +482,11 @@ class CouponFragment : Fragment() {
                             }
 
                             "수동 등록" -> {
-                                val intent = Intent(requireActivity(), ManualRegistrationActivity::class.java)
-                                startActivity(intent)
-                                /*manualAddGifticonResult.launch(Intent(requireActivity(), ManualRegistrationActivity::class.java).apply {
+                                /*val intent = Intent(requireActivity(), ManualRegistrationActivity::class.java)
+                                startActivity(intent)*/
+                                manualAddGifticonResult.launch(Intent(requireActivity(), ManualRegistrationActivity::class.java).apply {
                                     putExtra("isEdit", false)
-                                })*/
+                                })
                             }
                         }
                     }
@@ -454,6 +504,188 @@ class CouponFragment : Fragment() {
                     responseBody?.data?.dataList?.let { newList ->
                         // newList를 gifticonViewModel의 addCoupon함수를 이용해서 넣어준다.
                         // id가 높은 것 부터 넣어줘야 한다.
+                        newList.sortedByDescending { it.id }.forEach { gifticon ->
+                            gifticonViewModel.addCoupon(gifticon)
+                        }
+                        /*newList.forEach { gifticon ->
+                            gifticonViewModel.addCoupon(gifticon)
+                        }*/
+                    }
+                } else {
+                    Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<GetGifticonListResponse>, t: Throwable) {
+                Log.e(TAG, "Retrofit onFailure: ", t)
+            }
+        })
+    }
+
+    private fun getCategoryListFromServer() {
+        Retrofit2Generator.create(requireActivity()).getCategoryList().enqueue(object : Callback<GetCategoryListResponse> {
+            override fun onResponse(call: Call<GetCategoryListResponse>, response: Response<GetCategoryListResponse>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "Retrofit onResponse: ${response.body()}")
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        val resposeBody = responseBody.data
+
+                        if (resposeBody != null) {
+                            for (category in resposeBody) {
+                                if (category.categoryName == null) {
+                                    continue
+                                }
+                                if (category.categoryName == "미분류") {
+                                    // 항상 가장 마지막에 미분류 카테고리가 추가되도록
+                                    // categoryList의 맨 뒤에 추가
+                                    binding.chipUnclassified.visibility = View.VISIBLE
+                                    categoryList.add(category)
+                                    continue
+                                }
+                                val chip = category.categoryName!!.let { createNewChip(it) }
+
+                                // 마지막 Chip 뷰의 인덱스를 계산
+                                val lastChildIndex = binding.chipGroupCategory.childCount - 1
+
+                                // 마지막 Chip 뷰의 인덱스가 0보다 큰 경우에만
+                                // 현재 Chip을 바로 그 앞에 추가
+                                if (lastChildIndex >= 0) {
+                                    binding.chipGroupCategory.addView(chip, lastChildIndex)
+                                } else {
+                                    // ChipGroup에 자식이 없는 경우, 그냥 추가
+                                    binding.chipGroupCategory.addView(chip)
+                                }
+
+                                categoryList.add(category)
+                            }
+                        }
+                    }
+                } else {
+                    Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<GetCategoryListResponse>, t: Throwable) {
+                Log.e(TAG, "Retrofit onFailure: ", t)
+            }
+        })
+    }
+
+    private fun deleteGifticon( gifticon: Gifticon) {
+        Log.d(TAG, "deleteGifticon: ${gifticon.id}")
+        gifticon.id?.let {
+            Retrofit2Generator.create(requireActivity()).deleteGifticon(it).enqueue(object : Callback<LogoutUserResponse> {
+                override fun onResponse(call: Call<LogoutUserResponse>, response: Response<LogoutUserResponse>) {
+                    if (response.isSuccessful) {
+                        Log.d(TAG, "Retrofit onResponse: ${response.body()}")
+                        val responseBody = response.body()
+                        if (responseBody != null) {
+                            gifticonViewModel.deleteCoupon(gifticon)
+                        }
+
+                    } else {
+                        Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<LogoutUserResponse>, t: Throwable) {
+                    Log.e(TAG, "Retrofit onFailure: ", t)
+                }
+            })
+        }
+    }
+
+    private fun createNewChip(text: String): Chip {
+        val chip = layoutInflater.inflate(R.layout.category_chip_layout, null, false) as Chip
+        chip.text = text
+        //chip.isCloseIconVisible = false
+        chip.setOnCloseIconClickListener {
+            // 닫기 아이콘 클릭 시 Chip 제거
+            (it.parent as? ViewGroup)?.removeView(it)
+        }
+        return chip
+    }
+
+    private fun deleteChip(text: String) {
+        for (i in 0 until binding.chipGroupCategory.childCount) {
+            val childView = binding.chipGroupCategory.getChildAt(i)
+            if (childView is Chip) {
+                val chip = childView as Chip
+                if (chip.text == text) {
+                    binding.chipGroupCategory.removeView(chip)
+                    break
+                }
+            }
+        }
+    }
+
+    override fun onCategoryUpdated(categoryName: String) {
+        val categoryRequest = AddCategoryRequest(categoryName)
+        // Retrofit을 이용해서 서버에 카테고리 추가 요청
+        // 서버에서 카테고리 추가가 완료되면 아래 코드를 실행
+        Retrofit2Generator.create(requireActivity()).addCategory(categoryRequest).enqueue(object : Callback<AddCategoryResponse> {
+            override fun onResponse(call: Call<AddCategoryResponse>, response: Response<AddCategoryResponse>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "Retrofit onResponse: ${response.body()}")
+                    val responseBody = response.body()
+
+                    Log.d(TAG, "responseBody category: $responseBody")
+                    if (responseBody != null) {
+                        val category = responseBody.data
+                        // categoryList에 추가
+                        if (category != null) {
+                            val chip = category.categoryName?.let { createNewChip(it) }
+                            val positionToInsert = binding.chipGroupCategory.childCount - 1
+                            binding.chipGroupCategory.addView(chip, positionToInsert)
+                            categoryList.add(category)
+                        }
+                    }
+                } else {
+                    Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<AddCategoryResponse>, t: Throwable) {
+                Log.e(TAG, "Retrofit onFailure: ", t)
+            }
+        })
+    }
+
+    override fun onCategoryDeleted(categoryName: String) {
+        var categoryId: Long? = null
+        Log.d(TAG, "onCategoryDeleted: $categoryName")
+        for (category in categoryList) {
+            if (categoryName == category.categoryName) {
+                // categoryList에서 해당 카테고리의 id 값 가져오기
+                categoryId = category.id
+                // categoryList에서 해당 카테고리 삭제
+                categoryList.remove(category)
+                deleteChip(categoryName)
+                Log.d(TAG, "onCategoryDeleted: $categoryId")
+                Log.d(TAG, "onCategoryDeleted: $categoryList")
+                break
+            }
+        }
+    }
+
+    private fun showCategoryBottomSheet(categoryList: List<CategoryItem>) {
+        val categoryBottomSheet = CategoryBottomSheet(categoryList, this)
+        categoryBottomSheet.setStyle(DialogFragment.STYLE_NORMAL, R.style.RoundCornerBottomSheetDialogTheme)
+        categoryBottomSheet.show(requireActivity().supportFragmentManager, categoryBottomSheet.tag)
+    }
+
+    private fun getCategoryGifticonListFromServer(categoryId: Long, page: Int) {
+        Retrofit2Generator.create(requireActivity()).getCategoryGifticonList(categoryId, 30, page).enqueue(object : Callback<GetGifticonListResponse> {
+            override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "Retrofit onResponse: ${response.body()}")
+                    val responseBody = response.body()
+                    responseBody?.data?.dataList?.let { newList ->
+                        // newList를 gifticonViewModel의 addCoupon함수를 이용해서 넣어준다.
+                        // id가 높은 것 부터 넣어줘야 한다.
+                        /*// 기존에 있던 기프티콘 리스트를 모두 지운다.
+                        gifticonViewModel.clearCouponList()*/
                         newList.sortedByDescending { it.id }.forEach { gifticon ->
                             gifticonViewModel.addCoupon(gifticon)
                         }

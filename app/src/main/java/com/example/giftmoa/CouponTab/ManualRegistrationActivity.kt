@@ -1,5 +1,7 @@
 package com.example.giftmoa.CouponTab
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.ViewGroup
@@ -54,7 +56,9 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        gifticonViewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())[GifticonViewModel::class.java]
+        Log.d(TAG, "onCreate: ")
+
+        //gifticonViewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())[GifticonViewModel::class.java]
 
         binding = ActivityManualRegistrationBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -63,11 +67,9 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
             intent.getParcelableExtra("gifticon", GifticonDetailItem::class.java)
         } else {
             intent.getParcelableExtra<GifticonDetailItem>("gifticon")
-        }
-        isEdit = intent.getBooleanExtra("isEdit", false)*/
-
-        gifticonId = intent.getLongExtra("gifticonId", 0)
+        }*/
         isEdit = intent.getBooleanExtra("isEdit", false)
+        gifticonId = intent.getLongExtra("gifticonId", 0)
 
         if (isEdit) {
             binding.tvToolbarTitle.text = "기프티콘 수정"
@@ -104,15 +106,13 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
             showCategoryBottomSheet(categoryList)
         }
 
-        /*binding.btnConfirm.setOnClickListener {
-            if (gifticonId != null && isEdit) {
-                editGifticon(gifticonDetail!!)
+        binding.btnConfirm.setOnClickListener {
+            if (gifticonId != 0L && isEdit) {
+                gifticonDetail?.let { it1 -> editGifticon(it1) }
             } else {
-                //updateGifticon = registerGifticon2()
                 addGifticon()
             }
-            //couponViewModel.addData(updateGifticon)
-        }*/
+        }
     }
 
     private fun getGiftionDetailFromServer(gifticonId: Long) {
@@ -220,7 +220,7 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
             barcodeNumber = binding.etBarcodeNumber.text.toString(),
             gifticonImagePath = gifticon.gifticonImagePath,
             exchangePlace = binding.etExchangePlace.text.toString(),
-            dueDate = gifticon.dueDate,
+            dueDate = FormatUtil().StringToDate(binding.etDueDate.text.toString(), TAG),
             orderNumber = binding.etOrderNumber.text.toString(),
             gifticonType = gifticonType,
             gifticonMoney = if (binding.switchCouponAmount.isChecked) binding.etCouponAmount.text.toString() else null,
@@ -251,10 +251,26 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
 
                     Log.d(TAG, "responseBody gifticon: $responseBody")
 
-                    // 2초 후에 화면 종료
-                   /* Handler(Looper.getMainLooper()).postDelayed({
-                        finish()
-                    }, 2000)*/
+                    val coupon = Gifticon(
+                        id = responseBody?.data?.gifticonId,
+                        name = responseBody?.data?.name,
+                        gifticonImagePath = responseBody?.data?.gifticonImagePath,
+                        exchangePlace = responseBody?.data?.exchangePlace,
+                        dueDate = responseBody?.data?.dueDate,
+                        gifticonType = responseBody?.data?.gifticonType,
+                        status = responseBody?.data?.status,
+                        usedDate = responseBody?.data?.usedDate,
+                        author = responseBody?.data?.author,
+                        category = responseBody?.data?.category,
+                    )
+
+                    val data = Intent().apply {
+                        putExtra("updatedGifticon", coupon)
+                        putExtra("isEdit", isEdit)
+                    }
+
+                    setResult(RESULT_OK, data)
+
                     finish()
                 } else {
                     Log.e(TAG, "Error: ${response.errorBody()?.string()}")
@@ -326,9 +342,15 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
                         author = responseBody?.data?.author,
                         category = responseBody?.data?.category,
                     )
-                    gifticonViewModel.addCoupon(coupon)
+
+                    val data = Intent().apply {
+                        putExtra("updatedGifticon", coupon)
+                        putExtra("isEdit", isEdit)
+                    }
+                    setResult(RESULT_OK, data)
 
                     finish()
+
                 } else {
                     Log.e(TAG, "Error: ${response.errorBody()?.string()}")
                 }
@@ -443,15 +465,7 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
 
     override fun onStart() {
         super.onStart()
-        binding.btnConfirm.setOnClickListener {
-            if (gifticonId != null && isEdit) {
-                editGifticon(gifticonDetail!!)
-            } else {
-                //updateGifticon = registerGifticon2()
-                addGifticon()
-            }
-            //couponViewModel.addData(updateGifticon)
-        }
+
     }
 
     /*private fun editGifticon2(gifticon: GifticonDetailItem): GifticonDetailItem {

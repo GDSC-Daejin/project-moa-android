@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.example.giftmoa.Data.Gifticon
 import com.example.giftmoa.R
@@ -39,12 +40,13 @@ class CouponListAdapter(private val onClick: (Gifticon) -> Unit, var Coupons: Li
                 val cropHeight = 390 // 잘라낼 높이
 
                 Glide.with(binding.ivCouponImage.context)
-                    .asBitmap()
                     .load(gifticon.gifticonImagePath)
                     .apply(RequestOptions().transform(CustomCropTransformation(cropX, cropY, cropWidth, cropHeight)))
                     .into(binding.ivCouponImage)
+
             } else {
                 binding.ivCouponImage.setPadding(100, 100, 100, 100)
+                binding.ivCouponImage.setBackgroundColor(binding.ivCouponImage.context.getColor(R.color.moa_gray_200))
                 binding.ivCouponImage.setImageResource(R.drawable.icon_logo)
             }
 
