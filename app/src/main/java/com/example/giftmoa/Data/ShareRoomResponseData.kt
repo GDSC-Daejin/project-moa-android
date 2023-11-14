@@ -21,5 +21,7 @@ data class TeamData (
     @SerializedName("status")
     var status : String,
     @SerializedName("teamLeaderNickName")
-    var teamLeaderNickName : String
+    var teamLeaderNickName : String,
+    @SerializedName("teamImage")
+    var teamImage : String?
 )

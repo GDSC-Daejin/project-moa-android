@@ -8,6 +8,7 @@ import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.example.giftmoa.Data.GiftData
 import com.example.giftmoa.Data.ShareRoomGifticon
+import com.example.giftmoa.Data.TeamGifticon
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.HomeItemBinding
 import com.example.giftmoa.databinding.ItemGifticonBinding
@@ -19,7 +20,7 @@ import kotlin.collections.ArrayList
 
 class HomeGiftAdapter : RecyclerView.Adapter<HomeGiftAdapter.HomeGiftViewHolder>(){
     private lateinit var binding : HomeItemBinding
-    var giftItemData = ArrayList<ShareRoomGifticon>()
+    var giftItemData = ArrayList<TeamGifticon>()
     private lateinit var context : Context
 
     init {
@@ -34,14 +35,14 @@ class HomeGiftAdapter : RecyclerView.Adapter<HomeGiftAdapter.HomeGiftViewHolder>
         private var giftRemainingDay = binding.giftRemainingDay
 
 
-        fun bind(itemData: ShareRoomGifticon, position : Int) {
+        fun bind(itemData: TeamGifticon, position : Int) {
             this.position = position
             val s = itemData.dueDate
 
             giftBrand.text = itemData.exchangePlace
             giftName.text = itemData.name
             if (itemData.gifticonImagePath != null) {
-                giftImg.setImageURI(itemData.gifticonImagePath!!.toUri())
+                giftImg.setImageURI(itemData.gifticonImagePath.toUri())
             } else {
                 giftImg.setImageResource(R.drawable.image)
             }
@@ -120,7 +121,7 @@ class HomeGiftAdapter : RecyclerView.Adapter<HomeGiftAdapter.HomeGiftViewHolder>
     }
 
     interface ItemClickListener {
-        fun onClick(view: View, position: Int, itemId: String)
+        fun onClick(view: View, position: Int, itemId: String?)
     }
 
     //약한 참조로 참조하는 객체가 사용되지 않을 경우 가비지 콜렉션에 의해 자동해제

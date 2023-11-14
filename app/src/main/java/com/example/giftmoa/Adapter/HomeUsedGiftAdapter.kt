@@ -8,6 +8,7 @@ import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.example.giftmoa.Data.GiftData
 import com.example.giftmoa.Data.ShareRoomGifticon
+import com.example.giftmoa.Data.TeamGifticon
 import com.example.giftmoa.Data.UsedGiftData
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.HomeItemBinding
@@ -21,7 +22,7 @@ import kotlin.collections.ArrayList
 
 class HomeUsedGiftAdapter : RecyclerView.Adapter<HomeUsedGiftAdapter.HomeUsedGiftViewHolder>(){
     private lateinit var binding : HomeUsedCouponItemBinding
-    var usedGiftItemData = ArrayList<ShareRoomGifticon>()
+    var usedGiftItemData = ArrayList<TeamGifticon>()
     private lateinit var context : Context
 
     init {
@@ -38,13 +39,13 @@ class HomeUsedGiftAdapter : RecyclerView.Adapter<HomeUsedGiftAdapter.HomeUsedGif
         private var usedUser = binding.usedUser
 
 
-        fun bind(itemData: ShareRoomGifticon, position : Int) {
+        fun bind(itemData: TeamGifticon, position : Int) {
             this.position = position
 
             usedBrand.text = itemData.exchangePlace
             usedName.text = itemData.name
             usedCost.text = "사용금액 | " + itemData.gifticonMoney.toString()
-            usedUser.text = "사용자 | " + itemData.author.nickname
+            usedUser.text = "사용자 | " + itemData.author?.nickname
 
             if (itemData.gifticonImagePath != null) {
                 usedImage.setImageURI(itemData.gifticonImagePath!!.toUri())
@@ -131,7 +132,7 @@ class HomeUsedGiftAdapter : RecyclerView.Adapter<HomeUsedGiftAdapter.HomeUsedGif
     }
 
     interface ItemClickListener {
-        fun onClick(view: View, position: Int, itemId: String)
+        fun onClick(view: View, position: Int, itemId: String?)
     }
 
     //약한 참조로 참조하는 객체가 사용되지 않을 경우 가비지 콜렉션에 의해 자동해제

@@ -29,7 +29,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class ShareGifticonActivity : AppCompatActivity() {
     private lateinit var sBinding : ActivityShareGifticonBinding
 
-    var gifticonList = ArrayList<ShareRoomGifticon>()
+    private var gifticonList = ArrayList<ShareRoomGifticon>()
 
     private var giftAdapter: ShareRoomGifticonAdapter? = null
 
@@ -52,7 +52,7 @@ class ShareGifticonActivity : AppCompatActivity() {
 
         sBinding.shareGifticonTv.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
-                val saveSharedPreference = SaveSharedPreference()
+                /*val saveSharedPreference = SaveSharedPreference()
                 val token = saveSharedPreference.getToken(this@ShareGifticonActivity).toString()
                 val getExpireDate = saveSharedPreference.getExpireDate(this@ShareGifticonActivity).toString()
 
@@ -84,11 +84,11 @@ class ShareGifticonActivity : AppCompatActivity() {
                 val client: OkHttpClient = builder.build()
                 retrofit.client(client)
                 val retrofit2: Retrofit = retrofit.build()
-                val api = retrofit2.create(MoaInterface::class.java)
+                val api = retrofit2.create(MoaInterface::class.java)*/
 
                 for (i in selectGifticonList.indices) {
-                    val temp = TeamShareGiftIcon(teamId,selectGifticonList[i].gifticonId)
-                    api.teamShareGificon(temp).enqueue(object : Callback<ShareRoomGifticonResponseData> {
+                    val temp = TeamShareGiftIcon(teamId,selectGifticonList[i].gifticonId.toInt())
+                    Retrofit2Generator.create(this@ShareGifticonActivity).teamShareGificon(temp).enqueue(object : Callback<ShareRoomGifticonResponseData> {
                         override fun onResponse(
                             call: Call<ShareRoomGifticonResponseData>,
                             response: Response<ShareRoomGifticonResponseData>
@@ -137,19 +137,19 @@ class ShareGifticonActivity : AppCompatActivity() {
         (this * Resources.getSystem().displayMetrics.density).toInt()
 
     private fun getAllGifticonListFromServer(page: Int) {
-        Retrofit2Generator.create(this@ShareGifticonActivity).getAllGifticonList(size = 30, page = page).enqueue(object :
-            Callback<GetGifticonListResponse> {
-            override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
+        Retrofit2Generator.create(this@ShareGifticonActivity).getShareGifticonList(size = 30, page = page).enqueue(object :
+            Callback<ShareRoomGetTeamGifticonData> {
+            override fun onResponse(call: Call<ShareRoomGetTeamGifticonData>, response: Response<ShareRoomGetTeamGifticonData>) {
                 if (response.isSuccessful) {
                     val responseBody = response.body()
-                    responseBody?.data?.dataList?.let { newList ->
+                    responseBody?.data?.data?.let { newList ->
                         if (page == 0) {
                             // 첫 페이지인 경우 리스트를 새로 채웁니다.
                             gifticonList.clear()
                         }
                         // 새로운 데이터를 리스트에 추가합니다.
                         val currentPosition = gifticonList.size
-                        gifticonList.addAll(listOf(newList as ShareRoomGifticon))
+                        gifticonList.addAll(newList)
 
                         giftAdapter!!.notifyDataSetChanged()
                     }
@@ -158,7 +158,7 @@ class ShareGifticonActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<GetGifticonListResponse>, t: Throwable) {
+            override fun onFailure(call: Call<ShareRoomGetTeamGifticonData>, t: Throwable) {
                 Log.e("ERROR", "Retrofit onFailure: ", t)
             }
         })

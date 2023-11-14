@@ -19,6 +19,7 @@ import com.example.giftmoa.BuildConfig
 import com.example.giftmoa.Data.*
 import com.example.giftmoa.MoaInterface
 import com.example.giftmoa.R
+import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.ShareRoomMenu.ShareRoomEditActivity
 import com.example.giftmoa.ShareRoomMenu.ShareRoomReadActivity
 import com.example.giftmoa.databinding.FragmentShareRoomBinding
@@ -53,18 +54,11 @@ class ShareRoomFragment : Fragment() {
 
     private lateinit var sBinding : FragmentShareRoomBinding
     private var sAdapter : ShareRoomAdapter? = null
-    private var shareRoomAllData = ArrayList<GetTeamData>()
+    private var shareRoomAllData = ArrayList<Team>()
     private var manager : LinearLayoutManager = LinearLayoutManager(activity)
     private val saveSharedPreference = SaveSharedPreference()
     private var identification = ""
 
-    private var teamMembers = kotlin.collections.ArrayList<GetTeamMembers>() //데이터에 없어서 만든 더미데이터 나중에 나오면 바꾸기 TODO
-
-    private val SERVER_URL = BuildConfig.server_URL
-    private val retrofit = Retrofit.Builder().baseUrl(SERVER_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    val service: MoaInterface = retrofit.create(MoaInterface::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,10 +78,9 @@ class ShareRoomFragment : Fragment() {
 
         identification = saveSharedPreference.getName(activity).toString()
 
-        teamMembers.add(GetTeamMembers(0, "손민성", null))
 
         sAdapter!!.setItemClickListener(object : ShareRoomAdapter.ItemClickListener{
-            override fun onClick(view: View, position: Int, itemId: String) {
+            override fun onClick(view: View, position: Int, itemId: String?) {
                 val temp = shareRoomAllData[position]
 
                 val intent = Intent(activity, ShareRoomReadActivity::class.java).apply {
@@ -178,139 +171,84 @@ class ShareRoomFragment : Fragment() {
     }
 
     private fun setRoomData() {
-        val saveSharedPreference = SaveSharedPreference()
-        val token = saveSharedPreference.getToken(requireActivity()).toString()
-        val getExpireDate = saveSharedPreference.getExpireDate(requireActivity()).toString()
-        /*var interceptor = HttpLoggingInterceptor()
-    interceptor = interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-    val client = OkHttpClient.Builder().addInterceptor(interceptor).build()*/
+        Retrofit2Generator.create(requireActivity()).getMyTeamList().enqueue(object : Callback<GetMyTeamListResponse> {
+            override fun onResponse(
+                call: Call<GetMyTeamListResponse>,
+                response: Response<GetMyTeamListResponse>
+            ) {
+                if (response.isSuccessful) {
+                    Log.e("TEST", "setSucccccc")
+                    println("setSuc")
+                    shareRoomAllData.clear()
+                    val responseBody = response.body()
+                    responseBody?.data?.let { newList ->
 
-        /*val retrofit = Retrofit.Builder().baseUrl("url 주소")
-            .addConverterFactory(GsonConverterFactory.create())
-            //.client(client) 이걸 통해 통신 오류 log찍기 가능
-            .build()
-        val service = retrofit.create(MioInterface::class.java)*/
-        //통신로그
+                        Log.d("TAG", "Room: newList = $newList")
+                        // 새로운 데이터를 리스트에 추가합니다.
+                        val currentPosition = shareRoomAllData.size
+                        shareRoomAllData.addAll(newList)
+                        println(shareRoomAllData)
+                        println(currentPosition)
+                        println(newList.size)
 
-        /*val loggingInterceptor = HttpLoggingInterceptor()
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-        val clientBuilder = OkHttpClient.Builder().addInterceptor(loggingInterceptor).build()*/
-        //통신
-        val SERVER_URL = BuildConfig.server_URL
-        val retrofit = Retrofit.Builder().baseUrl(SERVER_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-        //.client(clientBuilder)
-
-        //Authorization jwt토큰 로그인
-        val interceptor = Interceptor { chain ->
-
-            var newRequest: Request
-            if (token != null && token != "") { // 토큰이 없는 경우
-                // Authorization 헤더에 토큰 추가
-                newRequest =
-                    chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
-                /*val expireDate: Long = getExpireDate.toLong()
-                if (expireDate <= System.currentTimeMillis()) { // 토큰 만료 여부 체크
-                    //refresh 들어갈 곳
-                    newRequest =
-                        chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
-                    return@Interceptor chain.proceed(newRequest)
-                }*/
-            } else newRequest = chain.request()
-            chain.proceed(newRequest)
-        }
-        val builder = OkHttpClient.Builder()
-        builder.interceptors().add(interceptor)
-        val client: OkHttpClient = builder.build()
-        retrofit.client(client)
-        val retrofit2: Retrofit = retrofit.build()
-        val api = retrofit2.create(MoaInterface::class.java)
-
-        println("token" + token)
-        CoroutineScope(Dispatchers.IO).launch {
-            api.getMyShareRoom().enqueue(object : Callback<ShareRoomGetTeamData> {
-                override fun onResponse(
-                    call: Call<ShareRoomGetTeamData>,
-                    response: Response<ShareRoomGetTeamData>
-                ) {
-                    if (response.isSuccessful) {
-                        Log.e("TEST", "setSucccccc")
-                        println("setSuc")
-                        shareRoomAllData.clear()
-
-
-
-                        for (i in response.body()!!.data.indices) {
-                            /*var teamLeaderNickName = ""
-                            teamLeaderNickName = try {
-                                response.body()!!.data[i].teamLeaderNickName
-                            } catch (e : java.lang.NullPointerException) {
-                                Log.d("null", e.toString())
-                                "null"
-                            }*/
-                            shareRoomAllData.add(GetTeamData(
-                                response.body()!!.data[i].id,
-                                response.body()!!.data[i].teamCode,
-                                response.body()!!.data[i].teamName,
-                                response.body()!!.data[i].teamImage,
-                                response.body()!!.data[i].teamLeaderNickName,
-                                response.body()!!.data[i].teamMembers
-                            ))
-                        }
-                        sAdapter!!.notifyDataSetChanged()
-
-                    } else {
-                        println("faafa")
-                        Log.d("add", response.errorBody()?.string()!!)
-                        Log.d("message", call.request().toString())
-                        println(response.code())
+                        // 어댑터에 데이터가 변경되었음을 알립니다.
+                        // DiffUtil.Callback 사용을 위한 submitList는 비동기 처리를 하므로 리스트의 사본을 넘깁니다.
+                        //sAdapter.submitList(shareRoomDetailList.toList())
+                        // 또는
+                        // DiffUtil을 사용하지 않는 경우
+                        //sAdapter!!.notifyItemRangeInserted(currentPosition, newList.size)
                     }
+                    sAdapter!!.notifyDataSetChanged()
+
+                } else {
+                    println("faafa")
+                    Log.d("add", response.errorBody()?.string()!!)
+                    Log.d("message", call.request().toString())
+                    println(response.code())
                 }
+            }
 
-                override fun onFailure(call: Call<ShareRoomGetTeamData>, t: Throwable) {
+            override fun onFailure(call: Call<GetMyTeamListResponse>, t: Throwable) {
 
-                }
+            }
 
-            })
-        }
+        })
     }
 
     private fun setJoinShareRoomData(inviteCode : String) {
         val temp = TeamJoinData(inviteCode)
-        CoroutineScope(Dispatchers.IO).launch {
-            service.joinShareRoom(temp).enqueue(object : Callback<ShareRoomResponseData> {
-                override fun onResponse(
-                    call: Call<ShareRoomResponseData>,
-                    response: Response<ShareRoomResponseData>
-                ) {
-                    if (response.isSuccessful) {
-                        println("set join Suc")
+        Retrofit2Generator.create(requireActivity()).joinShareRoom(temp).enqueue(object : Callback<ShareRoomResponseData> {
+            override fun onResponse(
+                call: Call<ShareRoomResponseData>,
+                response: Response<ShareRoomResponseData>
+            ) {
+                if (response.isSuccessful) {
+                    println("set join Suc")
 
-                        shareRoomAllData.add(GetTeamData(
-                            response.body()!!.data.teamId,
-                            response.body()!!.data.teamCode,
-                            response.body()!!.data.teamName,
-                            null,
-                            response.body()!!.data.teamLeaderNickName,
-                            teamMembers
-                        ))
+                    shareRoomAllData.add(Team(
+                        response.body()!!.data.teamId.toLong(),
+                        response.body()!!.data.teamCode,
+                        response.body()!!.data.teamName,
+                        response.body()!!.data.teamImage,
+                        response.body()!!.data.teamLeaderNickName,
+                        null
+                    ))
 
-                        sAdapter!!.notifyDataSetChanged()
+                    sAdapter!!.notifyDataSetChanged()
 
-                    } else {
-                        println("faafa")
-                        Log.d("add", response.errorBody()?.string()!!)
-                        Log.d("message", call.request().toString())
-                        println(response.code())
-                    }
+                } else {
+                    println("faafa")
+                    Log.d("add", response.errorBody()?.string()!!)
+                    Log.d("message", call.request().toString())
+                    println(response.code())
                 }
+            }
 
-                override fun onFailure(call: Call<ShareRoomResponseData>, t: Throwable) {
+            override fun onFailure(call: Call<ShareRoomResponseData>, t: Throwable) {
 
-                }
+            }
 
-            })
-        }
+        })
     }
 
 
