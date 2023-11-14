@@ -167,13 +167,13 @@ class HomeEntireFragment : Fragment(), CategoryListener {
                 }
             }*/
 
-        if (gifticonViewModel.allCouponList.value == null) {
+        /*if (gifticonViewModel.allCouponList.value == null) {
             binding.tvNoGifticon.visibility = View.VISIBLE
             binding.tvOfferCouponRegistration.visibility = View.VISIBLE
         } else {
             binding.tvNoGifticon.visibility = View.GONE
             binding.tvOfferCouponRegistration.visibility = View.GONE
-        }
+        }*/
 
         binding.ivAddCategory.setOnClickListener {
             showCategoryBottomSheet(categoryList)

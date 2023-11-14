@@ -272,7 +272,7 @@ class CouponFragment : Fragment() {
     }
 
     private fun launchAutoRegistrationActivity(result: String, uri: String) {
-        val parsedGifticon = extractDataFromJson(result, uri)
+        val parsedGifticon = extractPlatformFromJson(result, uri)
 
         val intent = Intent(requireActivity(), AutoRegistrationActivity::class.java)
         // parsedGifticon 객체를 intent에 담아서 AutoRegistrationActivity로 전달
@@ -280,12 +280,66 @@ class CouponFragment : Fragment() {
         startActivity(intent)
     }
 
-    private fun extractDataFromJson(result: String, uri: String): ParsedGifticon {
+    private fun extractPlatformFromJson(result: String, uri: String): ParsedGifticon {
         val fields = JSONObject(result)
             .getJSONArray("images")
             .getJSONObject(0)
             .getJSONArray("fields")
 
+        val lastField = fields.getJSONObject(fields.length() - 1)
+        val lastInferText = lastField.getString("inferText")
+
+        Log.i(TAG, "lastInferText: $lastInferText")
+        if (lastInferText == "toss") {
+            // toss 기프티콘
+            return extractDataFromToss(fields, uri)
+        } else {
+            // 카카오톡 기프티콘
+            return extractDataFromKakao(fields, uri)
+        }
+    }
+
+    private fun extractDataFromToss(fields: JSONArray, uri: String): ParsedGifticon {
+        val name = filterInferTextByCoordinates(fields, 0.0, 634.0, 780.0, 1050.0).joinToString(" ")
+        val barcodeNumber = filterInferTextByCoordinates(fields, 0.0, 710.0, 1000.0, 1200.0).joinToString(" ")
+        val dueDate = filterInferTextByCoordinates(fields, 400.0, 710.0, 1250.0, 1360.0).joinToString(" ")
+
+        var exchangePlace: String? = null
+        var orderNumber: String? = null
+
+        var amount: Long? = null
+        val regex = Regex("(\\d+([,\\d]*)(천|만|백|십)*)원")
+        val matchResult = regex.find(name)
+
+        if (matchResult != null) {
+            var amountStr = matchResult.groups[1]?.value?.replace(",", "") ?: ""
+
+            // 수량어 변환
+            if (amountStr.endsWith("만")) {
+                amountStr = amountStr.replace("만", "0000")
+            } else if (amountStr.endsWith("천")) {
+                amountStr = amountStr.replace("천", "000")
+            } // 백이나 십과 같은 다른 수량어도 필요하다면 추가로 처리할 수 있습니다.
+
+            if (amountStr.isNotEmpty()) {
+                amount = amountStr.toLong()
+                Log.i(TAG, "amount: $amount")
+            }
+        }
+
+        for (i in 0 until fields.length()) {
+            val field = fields.getJSONObject(i)
+            val text = field.getString("inferText")
+            when (text) {
+                "교환처" -> exchangePlace = fields.getJSONObject(i + 1).getString("inferText")
+                "주문번호" -> orderNumber = fields.getJSONObject(i + 1).getString("inferText")
+            }
+        }
+
+        return ParsedGifticon(name, uri, barcodeNumber, exchangePlace, dueDate, orderNumber, amount)
+    }
+
+    private fun extractDataFromKakao(fields: JSONArray, uri: String): ParsedGifticon {
         val name = filterInferTextByCoordinates(fields, 0.0, 634.0, 780.0, 1050.0).joinToString(" ")
         val barcodeNumber = filterInferTextByCoordinates(fields, 0.0, 710.0, 1000.0, 1200.0).joinToString(" ")
         val dueDate = filterInferTextByCoordinates(fields, 400.0, 710.0, 1250.0, 1360.0).joinToString(" ")

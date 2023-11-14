@@ -7,7 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object Retrofit2Generator {
 
-    private const val BASE_URL = "https://moa-backend.kro.kr"
+    private const val BASE_URL = BuildConfig.server_URL
 
     fun create(context: Context): ApiService {
         val okHttpClient = OkHttpClient.Builder()

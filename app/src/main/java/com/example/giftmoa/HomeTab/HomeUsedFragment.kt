@@ -85,7 +85,7 @@ class HomeUsedFragment : Fragment(), CategoryListener {
 
         gifticonViewModel.couponList.observe(viewLifecycleOwner, Observer {
             binding.giftRv.post(Runnable {
-                couponListAdapter.setUsedCouponsData(it.filter { x -> x.status == "AVAILABLE" })
+                couponListAdapter.setUsedCouponsData(it.filter { x -> x.status == "UNAVAILABLE" })
             })
         })
     }
