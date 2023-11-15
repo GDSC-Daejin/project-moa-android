@@ -96,14 +96,33 @@ interface ApiService {
     fun logoutUser(@Body requestBody: RefreshTokenRequest): Call<LogoutUserResponse>
 
     // team-controller-----------------------------------------------------------------------------
+
+    //팀 생성
+    @POST("/api/v1/team")
+    fun createShareRoom(@Body shareRoomData: TeamCreateData) : Call<ShareRoomResponseData>
+
+    //팀 참가
+    @POST("/api/v1/team/join")
+    fun joinShareRoom(@Body joinData : TeamJoinData) : Call<ShareRoomResponseData>
+
+    //팀에 기프티콘 공유
+    @POST("/api/v1/team/gifticon")
+    fun teamShareGificon(@Body shareGifticonData : TeamShareGiftIcon) : Call<ShareRoomGifticonResponseData>
+
     // 팀 목록 가져오기
     @GET("/api/v1/team/my_team")
     fun getMyTeamList(): Call<GetMyTeamListResponse>
 
     // 팀에 속한 기프티콘 가져오기
     @GET("/api/v1/team/gifticon/{teamId}")
-    fun getTeamGifticonList(@Path("teamId") teamId: Long): Call<GetTeamGifticonListResponse>
-
+    fun getTeamGifticonList(@Path("teamId") teamId : Long,
+                            @Query("page") page : Int,
+                            @Query("size") size : Int): Call<GetTeamGifticonListResponse>
+    @GET("/api/v1/gifticon/all_list")
+    fun getShareGifticonList(
+        @Query("size") size: Int?,
+        @Query("page") page: Int?
+    ): Call<ShareRoomGetTeamGifticonData>
 
     // user-controller-----------------------------------------------------------------------------
     // 유저 정보 수정

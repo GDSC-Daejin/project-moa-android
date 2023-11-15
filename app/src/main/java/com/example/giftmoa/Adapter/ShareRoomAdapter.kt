@@ -17,6 +17,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -24,9 +25,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
-import com.example.giftmoa.Data.GetTeamData
-import com.example.giftmoa.Data.GiftData
-import com.example.giftmoa.Data.ShareRoomData
+import com.example.giftmoa.Data.*
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.HomeItemBinding
 import com.example.giftmoa.databinding.ShareRoomItemBinding
@@ -37,7 +36,7 @@ import org.w3c.dom.Text
 
 class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(){
     private lateinit var binding : ShareRoomItemBinding
-    var shareRoomItemData = ArrayList<GetTeamData>()
+    var shareRoomItemData = ArrayList<Team>()
     private lateinit var context : Context
     private var inviteCode = ""
 
@@ -53,7 +52,7 @@ class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(
         private var shareCouponCnt = binding.shareCouponCnt*/
 
 
-        fun bind(itemData: GetTeamData, position : Int) {
+        fun bind(itemData: Team, position : Int) {
             this.position = position
 
             if (itemData.teamImage != null) {
@@ -61,13 +60,13 @@ class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(
                 binding.shareTitle.setTextColor(ContextCompat.getColor(context ,R.color.moa_gray_white))
 
                 //shareCouponCnt.text = "공유중인 쿠폰 : ${itemData.shareCouponCount.toString()}"
-                shareNOP.text = "+${itemData.teamMembers.size.toString()}"
+                shareNOP.text = "+${itemData.teamMembers?.size.toString()}"
                 binding.shareNumberOfPeople.setTextColor(ContextCompat.getColor(context ,R.color.moa_gray_white))
 
             } else {
                 shareTitle.text = itemData.teamName
                 //shareCouponCnt.text = "공유중인 쿠폰 : ${itemData.shareCouponCount.toString()}"
-                shareNOP.text = "+${itemData.teamMembers.size.toString()}"
+                shareNOP.text = "+${itemData.teamMembers?.size.toString()}"
             }
 
 
@@ -117,7 +116,9 @@ class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(
         holder.bind(shareRoomItemData[holder.adapterPosition], position)
 
         holder.itemView.setOnClickListener {
-            itemClickListener.onClick(it, holder.adapterPosition, shareRoomItemData[holder.adapterPosition].teamCode)
+            itemClickListener.onClick(it, holder.adapterPosition,
+                shareRoomItemData[holder.adapterPosition].teamCode
+            )
         }
 
         /*binding.shareDeleteBtn.setOnClickListener {
@@ -176,7 +177,7 @@ class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(
     }
 
     interface ItemClickListener {
-        fun onClick(view: View, position: Int, itemId: String)
+        fun onClick(view: View, position: Int, itemId: String?)
     }
 
     //약한 참조로 참조하는 객체가 사용되지 않을 경우 가비지 콜렉션에 의해 자동해제
@@ -187,14 +188,15 @@ class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(
         this.itemClickListener = itemClickListener
     }
 
-    //클립보드에 복사하기
-    private fun createClipData(message : String) {
-        val clipManager = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+    /*companion object {
+        val diffUtil = object : DiffUtil.ItemCallback<Gifticon>() {
+            override fun areItemsTheSame(oldItem: Gifticon, newItem: Gifticon): Boolean {
+                return oldItem.name == newItem.name
+            }
 
-        val clipData = ClipData.newPlainText("message", message)
-
-        clipManager.setPrimaryClip(clipData)
-
-        Toast.makeText(context, "복사되었습니다.", Toast.LENGTH_SHORT).show()
-    }
+            override fun areContentsTheSame(oldItem: Gifticon, newItem: Gifticon): Boolean {
+                return oldItem == newItem
+            }
+        }
+    }*/
 }

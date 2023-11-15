@@ -25,6 +25,7 @@ import com.example.giftmoa.BuildConfig
 import com.example.giftmoa.Data.*
 import com.example.giftmoa.MoaInterface
 import com.example.giftmoa.R
+import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.ActivityShareRoomEditBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -132,23 +133,23 @@ class ShareRoomEditActivity : AppCompatActivity() {
                     isComplete = !isComplete
                     myViewModel.postCheckComplete(false)
 
-                    val saveSharedPreference = SaveSharedPreference()
+                    /*val saveSharedPreference = SaveSharedPreference()
                     val token = saveSharedPreference.getToken(this).toString()
                     val getExpireDate = saveSharedPreference.getExpireDate(this).toString()
-                    /*var interceptor = HttpLoggingInterceptor()
+                    *//*var interceptor = HttpLoggingInterceptor()
                 interceptor = interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-                val client = OkHttpClient.Builder().addInterceptor(interceptor).build()*/
+                val client = OkHttpClient.Builder().addInterceptor(interceptor).build()*//*
 
-                    /*val retrofit = Retrofit.Builder().baseUrl("url 주소")
+                    *//*val retrofit = Retrofit.Builder().baseUrl("url 주소")
                         .addConverterFactory(GsonConverterFactory.create())
                         //.client(client) 이걸 통해 통신 오류 log찍기 가능
                         .build()
-                    val service = retrofit.create(MioInterface::class.java)*/
+                    val service = retrofit.create(MioInterface::class.java)*//*
                     //통신로그
 
-                    /*val loggingInterceptor = HttpLoggingInterceptor()
+                    *//*val loggingInterceptor = HttpLoggingInterceptor()
                     loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-                    val clientBuilder = OkHttpClient.Builder().addInterceptor(loggingInterceptor).build()*/
+                    val clientBuilder = OkHttpClient.Builder().addInterceptor(loggingInterceptor).build()*//*
                     //통신
                     val SERVER_URL = BuildConfig.server_URL
                     val retrofit = Retrofit.Builder().baseUrl(SERVER_URL)
@@ -178,34 +179,31 @@ class ShareRoomEditActivity : AppCompatActivity() {
                     val client: OkHttpClient = builder.build()
                     retrofit.client(client)
                     val retrofit2: Retrofit = retrofit.build()
-                    val api = retrofit2.create(MoaInterface::class.java)
+                    val api = retrofit2.create(MoaInterface::class.java)*/
 
                     tempTeamData = TeamCreateData(shareRoomName, imageFile.toString())
-                    CoroutineScope(Dispatchers.IO).launch {
-                        /*"application/json; charset=UTF-8",*/
-                        api.createShareRoom(tempTeamData!!).enqueue(object :
-                            Callback<ShareRoomResponseData> {
-                            override fun onResponse(
-                                call: Call<ShareRoomResponseData>,
-                                response: Response<ShareRoomResponseData>
-                            ) {
-                                if (response.isSuccessful) {
-                                    println("succcc")
-                                    println(response.body()!!.code)
-                                } else {
-                                    println("faafa")
-                                    Log.d("add", response.errorBody()?.string()!!)
-                                    Log.d("message", call.request().toString())
-                                    println(response.code())
-                                }
+                    Retrofit2Generator.create(this@ShareRoomEditActivity).createShareRoom(tempTeamData!!).enqueue(object :
+                        Callback<ShareRoomResponseData> {
+                        override fun onResponse(
+                            call: Call<ShareRoomResponseData>,
+                            response: Response<ShareRoomResponseData>
+                        ) {
+                            if (response.isSuccessful) {
+                                println("succcc")
+                                println(response.body()!!.code)
+                            } else {
+                                println("faafa")
+                                Log.d("add", response.errorBody()?.string()!!)
+                                Log.d("message", call.request().toString())
+                                println(response.code())
                             }
+                        }
 
-                            override fun onFailure(call: Call<ShareRoomResponseData>, t: Throwable) {
-                                Log.d("error", t.toString())
-                            }
+                        override fun onFailure(call: Call<ShareRoomResponseData>, t: Throwable) {
+                            Log.d("error", t.toString())
+                        }
 
-                        })
-                    }
+                    })
 
 
                     val intent = Intent(this@ShareRoomEditActivity, ShareRoomFragment::class.java).apply {

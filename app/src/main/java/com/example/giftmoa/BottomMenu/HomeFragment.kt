@@ -233,7 +233,7 @@ class HomeFragment : Fragment() {
     private fun getTeamGifticonListFromServer(teamId: Long) {
         Log.d(TAG, "getTeamGifticonListFromServer: teamId = $teamId")
 
-        Retrofit2Generator.create(requireActivity()).getTeamGifticonList(teamId).enqueue(object :
+        Retrofit2Generator.create(requireActivity()).getTeamGifticonList(teamId, 0, 10).enqueue(object :
             Callback<GetTeamGifticonListResponse> {
             override fun onResponse(call: Call<GetTeamGifticonListResponse>, response: Response<GetTeamGifticonListResponse>) {
                 if (response.isSuccessful) {

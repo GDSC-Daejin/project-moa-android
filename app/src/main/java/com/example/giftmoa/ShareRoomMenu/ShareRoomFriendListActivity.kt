@@ -7,11 +7,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.giftmoa.Adapter.MemberListAdapter
 import com.example.giftmoa.Adapter.ShareRoomAdapter
 import com.example.giftmoa.BuildConfig
+import com.example.giftmoa.Data.GetMyTeamListResponse
 import com.example.giftmoa.Data.GetTeamMembers
 import com.example.giftmoa.Data.SaveSharedPreference
 import com.example.giftmoa.Data.ShareRoomGetTeamData
 import com.example.giftmoa.MoaInterface
 import com.example.giftmoa.R
+import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.ActivityShareRoomFriendListBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -60,72 +62,54 @@ class ShareRoomFriendListActivity : AppCompatActivity() {
     }
 
     private fun setMemberList() {
-        val saveSharedPreference = SaveSharedPreference()
-        val token = saveSharedPreference.getToken(this).toString()
-        val getExpireDate = saveSharedPreference.getExpireDate(this).toString()
-
-        val SERVER_URL = BuildConfig.server_URL
-        val retrofit = Retrofit.Builder().baseUrl(SERVER_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-        //.client(clientBuilder)
-
-        //Authorization jwt토큰 로그인
-        val interceptor = Interceptor { chain ->
-            var newRequest: Request
-            if (token != null && token != "") { // 토큰이 없는 경우
-                // Authorization 헤더에 토큰 추가
-                newRequest =
-                    chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
-
-                val expireDate: Long = getExpireDate.toLong()
-                if (expireDate <= System.currentTimeMillis()) { // 토큰 만료 여부 체크
-                    //refresh 들어갈 곳
-                    newRequest =
-                        chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
-                    return@Interceptor chain.proceed(newRequest)
-                }
-            } else newRequest = chain.request()
-            chain.proceed(newRequest)
-        }
-        val builder = OkHttpClient.Builder()
-        builder.interceptors().add(interceptor)
-        val client: OkHttpClient = builder.build()
-        retrofit.client(client)
-        val retrofit2: Retrofit = retrofit.build()
-        val api = retrofit2.create(MoaInterface::class.java)
-        CoroutineScope(Dispatchers.IO).launch {
-            api.getMyShareRoom().enqueue(object : Callback<ShareRoomGetTeamData>{
-                override fun onResponse(
-                    call: Call<ShareRoomGetTeamData>,
-                    response: Response<ShareRoomGetTeamData>
-                ) {
-                    if (response.isSuccessful) {
-                        println("dssdsds")
-                        memberList.clear()
-                        for (i in response.body()!!.data.indices) {
-                            for (j in response.body()!!.data[i].teamMembers.indices) {
-                                memberList.add(GetTeamMembers(
-                                    response.body()!!.data[i].teamMembers[j].id,
-                                    response.body()!!.data[i].teamMembers[j].nickname,
-                                    response.body()!!.data[i].teamMembers[j].profileImageUrl
-                                ))
+        Retrofit2Generator.create(this@ShareRoomFriendListActivity).getMyTeamList().enqueue(object : Callback<GetMyTeamListResponse>{
+            override fun onResponse(
+                call: Call<GetMyTeamListResponse>,
+                response: Response<GetMyTeamListResponse>
+            ) {
+                if (response.isSuccessful) {
+                    println("dssdsds")
+                    memberList.clear()
+                    val responseBody = response.body()
+                    responseBody?.data?.let { newList ->
+                        val currentPosition = memberList.size
+                        newList.forEach { it ->
+                            it.teamMembers?.forEach {
+                                memberList.add(
+                                    GetTeamMembers(
+                                        it.id?.toInt()!!,
+                                        it.nickname?.toString()!!,
+                                        it.profileImageUrl
+                                    )
+                                )
                             }
                         }
-
-                        mAdapter!!.notifyDataSetChanged()
-
-                    } else {
-                        println("faafa")
-                        Log.d("test", response.errorBody()?.string()!!)
-                        Log.d("message", call.request().toString())
-                        println(response.code())
+                        //mAdapter?.notifyItemRangeInserted(currentPosition, newList.size)
                     }
-                }
+                    mAdapter?.notifyDataSetChanged()
+                    /*for (i in response.body()!!.data.indices) {
+                        for (j in response.body()!!.data[i].teamMembers.indices) {
+                            memberList.add(GetTeamMembers(
+                                response.body()!!.data[i].teamMembers[j].id,
+                                response.body()!!.data[i].teamMembers[j].nickname,
+                                response.body()!!.data[i].teamMembers[j].profileImageUrl
+                            ))
+                        }
+                    }*/
 
-                override fun onFailure(call: Call<ShareRoomGetTeamData>, t: Throwable) {
-                    Timber.tag("ERROR").e(t.message.toString())
+                    //mAdapter!!.notifyDataSetChanged()
+
+                } else {
+                    println("faafa")
+                    Log.d("test", response.errorBody()?.string()!!)
+                    Log.d("message", call.request().toString())
+                    println(response.code())
                 }
-            })
-        }
+            }
+
+            override fun onFailure(call: Call<GetMyTeamListResponse>, t: Throwable) {
+                Timber.tag("ERROR").e(t.message.toString())
+            }
+        })
     }
 }

@@ -89,35 +89,8 @@ class ShareEntireFragment : Fragment(), CategoryListener {
                         when (value) {
                             "최신 순" -> {
                                 binding.tvSort.text = "최신 순"
-
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    val page = 0
-                                    Retrofit2Generator.create(requireActivity()).getRecentGifticonList(size = 30, page = page).enqueue(object :
-                                        Callback<GetGifticonListResponse> {
-                                        override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
-                                            if (response.isSuccessful) {
-                                                val responseBody = response.body()
-                                                responseBody?.data?.dataList?.let { newList ->
-                                                    if (page == 0) {
-                                                        // 첫 페이지인 경우 리스트를 새로 채웁니다.
-                                                        gifticonList.clear()
-                                                    }
-                                                    // 새로운 데이터를 리스트에 추가합니다.
-                                                    val currentPosition = gifticonList.size
-                                                    gifticonList.addAll(listOf(newList as ShareRoomGifticon))
-
-                                                    giftAdapter!!.notifyDataSetChanged()
-                                                }
-                                            } else {
-                                                Log.e("ERROR", "Error: ${response.errorBody()?.string()}")
-                                            }
-                                        }
-
-                                        override fun onFailure(call: Call<GetGifticonListResponse>, t: Throwable) {
-                                            Log.e("ERROR", "Retrofit onFailure: ", t)
-                                        }
-                                    })
-                                }
+                                gifticonList.sortByDescending { it.gifticonId }
+                                giftAdapter!!.notifyDataSetChanged()
                             }
 
                             "마감임박 순" -> {
@@ -160,19 +133,19 @@ class ShareEntireFragment : Fragment(), CategoryListener {
 
 
     private fun getAllGifticonListFromServer(page: Int) {
-        Retrofit2Generator.create(requireActivity()).getAllGifticonList(size = 30, page = page).enqueue(object :
-            Callback<GetGifticonListResponse> {
-            override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
+        Retrofit2Generator.create(requireActivity()).getShareGifticonList(size = 30, page = page).enqueue(object :
+            Callback<ShareRoomGetTeamGifticonData> {
+            override fun onResponse(call: Call<ShareRoomGetTeamGifticonData>, response: Response<ShareRoomGetTeamGifticonData>) {
                 if (response.isSuccessful) {
                     val responseBody = response.body()
-                    responseBody?.data?.dataList?.let { newList ->
+                    responseBody?.data?.data?.let { newList ->
                         if (page == 0) {
                             // 첫 페이지인 경우 리스트를 새로 채웁니다.
                             gifticonList.clear()
                         }
                         // 새로운 데이터를 리스트에 추가합니다.
                         val currentPosition = gifticonList.size
-                        gifticonList.addAll(listOf(newList as ShareRoomGifticon))
+                        gifticonList.addAll(newList)
 
                         giftAdapter!!.notifyDataSetChanged()
                     }
@@ -181,7 +154,7 @@ class ShareEntireFragment : Fragment(), CategoryListener {
                 }
             }
 
-            override fun onFailure(call: Call<GetGifticonListResponse>, t: Throwable) {
+            override fun onFailure(call: Call<ShareRoomGetTeamGifticonData>, t: Throwable) {
                 Log.e("ERROR", "Retrofit onFailure: ", t)
             }
         })

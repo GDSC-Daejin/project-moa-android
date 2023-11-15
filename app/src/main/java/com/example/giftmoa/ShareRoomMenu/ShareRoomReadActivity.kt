@@ -3,11 +3,13 @@ package com.example.giftmoa.ShareRoomMenu
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.ViewGroup.LayoutParams
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.GridLayoutManager
@@ -22,6 +24,7 @@ import com.example.giftmoa.BuildConfig
 import com.example.giftmoa.Data.*
 import com.example.giftmoa.MoaInterface
 import com.example.giftmoa.R
+import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.ActivityShareRoomReadBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,20 +47,13 @@ class ShareRoomReadActivity : AppCompatActivity() {
 
     private var saveSharedPreference = SaveSharedPreference()
 
-    private var shareRoomData : GetTeamData? = null
-    private var shareUsedGiftAllData = ArrayList<ShareRoomGifticon>()
-    private var shareGiftAllData = ArrayList<ShareRoomGifticon>()
+    private var shareRoomData : Team? = null
+    private var shareUsedGiftAllData = ArrayList<TeamGifticon>()
+    private var shareGiftAllData = ArrayList<TeamGifticon>()
     private var type = ""
 
-    private var totalCount = 0
-    private var nextPage = 0
-
-    private val SERVER_URL = BuildConfig.server_URL
-    private val retrofit = Retrofit.Builder().baseUrl(SERVER_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    val service: MoaInterface = retrofit.create(MoaInterface::class.java)
-
+    private var totalCount : Int? = null
+    private var nextPage : Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,7 +62,11 @@ class ShareRoomReadActivity : AppCompatActivity() {
         type = intent.getStringExtra("type") as String
 
         if (type == "READ") {
-            shareRoomData = intent.getSerializableExtra("data") as GetTeamData
+            shareRoomData = if (Build.VERSION.SDK_INT >= 33) {
+                intent.getParcelableExtra("data", Team::class.java)
+            } else {
+                intent.getParcelableExtra("data")
+            }
             println(shareRoomData)
             initUsedRecyclerView()
             initSharedGifticonRecyclerView()
@@ -103,7 +103,7 @@ class ShareRoomReadActivity : AppCompatActivity() {
                     }
                 })
                 .into(sBinding.shareBackgroundImageview)
-            if (shareRoomData!!.teamLeaderNickName == saveSharedPreference.getName(this@ShareRoomReadActivity).toString()) {
+            if (shareRoomData?.teamLeaderNickname == saveSharedPreference.getName(this@ShareRoomReadActivity).toString()) {
                 sBinding.shareSettingIcon.setOnClickListener {
                     val intent = Intent(this@ShareRoomReadActivity, ShareRoomSettingActivity::class.java).apply {
                         putExtra("type", "SETTING_LEADER")
@@ -187,7 +187,7 @@ class ShareRoomReadActivity : AppCompatActivity() {
     }
 
     private fun setSharedGiftData() {
-        val saveSharedPreference = SaveSharedPreference()
+        /*val saveSharedPreference = SaveSharedPreference()
         val token = saveSharedPreference.getToken(this).toString()
         val getExpireDate = saveSharedPreference.getExpireDate(this).toString()
 
@@ -219,59 +219,75 @@ class ShareRoomReadActivity : AppCompatActivity() {
         val client: OkHttpClient = builder.build()
         retrofit.client(client)
         val retrofit2: Retrofit = retrofit.build()
-        val api = retrofit2.create(MoaInterface::class.java)
+        val api = retrofit2.create(MoaInterface::class.java)*/
 
         println("setting start")
 
-        CoroutineScope(Dispatchers.IO).launch {
-            api.getMyShareRoomGifticon(shareRoomData!!.id, 0, 10).enqueue(object : Callback<ShareRoomGetTeamGifticonData> {
-                override fun onResponse(
-                    call: Call<ShareRoomGetTeamGifticonData>,
-                    response: Response<ShareRoomGetTeamGifticonData>
-                ) {
-                    if (response.isSuccessful) {
-                        println("est gift")
+        Retrofit2Generator.create(this@ShareRoomReadActivity).getTeamGifticonList(shareRoomData?.id!!, 0, 10).enqueue(object : Callback<GetTeamGifticonListResponse> {
+            override fun onResponse(
+                call: Call<GetTeamGifticonListResponse>,
+                response: Response<GetTeamGifticonListResponse>
+            ) {
+                if (response.isSuccessful) {
+                    println("est gift")
 
-                        shareGiftAllData.clear()
+                    shareGiftAllData.clear()
 
-                        for (i in response.body()!!.data.data.indices) {
+                    val responseBody = response.body()
+                    responseBody?.data?.dataList?.let { newList ->
 
-                            shareGiftAllData.add(ShareRoomGifticon(
-                                response.body()!!.data.data[i].gifticonId,
-                                response.body()!!.data.data[i].name,
-                                response.body()!!.data.data[i].barcodeNumber,
-                                response.body()!!.data.data[i].gifticonImagePath,
-                                response.body()!!.data.data[i].exchangePlace,
-                                response.body()!!.data.data[i].dueDate,
-                                response.body()!!.data.data[i].gifticonType,
-                                response.body()!!.data.data[i].orderNumber,
-                                response.body()!!.data.data[i].status,
-                                response.body()!!.data.data[i].usedDate,
-                                response.body()!!.data.data[i].author,
-                                response.body()!!.data.data[i].category,
-                                response.body()!!.data.data[i].gifticonMoney,
-                                false
+                        Log.d("TAG", "read: newList = $newList")
+                        // 새로운 데이터를 리스트에 추가합니다.
+                        val currentPosition = shareGiftAllData.size
+                        shareGiftAllData.addAll(newList)
+
+                        // 어댑터에 데이터가 변경되었음을 알립니다.
+                        // DiffUtil.Callback 사용을 위한 submitList는 비동기 처리를 하므로 리스트의 사본을 넘깁니다.
+                        //sAdapter.submitList(shareRoomDetailList.toList())
+                        // 또는
+                        // DiffUtil을 사용하지 않는 경우
+                        shareGiftAdapter?.notifyItemRangeInserted(currentPosition, newList.size)
+                    }
+                    shareGiftAdapter?.notifyDataSetChanged()
+
+                    val temp = ArrayList<TeamGifticon>()
+                    for (i in shareGiftAllData.indices) {
+                        if (shareGiftAllData[i].status == "UNAVAILABLE") {
+                            shareUsedGiftAllData.add(TeamGifticon(
+                                shareGiftAllData[i].gifticonId,
+                                shareGiftAllData[i].name,
+                                shareGiftAllData[i].gifticonImagePath,
+                                shareGiftAllData[i].exchangePlace,
+                                shareGiftAllData[i].dueDate,
+                                shareGiftAllData[i].gifticonType,
+                                shareGiftAllData[i].orderNumber,
+                                shareGiftAllData[i].status,
+                                shareGiftAllData[i].usedDate,
+                                shareGiftAllData[i].author,
+                                shareGiftAllData[i].category,
+                                shareGiftAllData[i].gifticonMoney,
                             ))
                         }
-                        totalCount = response.body()!!.data.totalCount
-                        nextPage = response.body()!!.data.nextPage
-
-                        shareGiftAdapter!!.notifyDataSetChanged()
-
-                    } else {
-                        println("faafa")
-                        Log.d("add", response.errorBody()?.string()!!)
-                        Log.d("message", call.request().toString())
-                        println(response.code())
                     }
+                    temp.addAll(shareUsedGiftAllData)
+                    //shareUsedGiftAdapter?.notifyItemRangeInserted(shareUsedGiftAllData.size, temp.size)
+                    shareUsedGiftAdapter?.notifyDataSetChanged()
+                    totalCount = response.body()!!.data?.totalCount?.toInt()
+                    nextPage = response.body()!!.data?.nextPage?.toInt()
+
+                } else {
+                    println("faafa")
+                    Log.d("add", response.errorBody()?.string()!!)
+                    Log.d("message", call.request().toString())
+                    println(response.code())
                 }
+            }
 
-                override fun onFailure(call: Call<ShareRoomGetTeamGifticonData>, t: Throwable) {
+            override fun onFailure(call: Call<GetTeamGifticonListResponse>, t: Throwable) {
 
-                }
+            }
 
-            })
-        }
+        })
     }
 
     private val requestActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { it ->
