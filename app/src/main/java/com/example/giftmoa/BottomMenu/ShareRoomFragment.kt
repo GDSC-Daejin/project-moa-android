@@ -261,16 +261,6 @@ class ShareRoomFragment : Fragment() {
                     //add
                     0 -> {
                         setRoomData()
-                        /*shareRoomAllData.add(shareRoomData)
-                        sAdapter!!.notifyDataSetChanged()*/
-
-                        /*CoroutineScope(Dispatchers.Main).launch {
-                            requireActivity().supportFragmentManager.beginTransaction()
-                                .replace(R.id.fragment_content, ShareRoomFragment())
-                                .commit()
-                        }*/
-
-                        //finish()
                     }
                     //수정 테스트 해보기 todo//edit
                     1 -> {

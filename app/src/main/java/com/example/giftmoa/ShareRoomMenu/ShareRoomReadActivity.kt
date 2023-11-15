@@ -20,6 +20,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.example.giftmoa.Adapter.HomeGiftAdapter
 import com.example.giftmoa.Adapter.HomeUsedGiftAdapter
+import com.example.giftmoa.BottomMenu.ShareRoomFragment
 import com.example.giftmoa.BuildConfig
 import com.example.giftmoa.Data.*
 import com.example.giftmoa.MoaInterface
@@ -296,25 +297,16 @@ class ShareRoomReadActivity : AppCompatActivity() {
                 val shareRoomData = it.data?.getSerializableExtra("data") as ShareRoomData
 
                 when(it.data?.getIntExtra("flag", -1)) {
-                    //add
+                    //delete shareRoom
                     0 -> {
-                        //setRoomData()
+                        val intent = Intent(this@ShareRoomReadActivity, ShareRoomFragment::class.java).apply {
+                            putExtra("flag", 0)
+                        }
+                        setResult(RESULT_OK, intent)
+                        this@ShareRoomReadActivity.finish()
                     }
-                    //수정 테스트 해보기 todo//edit
                     1 -> {
-                        /*oldFragment = HomeFragment()
-                        oldTAG = TAG_HOME
-                        //setToolbarView(TAG_HOME, oldTAG)
-                        setFragment(TAG_HOME, HomeFragment())
-
-                        mBinding.bottomNavigationView.selectedItemId = R.id.navigation_home
-
-                        CoroutineScope(Dispatchers.Main).launch {
-                            supportFragmentManager.beginTransaction()
-                                .replace(R.id.fragment_content, HomeFragment())
-                                .commit()*/
                     }
-
                     //finish()
                 }
             }
