@@ -62,6 +62,7 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 import timber.log.Timber
 import java.io.IOException
+import java.util.Locale
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -118,6 +119,7 @@ class CouponFragment : Fragment(), CategoryListener {
     private lateinit var retrofit: Retrofit
 
     private lateinit var manualAddGifticonResult: ActivityResultLauncher<Intent>
+    private lateinit var autoAddGifticonResult: ActivityResultLauncher<Intent>
 
     interface NaverClovaOCRService {
         @Multipart
@@ -174,11 +176,32 @@ class CouponFragment : Fragment(), CategoryListener {
                     Log.d(TAG, "updatedGifticon: $updatedGifticon")
                     Log.d(TAG, "isEdit: $isEdit")
                     if (isEdit == true) {
+                        // 기프티콘 수정
                         updatedGifticon?.let { it1 -> gifticonViewModel.updateCoupon(it1) }
                     } else {
-                        // 기프티콘 추가
+                        // 기프티콘 수동 등록
+                        binding.tvSort.text = "최신순"
+                        gifticonViewModel.sortCouponList("최신순")
                         updatedGifticon?.let { it1 -> gifticonViewModel.addCoupon(it1) }
                     }
+                }
+            }
+
+        autoAddGifticonResult =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                if (it.resultCode == RESULT_OK) {
+                    val uploadedGifticon = if (Build.VERSION.SDK_INT >= 33) {
+                        it.data?.getParcelableExtra(
+                            "uploadedGifticon",
+                            Gifticon::class.java
+                        )
+                    } else {
+                        it.data?.getParcelableExtra<Gifticon>("uploadedGifticon")
+                    }
+                    Log.d(TAG, "uploadedGifticon: $uploadedGifticon")
+                    binding.tvSort.text = "최신순"
+                    gifticonViewModel.sortCouponList("최신순")
+                    uploadedGifticon?.let { it1 -> gifticonViewModel.addCoupon(it1) }
                 }
             }
 
@@ -321,13 +344,9 @@ class CouponFragment : Fragment(), CategoryListener {
         // parsedGifticon 객체를 intent에 담아서 AutoRegistrationActivity로 전달
         intent.putExtra("PARSED_GIFTICON", parsedGifticon)
         startActivity(intent)*/
-        manualAddGifticonResult.launch(
-            Intent(
-                requireActivity(),
-                AutoRegistrationActivity::class.java
-            ).apply {
-                putExtra("PARSED_GIFTICON", parsedGifticon)
-            })
+        autoAddGifticonResult.launch(Intent(requireActivity(), AutoRegistrationActivity::class.java).apply {
+            putExtra("PARSED_GIFTICON", parsedGifticon)
+        })
     }
 
     private fun extractPlatformFromJson(result: String, uri: String): ParsedGifticon {
@@ -337,7 +356,8 @@ class CouponFragment : Fragment(), CategoryListener {
             .getJSONArray("fields")
 
         val lastField = fields.getJSONObject(fields.length() - 1)
-        val lastInferText = lastField.getString("inferText")
+        // 소문자로 변환
+        val lastInferText = lastField.getString("inferText").lowercase(Locale.getDefault())
 
         Log.i(TAG, "lastInferText: $lastInferText")
         if (lastInferText == "toss") {
@@ -350,11 +370,11 @@ class CouponFragment : Fragment(), CategoryListener {
     }
 
     private fun extractDataFromToss(fields: JSONArray, uri: String): ParsedGifticon {
-        val name = filterInferTextByCoordinates(fields, 0.0, 634.0, 780.0, 1050.0).joinToString(" ")
-        val barcodeNumber = filterInferTextByCoordinates(fields, 0.0, 710.0, 1000.0, 1200.0).joinToString(" ")
-        val dueDate = filterInferTextByCoordinates(fields, 400.0, 710.0, 1250.0, 1360.0).joinToString(" ")
+        val exchangePlace = filterInferTextByCoordinates(fields, 0.0, 980.0, 565.0, 630.0).joinToString(" ")
+        val name = filterInferTextByCoordinates(fields, 0.0, 980.0, 632.0, 700.0).joinToString(" ")
 
-        var exchangePlace: String? = null
+        var barcodeNumber: String? = null
+        var dueDate: String? = null
         var orderNumber: String? = null
 
         var amount: Long? = null
@@ -380,14 +400,31 @@ class CouponFragment : Fragment(), CategoryListener {
         for (i in 0 until fields.length()) {
             val field = fields.getJSONObject(i)
             val text = field.getString("inferText")
-            when (text) {
-                "교환처" -> exchangePlace = fields.getJSONObject(i + 1).getString("inferText")
-                "주문번호" -> orderNumber = fields.getJSONObject(i + 1).getString("inferText")
+            if (text == "유효기간") {
+                dueDate = fields.getJSONObject(i + 1).getString("inferText")
+                barcodeNumber = fields.getJSONObject(i + 2).getString("inferText")
+            }
+        }
+        // 바코드 번호 형식 변환 (111122223333 -> 1111 2222 3333)
+        if (barcodeNumber != null) {
+            barcodeNumber = if (barcodeNumber.length <= 12) {
+                barcodeNumber.replace(Regex("(\\d{4})(\\d{4})(\\d{4})"), "$1 $2 $3")
+            } else {
+                // 11112222333344 -> 1111 2222 3333 44
+                barcodeNumber?.replace(Regex("(\\d{4})(\\d{4})(\\d{4})(\\d{2,4})"), "$1 $2 $3 $4")
             }
         }
 
-        return ParsedGifticon(name, uri, barcodeNumber, exchangePlace, dueDate, orderNumber, amount)
+        Log.i(TAG, "name: $name")
+        Log.i(TAG, "barcodeNumber: $barcodeNumber")
+        Log.i(TAG, "exchangePlace: $exchangePlace")
+        Log.i(TAG, "dueDate: $dueDate")
+        Log.i(TAG, "orderNumber: $orderNumber")
+        Log.i(TAG, "amount: $amount")
+
+        return ParsedGifticon(name, uri, barcodeNumber, exchangePlace, dueDate, orderNumber, amount, "toss")
     }
+
 
     private fun extractDataFromKakao(fields: JSONArray, uri: String): ParsedGifticon {
         val name = filterInferTextByCoordinates(fields, 0.0, 634.0, 780.0, 1050.0).joinToString(" ")
@@ -426,7 +463,7 @@ class CouponFragment : Fragment(), CategoryListener {
             }
         }
 
-        return ParsedGifticon(name, uri, barcodeNumber, exchangePlace, dueDate, orderNumber, amount)
+        return ParsedGifticon(name, uri, barcodeNumber, exchangePlace, dueDate, orderNumber, amount, "kakao")
     }
 
     private fun filterInferTextByCoordinates(fields: JSONArray, xStart: Double, xEnd: Double, yStart: Double, yEnd: Double): List<String> {
@@ -504,9 +541,10 @@ class CouponFragment : Fragment(), CategoryListener {
                     responseBody?.data?.dataList?.let { newList ->
                         // newList를 gifticonViewModel의 addCoupon함수를 이용해서 넣어준다.
                         // id가 높은 것 부터 넣어줘야 한다.
-                        newList.sortedByDescending { it.id }.forEach { gifticon ->
+                        newList.forEach { gifticon ->
                             gifticonViewModel.addCoupon(gifticon)
                         }
+                        gifticonViewModel.sortCouponList(binding.tvSort.text.toString())
                         /*newList.forEach { gifticon ->
                             gifticonViewModel.addCoupon(gifticon)
                         }*/
@@ -537,10 +575,9 @@ class CouponFragment : Fragment(), CategoryListener {
                                     continue
                                 }
                                 if (category.categoryName == "미분류") {
-                                    // 항상 가장 마지막에 미분류 카테고리가 추가되도록
-                                    // categoryList의 맨 뒤에 추가
-                                    binding.chipUnclassified.visibility = View.VISIBLE
+                                    // 가장 마지막에 미분류 카테고리가 추가되게 한다.
                                     categoryList.add(category)
+                                    binding.chipGroupCategory.addView(createNewChip(category.categoryName!!))
                                     continue
                                 }
                                 val chip = category.categoryName!!.let { createNewChip(it) }
@@ -551,7 +588,7 @@ class CouponFragment : Fragment(), CategoryListener {
                                 // 마지막 Chip 뷰의 인덱스가 0보다 큰 경우에만
                                 // 현재 Chip을 바로 그 앞에 추가
                                 if (lastChildIndex >= 0) {
-                                    binding.chipGroupCategory.addView(chip, lastChildIndex)
+                                    binding.chipGroupCategory.addView(chip)
                                 } else {
                                     // ChipGroup에 자식이 없는 경우, 그냥 추가
                                     binding.chipGroupCategory.addView(chip)
@@ -689,6 +726,7 @@ class CouponFragment : Fragment(), CategoryListener {
                         newList.sortedByDescending { it.id }.forEach { gifticon ->
                             gifticonViewModel.addCoupon(gifticon)
                         }
+                        gifticonViewModel.sortCouponList(binding.tvSort.text.toString())
                         /*newList.forEach { gifticon ->
                             gifticonViewModel.addCoupon(gifticon)
                         }*/

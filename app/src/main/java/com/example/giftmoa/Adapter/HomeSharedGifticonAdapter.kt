@@ -22,6 +22,17 @@ class HomeSharedGifticonAdapter(private val onClick: (TeamGifticon) -> Unit, pri
     inner class ViewHolder(private val binding: ItemHomeSharedGifticonBinding): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(gifticon: TeamGifticon) {
+
+            if (gifticon.gifticonId == 0L) {
+                binding.llNoGifticon.visibility = android.view.View.VISIBLE
+                // binding.root의 width를 match_parent로 설정
+                binding.root.layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+            } else {
+                binding.llNoGifticon.visibility = android.view.View.GONE
+                // binding.root의 width를 316dp로 설정
+                binding.root.layoutParams.width = 316
+            }
+
             if (gifticon.gifticonImagePath != null) {
                 // 자르고 싶은 위치와 크기 지정
                 val cropX = 23 // X 시작 위치
@@ -40,6 +51,14 @@ class HomeSharedGifticonAdapter(private val onClick: (TeamGifticon) -> Unit, pri
 
             binding.tvCouponName.text = gifticon.name
             binding.tvCouponExchangePlace.text = gifticon.exchangePlace
+
+            if (gifticon.status == "AVAILABLE") {
+                binding.viewAlpha.visibility = android.view.View.GONE
+                binding.tvCouponUsedComplete.visibility = android.view.View.GONE
+            } else {
+                binding.viewAlpha.visibility = android.view.View.VISIBLE
+                binding.tvCouponUsedComplete.visibility = android.view.View.VISIBLE
+            }
 
             try {
                 val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")

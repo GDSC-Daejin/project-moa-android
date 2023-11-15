@@ -10,7 +10,71 @@
     android:elevation="5dp"
     android:padding="20dp">
 
-    <ImageView
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view"
+        android:layout_width="118dp"
+        android:layout_height="118dp"
+        android:clipChildren="true"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/iv_coupon_image"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@drawable/background_share_room_item"
+                android:clipToOutline="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/asset_gifticon_coffee"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="w, 1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="TODO" />
+
+            <View
+                android:id="@+id/view_alpha"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:alpha="0.7"
+                android:background="@drawable/background_gifticon_used"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_coupon_used_complete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_used_text"
+                android:fontFamily="@font/pretendard_medium"
+                android:paddingStart="10dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="4dp"
+                android:text="사용완료"
+                android:textColor="@color/moa_gray_white"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!--<ImageView
         android:id="@+id/iv_coupon_image"
         android:layout_width="118dp"
         android:layout_height="118dp"
@@ -20,7 +84,7 @@
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />-->
 
     <TextView
         android:id="@+id/tv_d_day"
@@ -31,7 +95,7 @@
         android:text="마감까지 D-3"
         android:textColor="@color/moa_carrot_700"
         android:textSize="12sp"
-        app:layout_constraintStart_toEndOf="@id/iv_coupon_image"
+        app:layout_constraintStart_toEndOf="@id/card_view"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -42,7 +106,7 @@
         android:ellipsize="end"
         android:fontFamily="@font/pretendard_bold"
         android:maxLines="1"
-        android:text="아이스 아메리카노"
+        tools:text="아이스 아메리카노"
         android:textColor="@color/moa_gray_900"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@id/tv_d_day"
@@ -53,7 +117,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/pretendard_medium"
-        android:text="스타벅스"
+        tools:text="스타벅스"
         android:textColor="@color/moa_gray_400"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="@id/tv_d_day"
@@ -61,12 +125,47 @@
 
     <ImageView
         android:id="@+id/iv_barcode_image"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="39dp"
         android:scaleType="fitStart"
         android:src="@drawable/asset_barcode_image"
-        app:layout_constraintBottom_toBottomOf="@id/iv_coupon_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/card_view"
         app:layout_constraintStart_toStartOf="@id/tv_d_day" />
 
+    <LinearLayout
+        android:id="@+id/ll_no_gifticon"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:background="@color/moa_gray_white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tv_no_gifticon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/pretendard_medium"
+            android:gravity="center"
+            android:text="쿠폰이 없습니다."
+            android:textColor="@color/moa_gray_500"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_offer_coupon_registration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/pretendard_medium"
+            android:text="쿠폰을 추가해보세요!"
+            android:textColor="@color/moa_gray_400"
+            android:textSize="14sp" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,6 @@
 package com.example.giftmoa.HomeTab
 
+import android.util.Log
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -41,12 +42,19 @@ class GifticonViewModel: ViewModel() {
     }
 
     fun addCoupon(coupon: Gifticon) {
-        datas.add(coupon)
+        // 가장 앞에 추가
+        datas.add(0, coupon)
         setData(datas)
     }
 
     fun deleteCoupon(coupon: Gifticon) {
         datas.remove(coupon)
+        setData(datas)
+    }
+
+    fun deleteCouponById(id: Long) {
+        val index = datas.indexOfFirst { x -> x.id == id }
+        datas.removeAt(index)
         setData(datas)
     }
 

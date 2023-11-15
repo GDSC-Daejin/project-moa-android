@@ -14,4 +14,5 @@ data class ParsedGifticon (
     @SerializedName("due_date") val dueDate: String? = null,
     @SerializedName("order_number") val orderNumber: String? = null,
     val amount: Long? = null,
+    val platform: String? = null,
 ): Parcelable

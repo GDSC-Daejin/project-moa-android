@@ -27,36 +27,38 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <TextView
-        android:id="@+id/tv_no_gifticon"
+    <LinearLayout
+        android:id="@+id/ll_no_gifticon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/pretendard_medium"
         android:gravity="center"
-        android:text="쿠폰이 없습니다."
-        android:textColor="@color/moa_gray_500"
-        android:layout_marginBottom="50dp"
-        android:textSize="16sp"
+        android:orientation="vertical"
         android:visibility="gone"
         tools:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/tv_offer_coupon_registration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/tv_no_gifticon"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="10dp"
-        android:text="쿠폰을 추가해보세요!"
-        android:textColor="@color/moa_gray_400"
-        android:textSize="14sp"
-        android:visibility="gone"
-        tools:visibility="visible"
-        android:fontFamily="@font/pretendard_medium"/>
+        <TextView
+            android:id="@+id/tv_no_gifticon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/pretendard_medium"
+            android:gravity="center"
+            android:text="쿠폰이 없습니다."
+            android:textColor="@color/moa_gray_500"
+            android:textSize="16sp" />
 
+        <TextView
+            android:id="@+id/tv_offer_coupon_registration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/pretendard_medium"
+            android:text="쿠폰을 추가해보세요!"
+            android:textColor="@color/moa_gray_400"
+            android:textSize="14sp" />
+
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

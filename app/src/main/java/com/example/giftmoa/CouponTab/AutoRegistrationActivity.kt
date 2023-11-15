@@ -1,10 +1,15 @@
 package com.example.giftmoa.CouponTab
 
+import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -24,6 +29,7 @@ import com.example.giftmoa.Data.AddGifticonRequest
 import com.example.giftmoa.Data.AutoRegistrationData
 import com.example.giftmoa.Data.CategoryItem
 import com.example.giftmoa.Data.GetCategoryListResponse
+import com.example.giftmoa.Data.Gifticon
 import com.example.giftmoa.Data.ParsedGifticon
 import com.example.giftmoa.Data.ShareRoomItem
 import com.example.giftmoa.Data.UpdateGifticonResponse
@@ -40,6 +46,8 @@ import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
+import java.io.FileOutputStream
 
 interface GifticonInfoListener {
     fun onGifticonInfoUpdated(gifticon: ParsedGifticon)
@@ -79,12 +87,37 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener, Categ
             showGifticonBottomSheet(it)
         }
 
-        uploadImageToFirebase(Uri.parse(parsedGifticon?.image), {
+        /*uploadImageToFirebase(Uri.parse(parsedGifticon?.image), {
             imageUrl = it
             Log.d(TAG, "uploadImageToFirebase: $imageUrl")
         }, {
             //Toast.makeText(this, "이미지 업로드에 실패했습니다.", Toast.LENGTH_SHORT).show()
-        })
+        })*/
+
+        if (parsedGifticon != null) {
+            if (parsedGifticon.platform == "toss") {
+                uploadCroppedImageToFirebase(this, Uri.parse(parsedGifticon?.image), 335, 210, 314, 314, {
+                    imageUrl = it
+                    Toast.makeText(this, "이미지 업로드에 성공했습니다.", Toast.LENGTH_SHORT).show()
+                }, {
+                    //Toast.makeText(this, "이미지 업로드에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                })
+            } else {
+                uploadCroppedImageToFirebase(this, Uri.parse(parsedGifticon.image), 50, 60, 700, 650, {
+                    imageUrl = it
+                    Toast.makeText(this, "이미지 업로드에 성공했습니다.", Toast.LENGTH_SHORT).show()
+                }, {
+                    //Toast.makeText(this, "이미지 업로드에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                })
+            }
+        }
+
+        /*uploadCroppedImageToFirebase(this, Uri.parse(parsedGifticon?.image), 50, 60, 700, 650, {
+            imageUrl = it
+            Toast.makeText(this, "이미지 업로드에 성공했습니다.", Toast.LENGTH_SHORT).show()
+        }, {
+            //Toast.makeText(this, "이미지 업로드에 실패했습니다.", Toast.LENGTH_SHORT).show()
+        })*/
 
         parsedGifticonAdapter = RegisteredGifticonAdapter()
         categoryAdapter = CategoryAdapter()
@@ -297,9 +330,6 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener, Categ
                     categoryId = categoryId
                 )
                 uploadGifticonToServer(newGifticon)
-                if (formattedDate != null) {
-                    Log.d(TAG, "date: $formattedDate")
-                }
             } else {
                 Snackbar.make(binding.root, "체크박스를 체크해주세요.", Snackbar.LENGTH_SHORT).show()
             }
@@ -315,6 +345,26 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener, Categ
                     val responseBody = response.body()
 
                     Log.d(TAG, "responseBody gifticon: $responseBody")
+
+                    val coupon = Gifticon(
+                        id = responseBody?.data?.gifticonId,
+                        name = responseBody?.data?.name,
+                        gifticonImagePath = responseBody?.data?.gifticonImagePath,
+                        exchangePlace = responseBody?.data?.exchangePlace,
+                        dueDate = responseBody?.data?.dueDate,
+                        gifticonType = responseBody?.data?.gifticonType,
+                        status = responseBody?.data?.status,
+                        usedDate = responseBody?.data?.usedDate,
+                        author = responseBody?.data?.author,
+                        category = responseBody?.data?.category
+                    )
+
+                    Log.i(TAG, "coupon: $coupon")
+
+                    val data = Intent().apply {
+                        putExtra("uploadedGifticon", coupon)
+                    }
+                    setResult(RESULT_OK, data)
 
                     finish()
                 } else {
@@ -340,6 +390,46 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener, Categ
             .addOnFailureListener {
                 onFailure(it)
             }
+    }
+
+    fun uploadCroppedImageToFirebase(
+        context: Context,
+        originalUri: Uri,
+        cropX: Int,
+        cropY: Int,
+        cropWidth: Int,
+        cropHeight: Int,
+        onSuccess: (String) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        try {
+            // 이미지 로드 및 크롭
+            val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, originalUri)
+            val croppedBitmap = CustomCropTransformation(cropX, cropY, cropWidth, cropHeight).transform(
+                Glide.get(context).bitmapPool, bitmap, bitmap.width, bitmap.height
+            )
+
+            // 임시 파일 생성
+            val tempFile = File(context.cacheDir, "cropped_${System.currentTimeMillis()}_image.jpeg")
+            FileOutputStream(tempFile).use { out ->
+                croppedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out) // PNG, JPEG 등 원하는 형식으로 변경 가능
+            }
+
+            // Firebase에 임시 파일 업로드
+            val storageReference = FirebaseStorage.getInstance().reference.child("images/${tempFile.name}")
+            storageReference.putFile(Uri.fromFile(tempFile))
+                .addOnSuccessListener {
+                    storageReference.downloadUrl.addOnSuccessListener { downloadUri ->
+                        onSuccess(downloadUri.toString())
+                        Log.d(TAG, "downloadUri2: $downloadUri")
+                    }
+                }
+                .addOnFailureListener {
+                    onFailure(it)
+                }
+        } catch (e: Exception) {
+            onFailure(e)
+        }
     }
 
     private fun showCategoryBottomSheet(cateogoryList: List<CategoryItem>) {

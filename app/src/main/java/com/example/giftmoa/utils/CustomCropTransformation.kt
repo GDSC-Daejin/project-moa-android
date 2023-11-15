@@ -13,7 +13,7 @@ class CustomCropTransformation(
     private val height: Int
 ) : BitmapTransformation() {
 
-    override fun transform(pool: BitmapPool, toTransform: Bitmap, outWidth: Int, outHeight: Int): Bitmap {
+    public override fun transform(pool: BitmapPool, toTransform: Bitmap, outWidth: Int, outHeight: Int): Bitmap {
         // 비트맵의 경계 내에서 자르기 차원이 있는지 확인합니다.
         val actualWidth = toTransform.width
         val actualHeight = toTransform.height

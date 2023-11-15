@@ -39,22 +39,30 @@ class GifticonInfoBottomSheet(private var gifticon: ParsedGifticon, private val 
         val formattedAmount = gifticon.amount?.let { String.format("%,d", it) }
 
         // 자르고 싶은 위치와 크기 지정
-        val cropX = 25 // X 시작 위치
-        val cropY = 25 // Y 시작 위치
-        val cropWidth = 275 // 잘라낼 너비
-        val cropHeight = 265 // 잘라낼 높이
+        var cropX = 25 // X 시작 위치
+        var cropY = 25 // Y 시작 위치
+        var cropWidth = 275 // 잘라낼 너비
+        var cropHeight = 265 // 잘라낼 높이
 
-        Glide.with(binding.ivCouponImage.context)
-            .asBitmap()
-            .load(gifticon.image)
-            .apply(RequestOptions().transform(CustomCropTransformation(cropX, cropY, cropWidth, cropHeight)))
-            .into(binding.ivCouponImage)
+        if (gifticon.platform == "toss") {
+            Glide.with(binding.ivCouponImage.context)
+                .asBitmap()
+                .load(gifticon.image)
+                .apply(RequestOptions().transform(CustomCropTransformation(115, 70, 110, 110)))
+                .into(binding.ivCouponImage)
+        } else {
+            Glide.with(binding.ivCouponImage.context)
+                .asBitmap()
+                .load(gifticon.image)
+                .apply(RequestOptions().transform(CustomCropTransformation(25, 25, 275, 265)))
+                .into(binding.ivCouponImage)
+        }
 
         binding.etCouponName.setText(gifticon.name)
         binding.etBarcodeNumber.setText(gifticon.barcodeNumber)
         binding.etExchangePlace.setText(gifticon.exchangePlace)
         binding.etDueDate.setText(formattedDueDate)
-        binding.etOrderNumber.setText(gifticon.orderNumber)
+        binding.etOrderNumber.setText(gifticon.orderNumber ?: "주문번호가 없습니다.")
         if (gifticon.amount != null) {
             binding.etCouponAmount.visibility = View.VISIBLE
             binding.tvCouponAmountUnit.visibility = View.VISIBLE

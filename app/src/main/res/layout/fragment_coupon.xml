@@ -98,7 +98,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
         android:fontFamily="@font/pretendard_medium"
-        android:text="마감임박 순"
+        android:text="최신순"
         android:textColor="@color/moa_gray_400"
         android:textSize="16sp"
         app:drawableRightCompat="@drawable/baseline_keyboard_arrow_down_24"

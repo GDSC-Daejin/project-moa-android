@@ -93,6 +93,8 @@ class HomeEntireFragment : Fragment() {
 
     private lateinit var couponListAdapter: CouponListAdapter
 
+    private var currentCategoryId = 0L
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -111,6 +113,11 @@ class HomeEntireFragment : Fragment() {
                 //*(binding.giftRv.adapter as? CouponListAdapter)?.setAllCouponsData(coupons)*//*
                 //couponListAdapter.setAllCouponsData(it)
                 giftAdapter.submitList(it.toList())
+                if (it.toList().isEmpty()) {
+                    binding.llNoGifticon.visibility = View.VISIBLE
+                } else {
+                    binding.llNoGifticon.visibility = View.GONE
+                }
             })
         })
     }
@@ -170,10 +177,20 @@ class HomeEntireFragment : Fragment() {
                         it.data?.getParcelableExtra<Gifticon>("updatedGifticon")
                     }
                     val isEdit = it.data?.getBooleanExtra("isEdit", false)
+                    val couponList = gifticonViewModel.allCouponList.value
                     Log.d(TAG, "updatedGifticon: $updatedGifticon")
-                    Log.d(TAG, "isEdit: $isEdit")
+                    Log.d(TAG, "couponList: $couponList")
                     if (isEdit == true) {
-                        updatedGifticon?.let { it1 -> gifticonViewModel.updateCoupon(it1) }
+                        // 현재 선택된 카테고리와 기프티콘의 카테고리가 다른 경우
+                        if (updatedGifticon?.category?.id != couponList?.get(0)?.category?.id) {
+                            updatedGifticon?.let { it1 -> it1.id?.let { it2 ->
+                                gifticonViewModel.deleteCouponById(
+                                    it2
+                                )
+                            } }
+                        } else {
+                            updatedGifticon?.let { it1 -> gifticonViewModel.updateCoupon(it1) }
+                        }
                     } else {
                         // 기프티콘 추가
                         updatedGifticon?.let { it1 -> gifticonViewModel.addCoupon(it1) }

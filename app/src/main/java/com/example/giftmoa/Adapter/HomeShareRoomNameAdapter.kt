@@ -20,9 +20,22 @@ import java.util.Date
 
 class HomeShareRoomNameAdapter(private val onClick: (Team) -> Unit) : ListAdapter<Team, HomeShareRoomNameAdapter.ViewHolder>(diffUtil) {
 
+    interface OnItemClickListener {
+        fun onItemClick(position: Int)
+    }
+
+    var itemClickListener: OnItemClickListener? = null
+
     private var selectedPosition: Int = -1 // 초기에 선택한 아이템의 위치 설정, -1은 아무것도 선택하지 않은 상태
 
     inner class ViewHolder(val binding: ItemHomeShareRoomNameBinding) : RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            binding.root.setOnClickListener {
+                itemClickListener?.onItemClick(adapterPosition)
+                return@setOnClickListener
+            }
+        }
 
         fun bind(team: Team) {
             binding.tvShareRoomName.text = team.teamName

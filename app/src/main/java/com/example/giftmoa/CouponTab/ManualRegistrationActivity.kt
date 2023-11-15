@@ -206,10 +206,14 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
         var categoryId: Long? = null
 
         // categoryList에 있는 카테고리 이름과 같은 카테고리를 찾아서 categoryId를 가져옴
-        for (category in categoryList) {
-            if (categoryName == category.categoryName) {
-                categoryId = category.id
+        if (categoryName != null) {
+            for (category in categoryList) {
+                if (categoryName == category.categoryName) {
+                    categoryId = category.id
+                }
             }
+        } else {
+            categoryId = null
         }
 
         val gifticonType = if (binding.switchCouponAmount.isChecked) "MONEY" else "GENERAL"
@@ -376,6 +380,7 @@ class ManualRegistrationActivity : AppCompatActivity(), CategoryListener {
                 category.categoryName?.let { createNewChip(it.trim()) }
                 categoryList.add(category)
                 val chip = category.categoryName?.let { createNewChip(it) }
+                val positionToInsert = binding.chipGroupCategory.childCount - 1
                 val positionToInsert = binding.chipGroupCategory.childCount - 1
                 binding.chipGroupCategory.addView(chip, positionToInsert)
             }

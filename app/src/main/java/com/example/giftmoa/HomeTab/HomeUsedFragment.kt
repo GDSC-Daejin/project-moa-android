@@ -95,6 +95,13 @@ class HomeUsedFragment : Fragment() {
             binding.giftRv.post(Runnable {
                 //couponListAdapter.setAvailableCouponsData(it.filter { x -> x.status == "AVAILABLE" })
                 giftAdapter.submitList(it.filter { x -> x.status == "UNAVAILABLE" }.toList())
+
+                // 필터된 리스트가 비어있으면
+                if (it.filter { x -> x.status == "UNAVAILABLE" }.toList().isEmpty()) {
+                    binding.llNoGifticon.visibility = View.VISIBLE
+                } else {
+                    binding.llNoGifticon.visibility = View.GONE
+                }
             })
         })
     }
@@ -152,10 +159,20 @@ class HomeUsedFragment : Fragment() {
                         it.data?.getParcelableExtra<Gifticon>("updatedGifticon")
                     }
                     val isEdit = it.data?.getBooleanExtra("isEdit", false)
+                    val couponList = gifticonViewModel.allCouponList.value
                     Log.d(TAG, "updatedGifticon: $updatedGifticon")
-                    Log.d(TAG, "isEdit: $isEdit")
+                    Log.d(TAG, "couponList: $couponList")
                     if (isEdit == true) {
-                        updatedGifticon?.let { it1 -> gifticonViewModel.updateCoupon(it1) }
+                        // 현재 선택된 카테고리와 기프티콘의 카테고리가 다른 경우
+                        if (updatedGifticon?.category?.id != couponList?.get(0)?.category?.id) {
+                            updatedGifticon?.let { it1 -> it1.id?.let { it2 ->
+                                gifticonViewModel.deleteCouponById(
+                                    it2
+                                )
+                            }}
+                        } else {
+                            updatedGifticon?.let { it1 -> gifticonViewModel.updateCoupon(it1) }
+                        }
                     } else {
                         // 기프티콘 추가
                         updatedGifticon?.let { it1 -> gifticonViewModel.addCoupon(it1) }
@@ -220,13 +237,11 @@ class HomeUsedFragment : Fragment() {
             }
         }
 
-        if (gifticonViewModel.usedCouponList.value == null) {
-            binding.tvNoGifticon.visibility = View.VISIBLE
-            binding.tvOfferCouponRegistration.visibility = View.VISIBLE
+        /*if (gifticonViewModel.usedCouponList.value == null) {
+            binding.llNoGifticon.visibility = View.VISIBLE
         } else {
-            binding.tvNoGifticon.visibility = View.GONE
-            binding.tvOfferCouponRegistration.visibility = View.GONE
-        }
+            binding.llNoGifticon.visibility = View.GONE
+        }*/
 
         return binding.root
     }

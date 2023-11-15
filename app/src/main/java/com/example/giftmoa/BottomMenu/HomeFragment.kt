@@ -218,6 +218,10 @@ class HomeFragment : Fragment() {
                         // 또는
                         // DiffUtil을 사용하지 않는 경우
                         //giftAdapter.notifyItemRangeInserted(currentPosition, newList.size)
+
+                        if (shareRoomDetailList.isNotEmpty()) {
+                            triggerFirstItemOfShareRoomNameAdapter()
+                        }
                     }
                 } else {
                     Log.e(TAG, "Error: ${response.errorBody()?.string()}")
@@ -240,17 +244,23 @@ class HomeFragment : Fragment() {
                     val responseBody = response.body()
                     responseBody?.data?.dataList?.let { newList ->
                         // 새로운 데이터를 리스트에 추가합니다.
-                        val currentPosition = teamGifticonList.size
-                        teamGifticonList.addAll(newList)
 
-                        Log.d(TAG, "getTeamGifticonListFromServer: teamGifticonList = $teamGifticonList")
+                        if (newList.isNotEmpty()) {
+                            val currentPosition = teamGifticonList.size
+                            teamGifticonList.addAll(newList)
 
-                        // 어댑터에 데이터가 변경되었음을 알립니다.
-                        // DiffUtil.Callback 사용을 위한 submitList는 비동기 처리를 하므로 리스트의 사본을 넘깁니다.
-                        homeSharedGifticonAdapter.submitList(teamGifticonList.toList())
-                        // 또는
-                        // DiffUtil을 사용하지 않는 경우
-                        //giftAdapter.notifyItemRangeInserted(currentPosition, newList.size)
+                            Log.d(TAG, "getTeamGifticonListFromServer: teamGifticonList = $teamGifticonList")
+
+                            // 어댑터에 데이터가 변경되었음을 알립니다.
+                            // DiffUtil.Callback 사용을 위한 submitList는 비동기 처리를 하므로 리스트의 사본을 넘깁니다.
+                            homeSharedGifticonAdapter.submitList(teamGifticonList.toList())
+                            // 또는
+                            // DiffUtil을 사용하지 않는 경우
+                            //giftAdapter.notifyItemRangeInserted(currentPosition, newList.size)
+                        } else {
+                            teamGifticonList.add(TeamGifticon(0, "", "", "", "", "", "", "", "", null, null, ""))
+                            homeSharedGifticonAdapter.submitList(teamGifticonList.toList())
+                        }
                     }
                 } else {
                     Log.e(TAG, "Error: ${response.errorBody()?.string()}")
@@ -263,40 +273,11 @@ class HomeFragment : Fragment() {
         })
     }
 
-    // 팀 목록 가져오기
-    /*private fun getHomeShareRoomInfoFromServer() {
-
-        Log.d(TAG, "getHomeShareRoomInfoFromServer: ")
-        val retrofitService = Retrofit2Generator.create(requireActivity())
-
-        lifecycleScope.launch {
-            try {
-                val teamResponse = retrofitService.getMyTeamList()
-                if (teamResponse.isSuccessful) {
-                    val teamList = teamResponse.body()?.data ?: emptyList()
-                    Log.d(TAG, "getHomeShareRoomInfoFromServer: teamList = $teamList")
-                    shareRoomDetailList.addAll(teamList)
-
-                    // 병렬로 네트워크 요청을 시작합니다.
-                    val gifticonLists = teamList.mapNotNull { team ->
-                        async { team.id?.let { retrofitService.getTeamGifticonList(it) } }
-                    }.awaitAll()
-
-                    // 모든 네트워크 요청이 완료된 후에 리스트를 업데이트합니다.
-                    gifticonLists.forEach { response ->
-                        if (response?.isSuccessful == true) {
-                            teamGifticonList.addAll(response.body()?.data?.dataList ?: emptyList())
-                        }
-                    }
-
-                    // 최종적으로 어댑터에 데이터를 제공합니다.
-                    homeShareRoomNameAdapter.submitList(shareRoomDetailList.toList())
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "getHomeShareRoomInfoFromServer: ", e)
-            }
+    private fun triggerFirstItemOfShareRoomNameAdapter() {
+        hBinding.rvShareRoomName?.post {
+            hBinding.rvShareRoomName?.findViewHolderForAdapterPosition(0)?.itemView?.performClick()
         }
-    }*/
+    }
 
 
     override fun onStart() {
@@ -304,6 +285,7 @@ class HomeFragment : Fragment() {
         Log.d(TAG, "onStart: ")
 
         getHomeGifticonListFromServer(0)
+
     }
 
     companion object {
