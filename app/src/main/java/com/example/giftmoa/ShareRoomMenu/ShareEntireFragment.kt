@@ -47,7 +47,7 @@ class ShareEntireFragment : Fragment(), CategoryListener {
 
     private var getBottomSheetData = ""
 
-    private var gridManager : GridLayoutManager? = null
+    private var gridManager = GridLayoutManager(activity, 2, GridLayoutManager.VERTICAL, false)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -138,10 +138,8 @@ class ShareEntireFragment : Fragment(), CategoryListener {
                 if (response.isSuccessful) {
                     gifticonList.clear()
                     val responseBody = response.body()
-                    println(response.body()?.data?.dataList)
 
                     for (i in responseBody?.data?.dataList?.indices!!) {
-                        println(response.body()?.data?.dataList?.get(i))
                         gifticonList.add(ShareRoomGifticon(
                             responseBody.data.dataList[i].id!!.toInt(),
                             responseBody.data.dataList[i].name!!,
@@ -295,16 +293,6 @@ class ShareEntireFragment : Fragment(), CategoryListener {
             }
         }
     }
-
-    override fun onStart() {
-        super.onStart()
-        gridManager = GridLayoutManager(requireActivity(), 2, GridLayoutManager.VERTICAL, false)
-    }
-
-    override fun onResume() {
-        super.onResume()
-    }
-
     companion object {
         /**
          * Use this factory method to create a new instance of

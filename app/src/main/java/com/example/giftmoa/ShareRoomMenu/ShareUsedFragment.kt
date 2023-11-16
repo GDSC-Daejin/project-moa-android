@@ -135,11 +135,8 @@ class ShareUsedFragment : Fragment(), CategoryListener {
             override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
                 if (response.isSuccessful) {
                     val responseBody = response.body()
+                    gifticonList.clear()
                     for (i in responseBody?.data?.dataList?.indices!!) {
-                        if (page == 0) {
-                            // 첫 페이지인 경우 리스트를 새로 채웁니다.
-                            gifticonList.clear()
-                        }
                         // 새로운 데이터를 리스트에 추가합니다.
                         val currentPosition = gifticonList.size
                         gifticonList.add(ShareRoomGifticon(

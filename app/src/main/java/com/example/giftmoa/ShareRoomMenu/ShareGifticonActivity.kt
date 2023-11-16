@@ -107,11 +107,9 @@ class ShareGifticonActivity : AppCompatActivity() {
             override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
                 if (response.isSuccessful) {
                     val responseBody = response.body()
+                    gifticonList.clear()
                     for (i in responseBody?.data?.dataList?.indices!!) {
-                        if (page == 0) {
-                            // 첫 페이지인 경우 리스트를 새로 채웁니다.
-                            gifticonList.clear()
-                        }
+                        println(responseBody?.data?.dataList)
                         // 새로운 데이터를 리스트에 추가합니다.
                         gifticonList.add(ShareRoomGifticon(
                             responseBody.data.dataList[i].id!!.toInt(),
@@ -129,6 +127,7 @@ class ShareGifticonActivity : AppCompatActivity() {
                             "null",
                             false
                         ))
+                        println(gifticonList)
                     }
                     giftAdapter!!.notifyDataSetChanged()
 
