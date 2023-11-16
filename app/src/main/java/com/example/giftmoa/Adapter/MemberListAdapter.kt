@@ -63,7 +63,7 @@ class MemberListAdapter : RecyclerView.Adapter<MemberListAdapter.MemberViewHolde
 
                 val requestOptions = RequestOptions()
                     .centerCrop() // 또는 .fitCenter()
-                    .override(100, 100) // 원하는 크기로 조절
+                    .override(300, 300) // 원하는 크기로 조절
 
                 Glide.with(context)
                     .load(itemData.profileImageUrl!!.toUri())
