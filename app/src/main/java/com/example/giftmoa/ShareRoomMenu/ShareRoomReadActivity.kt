@@ -7,6 +7,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup.LayoutParams
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -18,13 +19,12 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
+import com.example.giftmoa.*
 import com.example.giftmoa.Adapter.HomeGiftAdapter
 import com.example.giftmoa.Adapter.HomeUsedGiftAdapter
-import com.example.giftmoa.BuildConfig
+import com.example.giftmoa.Adapter.ShareRoomGifticonAdapter
+import com.example.giftmoa.BottomMenu.ShareRoomFragment
 import com.example.giftmoa.Data.*
-import com.example.giftmoa.MoaInterface
-import com.example.giftmoa.R
-import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.ActivityShareRoomReadBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -153,6 +153,15 @@ class ShareRoomReadActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        shareGiftAdapter!!.setItemClickListener(object : HomeGiftAdapter.ItemClickListener{
+            override fun onClick(view: View, position: Int, itemId: Long?) {
+                val intent = Intent(this@ShareRoomReadActivity, GifticonDetailActivity::class.java).apply {
+                    putExtra("gifticonId", itemId)
+                }
+                requestActivity.launch(intent)
+            }
+        })
+
 
 
         setContentView(sBinding.root)
@@ -187,42 +196,6 @@ class ShareRoomReadActivity : AppCompatActivity() {
     }
 
     private fun setSharedGiftData() {
-        /*val saveSharedPreference = SaveSharedPreference()
-        val token = saveSharedPreference.getToken(this).toString()
-        val getExpireDate = saveSharedPreference.getExpireDate(this).toString()
-
-        val SERVER_URL = BuildConfig.server_URL
-        val retrofit = Retrofit.Builder().baseUrl(SERVER_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-        //.client(clientBuilder)
-
-        //Authorization jwt토큰 로그인
-        val interceptor = Interceptor { chain ->
-            var newRequest: Request
-            if (token != null && token != "") { // 토큰이 없는 경우
-                // Authorization 헤더에 토큰 추가
-                newRequest =
-                    chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
-
-                val expireDate: Long = getExpireDate.toLong()
-                if (expireDate <= System.currentTimeMillis()) { // 토큰 만료 여부 체크
-                    //refresh 들어갈 곳
-                    newRequest =
-                        chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
-                    return@Interceptor chain.proceed(newRequest)
-                }
-            } else newRequest = chain.request()
-            chain.proceed(newRequest)
-        }
-        val builder = OkHttpClient.Builder()
-        builder.interceptors().add(interceptor)
-        val client: OkHttpClient = builder.build()
-        retrofit.client(client)
-        val retrofit2: Retrofit = retrofit.build()
-        val api = retrofit2.create(MoaInterface::class.java)*/
-
-        println("setting start")
-
         Retrofit2Generator.create(this@ShareRoomReadActivity).getTeamGifticonList(shareRoomData?.id!!, 0, 10).enqueue(object : Callback<GetTeamGifticonListResponse> {
             override fun onResponse(
                 call: Call<GetTeamGifticonListResponse>,
@@ -296,25 +269,27 @@ class ShareRoomReadActivity : AppCompatActivity() {
                 val shareRoomData = it.data?.getSerializableExtra("data") as ShareRoomData
 
                 when(it.data?.getIntExtra("flag", -1)) {
-                    //add
+                    //delete shareRoom
                     0 -> {
-                        //setRoomData()
+                        val intent = Intent(this@ShareRoomReadActivity, ShareRoomFragment::class.java).apply {
+                            putExtra("flag", 0)
+                        }
+                        setResult(RESULT_OK, intent)
+                        this@ShareRoomReadActivity.finish()
                     }
-                    //수정 테스트 해보기 todo//edit
-                    1 -> {
-                        /*oldFragment = HomeFragment()
-                        oldTAG = TAG_HOME
-                        //setToolbarView(TAG_HOME, oldTAG)
-                        setFragment(TAG_HOME, HomeFragment())
-
-                        mBinding.bottomNavigationView.selectedItemId = R.id.navigation_home
-
-                        CoroutineScope(Dispatchers.Main).launch {
-                            supportFragmentManager.beginTransaction()
-                                .replace(R.id.fragment_content, HomeFragment())
-                                .commit()*/
+                    //use Gifticon
+                    3 -> {
+                        val updatedGifticonWithStatus = if (Build.VERSION.SDK_INT >= 33) {
+                            it.data?.getParcelableExtra(
+                                "updatedGifticonWithStatus",
+                                Gifticon::class.java
+                            )
+                        } else {
+                            it.data?.getParcelableExtra<Gifticon>("updatedGifticonWithStatus")
+                        }
+                        Log.d("SHARE_READ", "updatedGifticonWithStatus: $updatedGifticonWithStatus")
+                        setSharedGiftData()
                     }
-
                     //finish()
                 }
             }

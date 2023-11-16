@@ -200,6 +200,14 @@ class ShareRoomFragment : Fragment() {
                     }
                     sAdapter!!.notifyDataSetChanged()
 
+                    if (shareRoomAllData.isEmpty()) {
+                        sBinding.rvLl.visibility = View.GONE
+                        sBinding.noneShareRoomLl.visibility = View.VISIBLE
+                    } else {
+                        sBinding.rvLl.visibility = View.VISIBLE
+                        sBinding.noneShareRoomLl.visibility = View.GONE
+                    }
+
                 } else {
                     println("faafa")
                     Log.d("add", response.errorBody()?.string()!!)
@@ -261,16 +269,6 @@ class ShareRoomFragment : Fragment() {
                     //add
                     0 -> {
                         setRoomData()
-                        /*shareRoomAllData.add(shareRoomData)
-                        sAdapter!!.notifyDataSetChanged()*/
-
-                        /*CoroutineScope(Dispatchers.Main).launch {
-                            requireActivity().supportFragmentManager.beginTransaction()
-                                .replace(R.id.fragment_content, ShareRoomFragment())
-                                .commit()
-                        }*/
-
-                        //finish()
                     }
                     //수정 테스트 해보기 todo//edit
                     1 -> {

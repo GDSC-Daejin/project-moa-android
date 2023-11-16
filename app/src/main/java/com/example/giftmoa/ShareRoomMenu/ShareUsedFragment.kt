@@ -131,32 +131,44 @@ class ShareUsedFragment : Fragment(), CategoryListener {
 
     private fun getAvailableListFromServer(page: Int) {
         Retrofit2Generator.create(requireActivity()).getShareGifticonList(size = 30, page = page).enqueue(object :
-            Callback<ShareRoomGetTeamGifticonData> {
-            override fun onResponse(call: Call<ShareRoomGetTeamGifticonData>, response: Response<ShareRoomGetTeamGifticonData>) {
+            Callback<GetGifticonListResponse> {
+            override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
                 if (response.isSuccessful) {
                     val responseBody = response.body()
-                    responseBody?.data?.data?.let { newList ->
-                        if (page == 0) {
-                            // 첫 페이지인 경우 리스트를 새로 채웁니다.
-                            gifticonList.clear()
-                        }
+                    gifticonList.clear()
+                    for (i in responseBody?.data?.dataList?.indices!!) {
                         // 새로운 데이터를 리스트에 추가합니다.
                         val currentPosition = gifticonList.size
+                        gifticonList.add(ShareRoomGifticon(
+                            responseBody.data.dataList[i].id!!.toInt(),
+                            responseBody.data.dataList[i].name!!,
+                            "null",
+                            responseBody.data.dataList[i].gifticonImagePath!!,
+                            responseBody.data.dataList[i].exchangePlace!!,
+                            responseBody.data.dataList[i].dueDate!!,
+                            responseBody.data.dataList[i].gifticonType!!,
+                            "null",
+                            responseBody.data.dataList[i].status!!,
+                            responseBody.data.dataList[i].usedDate,
+                            responseBody.data.dataList[i].author,
+                            responseBody.data.dataList[i].category,
+                            "null",
+                            false
+                        ))
+
                         var temp = ArrayList<ShareRoomGifticon>()
-                        for (i in responseBody.data.data.indices) {
-                            temp = responseBody.data.data.filter { it.status != "AVAILABLE" } as ArrayList<ShareRoomGifticon>
+                        for (i in gifticonList.indices) {
+                            temp = gifticonList.filter { it.status != "AVAILABLE" } as ArrayList<ShareRoomGifticon>
                         }
-
                         gifticonList.addAll(temp)
-
-                        giftAdapter!!.notifyDataSetChanged()
                     }
+                    giftAdapter!!.notifyDataSetChanged()
                 } else {
                     Log.e("ERROR", "Error: ${response.errorBody()?.string()}")
                 }
             }
 
-            override fun onFailure(call: Call<ShareRoomGetTeamGifticonData>, t: Throwable) {
+            override fun onFailure(call: Call<GetGifticonListResponse>, t: Throwable) {
                 Log.e("ERROR", "Retrofit onFailure: ", t)
             }
         })

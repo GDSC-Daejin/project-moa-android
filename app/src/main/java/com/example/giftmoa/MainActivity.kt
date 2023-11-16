@@ -2,11 +2,16 @@ package com.example.giftmoa
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.giftmoa.BottomMenu.AccountFragment
@@ -14,10 +19,12 @@ import com.example.giftmoa.BottomMenu.CouponFragment
 import com.example.giftmoa.BottomMenu.HomeFragment
 import com.example.giftmoa.BottomMenu.ShareRoomFragment
 import com.example.giftmoa.Data.SaveSharedPreference
+import com.example.giftmoa.FCM.MyFirebaseMessagingService
 import com.example.giftmoa.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mBinding : ActivityMainBinding
+    private val PERMISSION_REQUEST_CODE = 500
     private val TAG_HOME = "home_fragment"
     private val TAG_SHAREROOM = "shareroom_fragment"
     private val TAG_ACCOUNT = "account_fragment"
@@ -43,8 +50,11 @@ class MainActivity : AppCompatActivity() {
 
 
         mBinding = ActivityMainBinding.inflate(layoutInflater)
-
         setContentView(mBinding.root)
+        //FCM 설정 및 token값 가져오기
+        MyFirebaseMessagingService().getFirebaseToken()
+
+        checkPostNotificationPermission()
         setFragment(TAG_HOME, HomeFragment())
         initNavigationBar()
     }
@@ -142,6 +152,45 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "한번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show()
         } else {
             finish()
+        }
+    }
+
+
+    //안드로이드 13 이상 PostNotification 대응
+    private fun checkPostNotificationPermission() {
+        //Android 13 이상 && 푸시권한 없음
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+            && PackageManager.PERMISSION_DENIED == ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)) {
+            val permissionCheck = ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.POST_NOTIFICATIONS
+            )
+            if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                    PERMISSION_REQUEST_CODE
+                )
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when(requestCode) {
+            PERMISSION_REQUEST_CODE -> {
+                if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(applicationContext, "권한 거부됨", Toast.LENGTH_SHORT)
+                        .show()
+                } else {
+                    Toast.makeText(applicationContext, "권한 승인됨", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
         }
     }
 }

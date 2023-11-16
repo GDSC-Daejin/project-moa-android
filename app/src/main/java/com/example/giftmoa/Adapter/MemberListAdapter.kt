@@ -60,7 +60,39 @@ class MemberListAdapter : RecyclerView.Adapter<MemberListAdapter.MemberViewHolde
 
             if (itemData.profileImageUrl != null) {
                 name.text = itemData.nickname
-                profile.setImageURI(itemData.profileImageUrl!!.toUri())
+
+                val requestOptions = RequestOptions()
+                    .centerCrop() // 또는 .fitCenter()
+                    .override(300, 300) // 원하는 크기로 조절
+
+                Glide.with(context)
+                    .load(itemData.profileImageUrl!!.toUri())
+                    .error(R.drawable.member_profile_default_icon)
+                    .apply(requestOptions)
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: com.bumptech.glide.request.target.Target<Drawable>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            Log.d("Glide", "Image load failed: ${e?.message}")
+                            println(e?.message.toString())
+                            return false
+                        }
+
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any?,
+                            target: com.bumptech.glide.request.target.Target<Drawable>?,
+                            dataSource: DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            println("glide")
+                            return false
+                        }
+                    })
+                    .into(binding.memberProfile)
             } else {
                 name.text = itemData.nickname
 

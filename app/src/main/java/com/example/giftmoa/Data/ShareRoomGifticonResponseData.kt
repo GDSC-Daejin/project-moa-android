@@ -47,9 +47,9 @@ data class ShareRoomGifticon(
     @SerializedName("usedDate")
     var usedDate : String?,
     @SerializedName("author")
-    var author : ShareRoomAuthor,
+    var author : Author?,
     @SerializedName("category")
-    var category : ShareRoomCategory,
+    var category : Category?,
     @SerializedName("gifticonMoney")
     var gifticonMoney : String,
 

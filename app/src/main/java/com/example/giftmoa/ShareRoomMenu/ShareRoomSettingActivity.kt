@@ -60,6 +60,9 @@ class ShareRoomSettingActivity : AppCompatActivity() {
             sBinding.shareSettingRoomNumberOfPeople.text = shareRoomData!!.teamMembers?.size.toString()
             sBinding.shareSettingRoomGifticonCount.text = sharedGifticonAllData.size.toString()
 
+            sBinding.shareSettingRoomDelete.setOnClickListener {
+                deleteShareRoom(shareRoomData?.id?.toInt()!!)
+            }
 
         } else {
             sBinding.shareLl1.visibility = View.GONE
@@ -128,10 +131,37 @@ class ShareRoomSettingActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<GetTeamGifticonListResponse>, t: Throwable) {
-
+                        Log.e("onFailure", t.message.toString())
                 }
-
             })
         }
+    }
+
+    private fun deleteShareRoom(teamId : Int) {
+        Retrofit2Generator.create(this@ShareRoomSettingActivity).deleteShareRoom(teamId).enqueue(object : Callback<ShareRoomResponseData> {
+            override fun onResponse(
+                call: Call<ShareRoomResponseData>,
+                response: Response<ShareRoomResponseData>
+            ) {
+                if (response.isSuccessful) {
+                    Log.d("delete","Delete ShareRoom")
+                    val intent = Intent(this@ShareRoomSettingActivity, ShareRoomReadActivity::class.java).apply {
+                        putExtra("flag", 0)
+                    }
+                    setResult(RESULT_OK, intent)
+                    this@ShareRoomSettingActivity.finish()
+                } else {
+                    Log.e("delete Error", response.errorBody()?.string()!!)
+                    println("faafa")
+                    Log.d("message", call.request().toString())
+                    println(response.code())
+                }
+            }
+
+            override fun onFailure(call: Call<ShareRoomResponseData>, t: Throwable) {
+                Log.e("onFailure", t.message.toString())
+            }
+
+        })
     }
 }

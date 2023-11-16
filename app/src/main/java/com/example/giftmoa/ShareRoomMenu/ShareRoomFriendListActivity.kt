@@ -34,12 +34,6 @@ class ShareRoomFriendListActivity : AppCompatActivity() {
     private var memberList = ArrayList<GetTeamMembers>()
     private var manager : LinearLayoutManager = LinearLayoutManager(this)
 
-    private val SERVER_URL = BuildConfig.server_URL
-    private val retrofit = Retrofit.Builder().baseUrl(SERVER_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    val service: MoaInterface = retrofit.create(MoaInterface::class.java)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sBinding = ActivityShareRoomFriendListBinding.inflate(layoutInflater)
