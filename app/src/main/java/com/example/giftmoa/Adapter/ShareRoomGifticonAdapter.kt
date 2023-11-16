@@ -1,34 +1,12 @@
 package com.example.giftmoa.Adapter
-import android.annotation.SuppressLint
-import android.app.AlertDialog
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
-import android.content.Context.CLIPBOARD_SERVICE
-import android.content.res.ColorStateList
-import android.graphics.ColorFilter
-import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
-import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions
 import com.example.giftmoa.Data.*
 import com.example.giftmoa.R
-import com.example.giftmoa.databinding.HomeItemBinding
 import com.example.giftmoa.databinding.ItemGifticonBinding
 import com.example.giftmoa.databinding.ShareRoomItemBinding
 import com.kakao.sdk.common.KakaoSdk.init
@@ -47,6 +25,9 @@ class ShareRoomGifticonAdapter : RecyclerView.Adapter<ShareRoomGifticonAdapter.S
 
     init {
         setHasStableIds(true)
+        shareRoomGifticonItemData.forEach { it ->
+            it.isSelected = false
+        }
     }
 
     inner class ShareViewHolder(private val binding : ItemGifticonBinding ) : RecyclerView.ViewHolder(binding.root) {
@@ -54,6 +35,7 @@ class ShareRoomGifticonAdapter : RecyclerView.Adapter<ShareRoomGifticonAdapter.S
         private var giftBrand = binding.tvCouponExchangePlace
         private var giftName = binding.tvCouponName
         private var giftImg = binding.ivCouponImage
+        var viewAlpha = binding.viewAlpha
         private var giftRemainingDay = binding.tvDDay
 
 
@@ -65,57 +47,50 @@ class ShareRoomGifticonAdapter : RecyclerView.Adapter<ShareRoomGifticonAdapter.S
             giftBrand.text = itemData.exchangePlace
             giftName.text = itemData.name
             if (itemData.gifticonImagePath != null) {
-                giftImg.setImageURI(itemData.gifticonImagePath!!.toUri())
+                Glide.with(binding.ivCouponImage.context)
+                    .load(itemData.gifticonImagePath)
+                    .into(binding.ivCouponImage)
             } else {
                 giftImg.setImageResource(R.drawable.image)
             }
 
             if (itemData.status == "AVAILABLE") {
                 binding.tvCouponUsedComplete.visibility = View.GONE
-                binding.ivCouponImage.setImageURI(itemData.gifticonImagePath!!.toUri())
+                binding.viewAlpha.visibility = View.GONE
+                Glide.with(binding.ivCouponImage.context)
+                    .load(itemData.gifticonImagePath)
+                    .into(binding.ivCouponImage)
             } else {
                 binding.tvCouponUsedComplete.visibility = View.VISIBLE
-                binding.ivCouponImage.setImageURI(itemData.gifticonImagePath!!.toUri())
+                binding.viewAlpha.visibility = View.VISIBLE
+                Glide.with(binding.ivCouponImage.context)
+                    .load(itemData.gifticonImagePath)
+                    .into(binding.ivCouponImage)
             }
 
-            val now = System.currentTimeMillis()
-            val date = Date(now)
-            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA)
-            val currentDate = sdf.format(date)
+            try {
+                //2024-01-26T00:00:00.000+00:00 -> inputFormat
+                val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+                val dueDate = inputFormat.parse(itemData.dueDate)
 
-            val nowFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).parse(currentDate)
-            val beforeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).parse(s)
+                val currentDate = Date()
+                val timeDifference = dueDate.time - currentDate.time
+                val daysDifference = timeDifference / (1000 * 60 * 60 * 24)
 
-            val diffMilliseconds = beforeFormat?.time?.minus(nowFormat?.time!!)
+                if (daysDifference >= 0) {
+                    val dDayText = "D-${daysDifference}"
+                    if (daysDifference == 0L)
+                        binding.tvDDay.text = "D-Day"
+                    else
+                        binding.tvDDay.text = dDayText
 
-            val diffSeconds = diffMilliseconds?.div(1000)
-            val diffMinutes = diffMilliseconds?.div((60 * 1000))
-            val diffHours = diffMilliseconds?.div((60 * 60 * 1000))
-            val diffDays = diffMilliseconds?.div((24 * 60 * 60 * 1000))
-            if (diffMinutes != null && diffDays != null && diffHours != null && diffSeconds != null) {
-                if(diffSeconds > -1){
-
+                } else {
+                    binding.tvDDay.text = "만료"
+                    binding.viewAlpha.visibility = android.view.View.VISIBLE
                 }
-
-                if (diffSeconds > 0) {
-
-                }
-
-                if (diffMinutes > 0) {
-
-                }
-
-                if (diffHours > 0) {
-
-                }
-
-                if (diffDays > 0) {
-                    giftRemainingDay.text = "D-${diffDays.toString()}"
-                }
-
-                if (diffDays < 0) {
-                    giftRemainingDay.text = "기간 지남"
-                }
+            } catch (e: Exception) {
+                // 날짜 파싱에 실패한 경우나 예외 처리
+                binding.tvDDay.text = "날짜 형식 오류"
             }
             /*binding.root.setOnClickListener {
                 val clickedPosition = position
@@ -130,9 +105,19 @@ class ShareRoomGifticonAdapter : RecyclerView.Adapter<ShareRoomGifticonAdapter.S
             }*/
 
             binding.root.setOnClickListener {
-                itemClickListener.onClick(it, position, shareRoomGifticonItemData[position].gifticonId.toString())
+                itemClickListener.onClick(it, position, shareRoomGifticonItemData[position].gifticonId)
                 pos = position
-                setMultipleSelection(binding, null, pos)
+                if (shareRoomGifticonItemData[position].isSelected == true) {
+                    shareRoomGifticonItemData[pos].isSelected = false
+                    binding.viewAlpha.visibility = View.GONE
+                    binding.ivCouponImage.alpha = 1.0.toFloat()
+                    //setMultipleSelection(binding, pos)
+                } else {
+                    shareRoomGifticonItemData[pos].isSelected = true
+                    binding.viewAlpha.visibility = View.VISIBLE
+                    binding.ivCouponImage.alpha = 0.7.toFloat()
+                    //setMultipleSelection(binding, pos)
+                }
             }
         }
     }
@@ -145,10 +130,13 @@ class ShareRoomGifticonAdapter : RecyclerView.Adapter<ShareRoomGifticonAdapter.S
 
     override fun onBindViewHolder(holder: ShareViewHolder, position: Int) {
         holder.bind(shareRoomGifticonItemData[holder.adapterPosition], position)
+
         /*holder.itemView.setOnClickListener {
             itemClickListener.onClick(it, holder.adapterPosition, shareRoomGifticonItemData[holder.adapterPosition].gifticonId.toString())
             pos = holder.adapterPosition
-            setMultipleSelection(binding, null, pos)
+            shareRoomGifticonItemData[holder.adapterPosition].isSelected = true
+            println(shareRoomGifticonItemData[holder.adapterPosition])
+            setMultipleSelection(binding, pos)
         }*/
     }
 
@@ -168,7 +156,7 @@ class ShareRoomGifticonAdapter : RecyclerView.Adapter<ShareRoomGifticonAdapter.S
     }
 
     interface ItemClickListener {
-        fun onClick(view: View, position: Int, itemId: String)
+        fun onClick(view: View, position: Int, itemId: Int)
     }
 
     //약한 참조로 참조하는 객체가 사용되지 않을 경우 가비지 콜렉션에 의해 자동해제
@@ -179,25 +167,33 @@ class ShareRoomGifticonAdapter : RecyclerView.Adapter<ShareRoomGifticonAdapter.S
         this.itemClickListener = itemClickListener
     }
 
-    private fun setMultipleSelection(binding: ItemGifticonBinding, s: Int?, adapterPosition : Int) {
+   /*private fun setMultipleSelection(binding: ItemGifticonBinding, adapterPosition : Int) {
         if(shareRoomGifticonItemData[adapterPosition].isSelected == true){
-            shareRoomGifticonItemData[adapterPosition].isSelected = false
+            Log.i("SETMULTIPLE", "TRUE")
             changeBackground(binding, adapterPosition)
+
+            //shareRoomGifticonItemData[adapterPosition].isSelected = false
         }else{
-            shareRoomGifticonItemData[adapterPosition].isSelected = true
+            Log.i("SETMULTIPLE", "FALSE")
             changeBackground(binding, adapterPosition)
+
+            //shareRoomGifticonItemData[adapterPosition].isSelected = true
         }
         notifyDataSetChanged()
     }
 
     private fun changeBackground(binding: ItemGifticonBinding, position: Int) {
         if(shareRoomGifticonItemData[position].isSelected == true){
-            val colorStateList = ContextCompat.getColor(context, R.color.moa_gray_300)
-            binding.ivCouponImage.setColorFilter(colorStateList)
+            Log.i("SETMULTIPLE", "VIEW CHANGE")
+            //binding.ivCouponImage.backgroundTintList =
+            //binding.ivCouponImage.alpha = 0.7.toFloat()
+            binding.viewAlpha.visibility = View.VISIBLE
         }else{
-            binding.ivCouponImage.clearColorFilter()
+            Log.i("SETMULTIPLE", "VIEW CHANGE2")
+            //binding.ivCouponImage.alpha = 1.0.toFloat()
+            binding.viewAlpha.visibility = View.GONE
         }
-    }
+    }*/
 
 
 }

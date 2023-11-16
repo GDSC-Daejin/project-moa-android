@@ -101,7 +101,7 @@ class HomeGiftAdapter : RecyclerView.Adapter<HomeGiftAdapter.HomeGiftViewHolder>
         holder.bind(giftItemData[holder.adapterPosition], position)
 
         holder.itemView.setOnClickListener {
-            itemClickListener.onClick(it, holder.adapterPosition, giftItemData[holder.adapterPosition].name)
+            itemClickListener.onClick(it, holder.adapterPosition, giftItemData[holder.adapterPosition].gifticonId)
         }
     }
 
@@ -121,7 +121,7 @@ class HomeGiftAdapter : RecyclerView.Adapter<HomeGiftAdapter.HomeGiftViewHolder>
     }
 
     interface ItemClickListener {
-        fun onClick(view: View, position: Int, itemId: String?)
+        fun onClick(view: View, position: Int, itemId: Long?)
     }
 
     //약한 참조로 참조하는 객체가 사용되지 않을 경우 가비지 콜렉션에 의해 자동해제

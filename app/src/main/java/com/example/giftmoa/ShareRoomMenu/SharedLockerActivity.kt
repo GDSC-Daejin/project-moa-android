@@ -20,5 +20,9 @@ class SharedLockerActivity : AppCompatActivity() {
         TabLayoutMediator(sBinding.categoryTabLayout, sBinding.viewpager) { tab, pos ->
             tab.text = tabTextList[pos]
         }.attach()
+
+        sBinding.backArrow.setOnClickListener {
+            this.finish()
+        }
     }
 }

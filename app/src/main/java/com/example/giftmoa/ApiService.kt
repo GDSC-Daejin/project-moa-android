@@ -120,13 +120,13 @@ interface ApiService {
                             @Query("size") size : Int): Call<GetTeamGifticonListResponse>
 
     // 팀에 공유하기 위한 자기 기프티콘 가져오기
-    @GET("/api/v1/gifticon/all_list")
+    @GET("/api/v1/gifticon/recent_list")
     fun getShareGifticonList(
         @Query("size") size: Int?,
         @Query("page") page: Int?
-    ): Call<ShareRoomGetTeamGifticonData>
+    ): Call<GetGifticonListResponse>
 
-    //리더의 공유방 삭제제
+    //리더의 공유방 삭제
    @DELETE("/api/v1/team/{teamId}")
     fun deleteShareRoom(@Path("teamId") teamId : Int) : Call<ShareRoomResponseData>
 

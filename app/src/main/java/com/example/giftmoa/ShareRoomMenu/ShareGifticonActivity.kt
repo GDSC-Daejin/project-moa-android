@@ -6,9 +6,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.giftmoa.*
-import com.example.giftmoa.Adapter.GifticonListAdapter
 import com.example.giftmoa.Adapter.ShareRoomGifticonAdapter
 import com.example.giftmoa.Data.*
 import com.example.giftmoa.GridSpacingItemDecoration
@@ -17,14 +17,9 @@ import com.google.android.material.chip.Chip
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class ShareGifticonActivity : AppCompatActivity() {
     private lateinit var sBinding : ActivityShareGifticonBinding
@@ -51,73 +46,43 @@ class ShareGifticonActivity : AppCompatActivity() {
         teamId = intent.getIntExtra("teamId", 0).toInt()
 
         sBinding.shareGifticonTv.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                /*val saveSharedPreference = SaveSharedPreference()
-                val token = saveSharedPreference.getToken(this@ShareGifticonActivity).toString()
-                val getExpireDate = saveSharedPreference.getExpireDate(this@ShareGifticonActivity).toString()
-
-                val SERVER_URL = BuildConfig.server_URL
-                val retrofit = Retrofit.Builder().baseUrl(SERVER_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                //.client(clientBuilder)
-
-                //Authorization jwt토큰 로그인
-                val interceptor = Interceptor { chain ->
-
-                    var newRequest: Request
-                    if (token != null && token != "") { // 토큰이 없는 경우
-                        // Authorization 헤더에 토큰 추가
-                        newRequest =
-                            chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
-                        val expireDate: Long = getExpireDate.toLong()
-                        if (expireDate <= System.currentTimeMillis()) { // 토큰 만료 여부 체크
-                            //refresh 들어갈 곳
-                            newRequest =
-                                chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
-                            return@Interceptor chain.proceed(newRequest)
-                        }
-                    } else newRequest = chain.request()
-                    chain.proceed(newRequest)
-                }
-                val builder = OkHttpClient.Builder()
-                builder.interceptors().add(interceptor)
-                val client: OkHttpClient = builder.build()
-                retrofit.client(client)
-                val retrofit2: Retrofit = retrofit.build()
-                val api = retrofit2.create(MoaInterface::class.java)*/
-
-                for (i in selectGifticonList.indices) {
-                    val temp = TeamShareGiftIcon(teamId,selectGifticonList[i].gifticonId.toInt())
-                    Retrofit2Generator.create(this@ShareGifticonActivity).teamShareGificon(temp).enqueue(object : Callback<ShareRoomGifticonResponseData> {
-                        override fun onResponse(
-                            call: Call<ShareRoomGifticonResponseData>,
-                            response: Response<ShareRoomGifticonResponseData>
-                        ) {
-                            if (response.isSuccessful) {
-                                println("ssisisisi")
-                            } else {
-                                println("faafa")
-                                Log.d("test", response.errorBody()?.string()!!)
-                                Log.d("message", call.request().toString())
-                                println(response.code())
+            if (selectGifticonList.isNotEmpty()) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    for (i in selectGifticonList.indices) {
+                        val temp = TeamShareGiftIcon(teamId,selectGifticonList[i].gifticonId.toInt())
+                        Retrofit2Generator.create(this@ShareGifticonActivity).teamShareGificon(temp).enqueue(object : Callback<ShareRoomGifticonResponseData> {
+                            override fun onResponse(
+                                call: Call<ShareRoomGifticonResponseData>,
+                                response: Response<ShareRoomGifticonResponseData>
+                            ) {
+                                if (response.isSuccessful) {
+                                    println("ssisisisi")
+                                } else {
+                                    println("faafa")
+                                    Log.d("test", response.errorBody()?.string()!!)
+                                    Log.d("message", call.request().toString())
+                                    println(response.code())
+                                }
                             }
-                        }
 
-                        override fun onFailure(
-                            call: Call<ShareRoomGifticonResponseData>,
-                            t: Throwable
-                        ) {
-                            Log.e("ERROR", t.message.toString())
-                        }
+                            override fun onFailure(
+                                call: Call<ShareRoomGifticonResponseData>,
+                                t: Throwable
+                            ) {
+                                Log.e("ERROR", t.message.toString())
+                            }
 
-                    })
+                        })
+                    }
                 }
+            } else {
+                Toast.makeText(this@ShareGifticonActivity, "공유할 기프티콘을 선택해주세요", Toast.LENGTH_SHORT).show()
             }
         }
 
-
-
-
+        sBinding.backArrow.setOnClickListener {
+            this.finish()
+        }
     }
 
     private fun initSharedRecyclerView() {
@@ -137,28 +102,43 @@ class ShareGifticonActivity : AppCompatActivity() {
         (this * Resources.getSystem().displayMetrics.density).toInt()
 
     private fun getAllGifticonListFromServer(page: Int) {
-        Retrofit2Generator.create(this@ShareGifticonActivity).getShareGifticonList(size = 30, page = page).enqueue(object :
-            Callback<ShareRoomGetTeamGifticonData> {
-            override fun onResponse(call: Call<ShareRoomGetTeamGifticonData>, response: Response<ShareRoomGetTeamGifticonData>) {
+        Retrofit2Generator.create(this@ShareGifticonActivity).getShareGifticonList(size = 10, page = page).enqueue(object :
+            Callback<GetGifticonListResponse> {
+            override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
                 if (response.isSuccessful) {
                     val responseBody = response.body()
-                    responseBody?.data?.data?.let { newList ->
+                    for (i in responseBody?.data?.dataList?.indices!!) {
                         if (page == 0) {
                             // 첫 페이지인 경우 리스트를 새로 채웁니다.
                             gifticonList.clear()
                         }
                         // 새로운 데이터를 리스트에 추가합니다.
-                        val currentPosition = gifticonList.size
-                        gifticonList.addAll(newList)
-
-                        giftAdapter!!.notifyDataSetChanged()
+                        gifticonList.add(ShareRoomGifticon(
+                            responseBody.data.dataList[i].id!!.toInt(),
+                            responseBody.data.dataList[i].name!!,
+                            "null",
+                            responseBody.data.dataList[i].gifticonImagePath!!,
+                            responseBody.data.dataList[i].exchangePlace!!,
+                            responseBody.data.dataList[i].dueDate!!,
+                            responseBody.data.dataList[i].gifticonType!!,
+                            "null",
+                            responseBody.data.dataList[i].status!!,
+                            responseBody.data.dataList[i].usedDate,
+                            responseBody.data.dataList[i].author,
+                            responseBody.data.dataList[i].category,
+                            "null",
+                            false
+                        ))
                     }
+                    giftAdapter!!.notifyDataSetChanged()
+
+                    println("GIfticonList" + gifticonList)
                 } else {
                     Log.e("ERROR", "Error: ${response.errorBody()?.string()}")
                 }
             }
 
-            override fun onFailure(call: Call<ShareRoomGetTeamGifticonData>, t: Throwable) {
+            override fun onFailure(call: Call<GetGifticonListResponse>, t: Throwable) {
                 Log.e("ERROR", "Retrofit onFailure: ", t)
             }
         })
@@ -228,11 +208,27 @@ class ShareGifticonActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         giftAdapter!!.setItemClickListener(object : ShareRoomGifticonAdapter.ItemClickListener {
-            override fun onClick(view: View, position: Int, itemId: String) {
-                selectGifticonList.add(gifticonList[position])
+            override fun onClick(view: View, position: Int, itemId: Int) {
+                //선택한 기프티콘에 같은게 없을 경우 추가
+                //println(selectGifticonList)
+                if (selectGifticonList.contains(gifticonList[position])) {
+                    //println(selectGifticonList.removeIf { it.gifticonId == gifticonList[position].gifticonId })
+                    selectGifticonList.removeIf { it.gifticonId == gifticonList[position].gifticonId }
+                    println("contains")
+                    //println(selectGifticonList)
 
-                sBinding.shareSelectLl.visibility = View.VISIBLE
-                sBinding.shareSelectTv.text = selectGifticonList.size.toString() +"개 쿠폰 선택됨"
+                    if (selectGifticonList.size == 0) {
+                        sBinding.shareSelectLl.visibility = View.GONE
+                        //sBinding.shareSelectTv.text = selectGifticonList.size.toString() +"개 쿠폰 선택됨"
+                    } else {
+                        sBinding.shareSelectLl.visibility = View.VISIBLE
+                        sBinding.shareSelectTv.text = selectGifticonList.size.toString() +"개 쿠폰 선택됨"
+                    }
+                } else {
+                    selectGifticonList.add(gifticonList[position])
+                    sBinding.shareSelectLl.visibility = View.VISIBLE
+                    sBinding.shareSelectTv.text = selectGifticonList.size.toString() +"개 쿠폰 선택됨"
+                }
             }
         })
     }

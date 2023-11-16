@@ -200,6 +200,14 @@ class ShareRoomFragment : Fragment() {
                     }
                     sAdapter!!.notifyDataSetChanged()
 
+                    if (shareRoomAllData.isEmpty()) {
+                        sBinding.rvLl.visibility = View.GONE
+                        sBinding.noneShareRoomLl.visibility = View.VISIBLE
+                    } else {
+                        sBinding.rvLl.visibility = View.VISIBLE
+                        sBinding.noneShareRoomLl.visibility = View.GONE
+                    }
+
                 } else {
                     println("faafa")
                     Log.d("add", response.errorBody()?.string()!!)

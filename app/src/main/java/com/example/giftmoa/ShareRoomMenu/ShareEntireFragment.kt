@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.giftmoa.*
+import com.example.giftmoa.Adapter.MemberListAdapter
 import com.example.giftmoa.Adapter.ShareRoomGifticonAdapter
 import com.example.giftmoa.BottomMenu.CategoryListener
 import com.example.giftmoa.BottomSheetFragment.CategoryBottomSheet
@@ -18,14 +19,9 @@ import com.example.giftmoa.Data.*
 import com.example.giftmoa.GridSpacingItemDecoration
 import com.example.giftmoa.databinding.FragmentShareEntireBinding
 import com.google.android.material.chip.Chip
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -42,12 +38,6 @@ class ShareEntireFragment : Fragment(), CategoryListener {
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var binding : FragmentShareEntireBinding
-
-    private val SERVER_URL = BuildConfig.server_URL
-    private val retrofit = Retrofit.Builder().baseUrl(SERVER_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    val service: MoaInterface = retrofit.create(MoaInterface::class.java)
 
     private var giftAdapter: ShareRoomGifticonAdapter? = null
 
@@ -111,15 +101,24 @@ class ShareEntireFragment : Fragment(), CategoryListener {
     private fun initShareEntireRecyclerView() {
         getAllGifticonListFromServer(0)
         println("entire")
-        binding.giftRv.apply {
+
+        giftAdapter = ShareRoomGifticonAdapter()
+        giftAdapter!!.shareRoomGifticonItemData = gifticonList
+        binding.giftRv.adapter = giftAdapter
+        binding.giftRv.setHasFixedSize(true)
+        binding.giftRv.layoutManager = gridManager
+
+        binding.giftRv.addItemDecoration(
+            GridSpacingItemDecoration(spanCount = 2, spacing = 10f.fromDpToPx())
+        )
+
+        /*binding.giftRv.apply {
             giftAdapter = ShareRoomGifticonAdapter()
             adapter = giftAdapter
             giftAdapter!!.shareRoomGifticonItemData = gifticonList
             layoutManager = gridManager
-            binding.giftRv.addItemDecoration(
-                GridSpacingItemDecoration(spanCount = 2, spacing = 10f.fromDpToPx())
-            )
-        }
+
+        }*/
     }
 
     private fun Float.fromDpToPx(): Int =
@@ -134,27 +133,40 @@ class ShareEntireFragment : Fragment(), CategoryListener {
 
     private fun getAllGifticonListFromServer(page: Int) {
         Retrofit2Generator.create(requireActivity()).getShareGifticonList(size = 30, page = page).enqueue(object :
-            Callback<ShareRoomGetTeamGifticonData> {
-            override fun onResponse(call: Call<ShareRoomGetTeamGifticonData>, response: Response<ShareRoomGetTeamGifticonData>) {
+            Callback<GetGifticonListResponse> {
+            override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
                 if (response.isSuccessful) {
+                    gifticonList.clear()
                     val responseBody = response.body()
-                    responseBody?.data?.data?.let { newList ->
-                        if (page == 0) {
-                            // 첫 페이지인 경우 리스트를 새로 채웁니다.
-                            gifticonList.clear()
-                        }
-                        // 새로운 데이터를 리스트에 추가합니다.
-                        val currentPosition = gifticonList.size
-                        gifticonList.addAll(newList)
+                    println(response.body()?.data?.dataList)
 
-                        giftAdapter!!.notifyDataSetChanged()
+                    for (i in responseBody?.data?.dataList?.indices!!) {
+                        println(response.body()?.data?.dataList?.get(i))
+                        gifticonList.add(ShareRoomGifticon(
+                            responseBody.data.dataList[i].id!!.toInt(),
+                            responseBody.data.dataList[i].name!!,
+                            "null",
+                            responseBody.data.dataList[i].gifticonImagePath!!,
+                            responseBody.data.dataList[i].exchangePlace!!,
+                            responseBody.data.dataList[i].dueDate!!,
+                            responseBody.data.dataList[i].gifticonType!!,
+                            "null",
+                            responseBody.data.dataList[i].status!!,
+                            responseBody.data.dataList[i].usedDate,
+                            responseBody.data.dataList[i].author,
+                            responseBody.data.dataList[i].category,
+                            "null",
+                            false
+                        ))
                     }
+                    giftAdapter?.notifyDataSetChanged()
+
                 } else {
                     Log.e("ERROR", "Error: ${response.errorBody()?.string()}")
                 }
             }
 
-            override fun onFailure(call: Call<ShareRoomGetTeamGifticonData>, t: Throwable) {
+            override fun onFailure(call: Call<GetGifticonListResponse>, t: Throwable) {
                 Log.e("ERROR", "Retrofit onFailure: ", t)
             }
         })
@@ -284,9 +296,13 @@ class ShareEntireFragment : Fragment(), CategoryListener {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        gridManager = GridLayoutManager(requireActivity(), 2, GridLayoutManager.VERTICAL, false)
+    }
+
     override fun onResume() {
         super.onResume()
-        gridManager = GridLayoutManager(requireActivity(), 2, GridLayoutManager.VERTICAL, false)
     }
 
     companion object {

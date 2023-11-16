@@ -297,6 +297,7 @@ class GifticonDetailActivity: AppCompatActivity() {
 
                         val data = Intent().apply {
                             putExtra("updatedGifticonWithStatus", coupon)
+                            putExtra("flag", 3)
                         }
                         setResult(RESULT_OK, data)
 

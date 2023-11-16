@@ -42,18 +42,17 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         //받은 remoteMessage의 값 출력해보기. 데이터메세지 / 알림메세지
         Log.d(TAG, "Message data : ${message.data}")
-        Log.d(TAG, "Message notification : ${message.notification}")
+        Log.d(TAG, "Message notification : ${message.notification?.body!!}")
 
-        if (message.data.isNotEmpty()) {
+
+        if (message.notification?.body!!.isNotEmpty()) {
             setNotification(message)
         } else {
             Log.e(TAG, "data가 비어있습니다. 메시지를 수신하지 못했습니다.")
             //메세지에 전송된 알림 데이터가 포함되어있는지 확인하기위함
-            message.notification?.let {
-                setNotification(
-                    message
-                )
-            }
+            setNotification(
+                message
+            )
         }
     }
 
@@ -99,10 +98,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         // 일회용 PendingIntent : Intent 의 실행 권한을 외부의 어플리케이션에게 위임
         val intent = Intent(this, MainActivity::class.java)
-        //각 key, value 추가
+        /*//각 key, value 추가
         for(key in message.data.keys){
             intent.putExtra(key, message.data.getValue(key))
-        }
+        }*/
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP) // Activity Stack 을 경로만 남김(A-B-C-D-B => A-B)
 
         //PendingIntent.FLAG_MUTABLE은 PendingIntent의 내용을 변경할 수 있도록 허용, PendingIntent.FLAG_IMMUTABLE은 PendingIntent의 내용을 변경할 수 없음
@@ -112,12 +111,15 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             PendingIntent.getActivity(this, uniId, intent, PendingIntent.FLAG_IMMUTABLE)
         }
 
+        val title: String? = message.notification?.title
+        val body: String? = message.notification?.body
+
         // 알림에 대한 UI 정보, 작업
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setPriority(NotificationCompat.PRIORITY_HIGH) // 중요도 (HIGH: 상단바 표시 가능)
             .setSmallIcon(R.mipmap.ic_launcher) // 아이콘 설정
-            .setContentTitle(message.data["title"].toString()) // 제목
-            .setContentText(message.data["body"].toString()) // 메시지 내용
+            .setContentTitle(title) // 제목
+            .setContentText(body) // 메시지 내용
             .setAutoCancel(true) // 알람클릭시 삭제여부
             .setContentIntent(pendingIntent) // 알림 실행 시 Intent
 
