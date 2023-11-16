@@ -80,15 +80,15 @@ interface ApiService {
     fun getGifticonHistoryList(@Path("gifticonId") gifticonId: Long): Call<GetGifticonHistoryListResponse>
 
     // auth-controller-----------------------------------------------------------------------------
-    @GET("/kakaologin")
+    @GET("/api/v1/kakaologin")
     fun kakaoLogin(@Query("accessToken") accessToken: String): Call<GetKakaoLoginResponse>
 
     // 토큰 재발급
-    @POST("/token")
+    @POST("/api/v1/token")
     fun refreshToken(@Body requestBody: RefreshTokenRequest): Call<GetKakaoLoginResponse>
 
     // 회원 탈퇴
-    @POST("/auth/user")
+    @POST("/api/v1/auth/user")
     fun deleteUser(): Call<LogoutUserResponse>
 
     // 로그아웃
@@ -132,10 +132,10 @@ interface ApiService {
 
     // user-controller-----------------------------------------------------------------------------
     // 유저 정보 수정
-    @PUT("/user")
+    @PUT("/api/v1/user")
     fun updateUser(@Body requestBody: UpdateUserRequest): Call<UpdateUserResponse>
     // 내 정보 가져오기
-    @GET("/user/me")
+    @GET("/api/v1/user/me")
     fun getMyProfile(): Call<GetMyProfileResponse>
 
     // category-controller-------------------------------------------------------------------------

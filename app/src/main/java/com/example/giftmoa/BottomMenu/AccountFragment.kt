@@ -17,6 +17,7 @@ import com.example.giftmoa.Data.RefreshTokenRequest
 import com.example.giftmoa.Login2Activity
 import com.example.giftmoa.LoginActivity
 import com.example.giftmoa.MyProfileActivity
+import com.example.giftmoa.R
 import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.FragmentAccountBinding
 import retrofit2.Call
@@ -98,14 +99,14 @@ class AccountFragment : Fragment() {
                 response: Response<GetMyProfileResponse>
             ) {
                 if (response.isSuccessful) {
-                    Log.d(TAG, "onResponse: ${response.body()}")
-                    binding.tvUserName.text = response.body()?.data?.nickname
+                    myProfile = response.body()?.data
+                    binding.tvUserName.text = myProfile?.nickname
                     Glide.with(requireActivity())
-                        .load(response.body()?.data?.profileImageUrl)
+                        .load(myProfile?.profileImageUrl)
+                        .error(R.drawable.member_profile_default_icon)
                         .circleCrop()
                         .into(binding.civUserProfileImage)
 
-                    myProfile = response.body()?.data
                     Log.d(TAG, "myProfile: $myProfile")
                 }
             }

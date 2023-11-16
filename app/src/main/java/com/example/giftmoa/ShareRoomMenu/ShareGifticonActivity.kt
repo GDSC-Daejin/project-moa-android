@@ -115,7 +115,7 @@ class ShareGifticonActivity : AppCompatActivity() {
                             responseBody.data.dataList[i].id!!.toInt(),
                             responseBody.data.dataList[i].name!!,
                             "null",
-                            responseBody.data.dataList[i].gifticonImagePath!!,
+                            responseBody.data.dataList[i].gifticonImagePath,
                             responseBody.data.dataList[i].exchangePlace!!,
                             responseBody.data.dataList[i].dueDate!!,
                             responseBody.data.dataList[i].gifticonType!!,
