@@ -33,6 +33,9 @@ import com.example.giftmoa.databinding.FragmentHomeBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -95,7 +98,7 @@ class HomeFragment : Fragment() {
                     hBinding.ivShareRoomImage.setPadding(100, 100, 100, 100)
                 } else {
                     Glide.with(requireActivity())
-                        .load(teamDetail?.teamImage)
+                        .load(teamDetail.teamImage)
                         .into(hBinding.ivShareRoomImage)
                 }
             }
@@ -199,6 +202,57 @@ class HomeFragment : Fragment() {
         })
     }
 
+    private fun getAllGifticonListFromServer(page: Int) {
+        Retrofit2Generator.create(requireActivity()).getAllGifticonList(size = 30, page = page).enqueue(object :
+            Callback<GetGifticonListResponse> {
+            override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    responseBody?.data?.dataList?.let { newList ->
+                        Log.d(TAG, "getHomeGifticonListFromServer: newList = $newList")
+
+                        if (page == 0) {
+                            gifticonList.clear()
+                        }
+
+                        // SimpleDateFormat을 사용하여 날짜를 파싱합니다.
+                        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault())
+                        val currentDate = Date()
+
+                        Log.d(TAG, "currentDate = $currentDate")
+
+                        val filteredList = newList
+                            .filter { it.status == "AVAILABLE" && it.dueDate != null }
+                            .mapNotNull { gifticon ->
+                                gifticon.dueDate?.let { dueDateString ->
+                                    try {
+                                        val dueDate = dateFormat.parse(dueDateString)
+                                        if (dueDate != null && dueDate.after(currentDate)) gifticon else null
+                                    } catch (e: Exception) {
+                                        null
+                                    }
+                                }
+                            }
+                            .sortedBy { it.dueDate }
+                            .take(6 - gifticonList.size)
+
+                        gifticonList.addAll(filteredList)
+
+                        Log.d(TAG, "filteredList = $filteredList")
+                        giftAdapter.submitList(gifticonList.toList())
+                    }
+                } else {
+                    Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<GetGifticonListResponse>, t: Throwable) {
+                Log.e(TAG, "Retrofit onFailure: ", t)
+            }
+        })
+    }
+
+
     private fun getMyTeamListFromServer() {
         Retrofit2Generator.create(requireActivity()).getMyTeamList().enqueue(object :
             Callback<GetMyTeamListResponse> {
@@ -284,7 +338,8 @@ class HomeFragment : Fragment() {
         super.onStart()
         Log.d(TAG, "onStart: ")
 
-        getHomeGifticonListFromServer(0)
+        //getHomeGifticonListFromServer(0)
+        getAllGifticonListFromServer(0)
 
     }
 

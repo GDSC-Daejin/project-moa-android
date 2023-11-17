@@ -180,8 +180,8 @@ class CouponFragment : Fragment(), CategoryListener {
                         updatedGifticon?.let { it1 -> gifticonViewModel.updateCoupon(it1) }
                     } else {
                         // 기프티콘 수동 등록
-                        binding.tvSort.text = "최신순"
-                        gifticonViewModel.sortCouponList("최신순")
+                        binding.tvSort.text = "최신 등록순"
+                        gifticonViewModel.sortCouponList("최신 등록순")
                         updatedGifticon?.let { it1 -> gifticonViewModel.addCoupon(it1) }
                     }
                 }
@@ -256,13 +256,18 @@ class CouponFragment : Fragment(), CategoryListener {
                 //gifticonViewModel.filterCouponListByCategoryId(0L)
                 gifticonViewModel.clearCouponList()
                 getAllGifticonListFromServer(0)
+                gifticonViewModel.setCategory(CategoryItem(0L, "전체"))
             } else {
                 // 전체 카테고리가 아닌 경우
                 // 해당 카테고리에 속한 기프티콘 리스트를 보여줍니다.
                 //categoryId?.let { gifticonViewModel.filterCouponListByCategoryId(it) }
                 gifticonViewModel.clearCouponList()
                 categoryId?.let { getCategoryGifticonListFromServer(it, 0) }
+                gifticonViewModel.setCategory(CategoryItem(categoryId, categoryName.toString()))
             }
+
+            val currentCategory = gifticonViewModel.selectedCategory.value
+            Log.d(TAG, "currentCategory: $currentCategory")
         }
 
         return root

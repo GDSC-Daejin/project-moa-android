@@ -80,15 +80,15 @@ interface ApiService {
     fun getGifticonHistoryList(@Path("gifticonId") gifticonId: Long): Call<GetGifticonHistoryListResponse>
 
     // auth-controller-----------------------------------------------------------------------------
-    @GET("/kakaologin")
+    @GET("/api/v1/kakaologin")
     fun kakaoLogin(@Query("accessToken") accessToken: String): Call<GetKakaoLoginResponse>
 
     // 토큰 재발급
-    @POST("/token")
+    @POST("/api/v1/token")
     fun refreshToken(@Body requestBody: RefreshTokenRequest): Call<GetKakaoLoginResponse>
 
     // 회원 탈퇴
-    @POST("/auth/user")
+    @POST("/api/v1/auth/user")
     fun deleteUser(): Call<LogoutUserResponse>
 
     // 로그아웃
@@ -132,11 +132,24 @@ interface ApiService {
 
     // user-controller-----------------------------------------------------------------------------
     // 유저 정보 수정
-    @PUT("/user")
+    @PUT("/api/v1/user")
     fun updateUser(@Body requestBody: UpdateUserRequest): Call<UpdateUserResponse>
+
     // 내 정보 가져오기
-    @GET("/user/me")
+    @GET("/api/v1/user/me")
     fun getMyProfile(): Call<GetMyProfileResponse>
+
+    // 내 기프티콘 전체 개수 가져오기
+    @GET("/api/v1/gifticon/count")
+    fun getMyGifticonCount(): Call<LogoutUserResponse>
+
+    // 사용가능한 기프티콘 개수 가져오기
+    @GET("/api/v1/gifticon/usable_count")
+    fun getUsableGifticonCount(): Call<LogoutUserResponse>
+
+    // 사용한 기프티콘 개수 가져오기
+    @GET("/api/v1/gifticon/used_count")
+    fun getUsedGifticonCount(): Call<LogoutUserResponse>
 
     // category-controller-------------------------------------------------------------------------
     // 카테고리 생성

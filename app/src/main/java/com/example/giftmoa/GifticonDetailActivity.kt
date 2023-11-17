@@ -4,20 +4,27 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.giftmoa.Adapter.UsageHistoryAdapter
+import com.example.giftmoa.BottomSheetFragment.CategoryBottomSheet
+import com.example.giftmoa.BottomSheetFragment.ShareBottomSheet
+import com.example.giftmoa.Data.CategoryItem
 import com.example.giftmoa.Data.GetGifticonDetailResponse
 import com.example.giftmoa.Data.GetGifticonHistoryListResponse
 import com.example.giftmoa.Data.Gifticon
 import com.example.giftmoa.Data.GifticonDetailData
 import com.example.giftmoa.Data.GifticonHistoryData
 import com.example.giftmoa.Data.GifticonHistoryResponse
+import com.example.giftmoa.Data.Team
 import com.example.giftmoa.Data.UpdateGifticonHistoryRequest
 import com.example.giftmoa.HomeTab.GifticonViewModel
+import com.example.giftmoa.ShareRoomMenu.ShareRoomReadActivity
 import com.example.giftmoa.databinding.ActivityGifticonDetailBinding
 import com.example.giftmoa.utils.CustomCropTransformation
 import com.example.giftmoa.utils.FormatUtil
@@ -29,7 +36,12 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class GifticonDetailActivity: AppCompatActivity() {
+
+interface ShareBottomSheetListener {
+    fun onTeamUpdated(team: Team)
+}
+
+class GifticonDetailActivity: AppCompatActivity(), ShareBottomSheetListener {
 
     private lateinit var binding: ActivityGifticonDetailBinding
     private val TAG = "GifticonDetailActivity"
@@ -78,6 +90,22 @@ class GifticonDetailActivity: AppCompatActivity() {
             }
         }
 
+        binding.ivShareRoomImage.setOnClickListener {
+            val intent = Intent(this, ShareRoomReadActivity::class.java).apply {
+                putExtra("type", "READ")
+                putExtra("data", gifticonDetail?.teamList?.get(0))
+            }
+            startActivity(intent)
+        }
+
+        binding.tvToolbarConfirm.setOnClickListener {
+            finish()
+        }
+
+        binding.btnShare.setOnClickListener {
+            showShareBottomSheet()
+        }
+
         binding.btnUsedComplete.setOnClickListener {
             sendUseGifticonToServer(gifticonId)
         }
@@ -121,17 +149,16 @@ class GifticonDetailActivity: AppCompatActivity() {
 
                             binding.tvToolbarCategoryName.text = gifticonDetail?.gifticon?.category?.categoryName
                             binding.tvCouponName.text = gifticonDetail?.gifticon?.name
-                            // 자르고 싶은 위치와 크기 지정
-                            val cropX = 20 // X 시작 위치
-                            val cropY = 20 // Y 시작 위치
-                            val cropWidth = 220 // 잘라낼 너비
-                            val cropHeight = 205 // 잘라낼 높이
 
-                            Glide.with(binding.ivCouponImage.context)
-                                .asBitmap()
-                                .load(gifticonDetail?.gifticon?.gifticonImagePath)
-                                .apply(RequestOptions().transform(CustomCropTransformation(cropX, cropY, cropWidth, cropHeight)))
-                                .into(binding.ivCouponImage)
+                            if (gifticonDetail?.gifticon?.gifticonImagePath != null) {
+                                Glide.with(binding.ivCouponImage.context)
+                                    .load(gifticonDetail?.gifticon?.gifticonImagePath)
+                                    .into(binding.ivCouponImage)
+                            } else {
+                                binding.ivCouponImage.setPadding(50, 50, 50, 50)
+                                binding.ivCouponImage.setBackgroundColor(binding.ivCouponImage.context.getColor(R.color.moa_gray_200))
+                                binding.ivCouponImage.setImageResource(R.drawable.icon_logo)
+                            }
 
                             binding.tvBarcodeNumber.text = gifticonDetail?.gifticon?.barcodeNumber
                             binding.tvCouponExchangePlace.text = gifticonDetail?.gifticon?.exchangePlace
@@ -140,6 +167,8 @@ class GifticonDetailActivity: AppCompatActivity() {
 
                             if (gifticonDetail?.gifticon?.gifticonType == "MONEY") {
                                 binding.llCouponMoneyInfo.visibility = android.view.View.VISIBLE
+
+                                getUsageHistoryFromServer()
                                 /*val formattedAmount = gifticonDetail?.gifticon?.gifticonMoney?.toLongOrNull()?.let { String.format("%,d", it) }
                                 binding.etCouponRemainAmount.setText(formattedAmount)*/
                             } else {
@@ -155,6 +184,20 @@ class GifticonDetailActivity: AppCompatActivity() {
                                 Glide.with(binding.ivShareRoomImage.context)
                                     .load(gifticonDetail?.teamList?.get(0)?.teamImage)
                                     .into(binding.ivShareRoomImage)
+                                binding.tvShareRoomName.text = gifticonDetail?.teamList?.get(0)?.teamName
+                                Glide.with(binding.ivShareRoomUserImage01.context)
+                                    .load(gifticonDetail?.teamList?.get(0)?.teamMembers?.get(0)?.profileImageUrl)
+                                    .into(binding.ivShareRoomUserImage01)
+                                if (gifticonDetail?.teamList?.get(0)?.teamMembers?.size!! > 1) {
+                                    binding.ivShareRoomUserImage02.visibility = ViewGroup.VISIBLE
+                                    if (gifticonDetail?.teamList?.get(0)?.teamMembers?.size!! > 2) {
+                                        binding.tvShareRoomCount.visibility = ViewGroup.VISIBLE
+                                        "+${gifticonDetail?.teamList?.get(0)?.teamMembers?.size!! - 2}".also { binding.tvShareRoomCount.text = it }
+                                    }
+                                    Glide.with(binding.ivShareRoomUserImage02.context)
+                                        .load(gifticonDetail?.teamList?.get(0)?.teamMembers?.get(0)?.profileImageUrl)
+                                        .into(binding.ivShareRoomUserImage02)
+                                }
                             } else {
                                 binding.switchCouponAmount.isChecked = false
                                 binding.cardViewShareRoom.visibility = android.view.View.GONE
@@ -166,8 +209,6 @@ class GifticonDetailActivity: AppCompatActivity() {
                                 binding.btnUsedComplete.text = "사용 취소"
                             }
                         }
-
-                        getUsageHistoryFromServer()
                     }
 
                 } else {
@@ -316,6 +357,35 @@ class GifticonDetailActivity: AppCompatActivity() {
                 Log.e(TAG, "Retrofit onFailure: ", t)
             }
         })
+    }
+
+    private fun showShareBottomSheet() {
+        val shareBottomSheet = ShareBottomSheet(gifticonId, this)
+        shareBottomSheet.setStyle(DialogFragment.STYLE_NORMAL, R.style.RoundCornerBottomSheetDialogTheme)
+        shareBottomSheet.show(this.supportFragmentManager, shareBottomSheet.tag)
+    }
+
+    override fun onTeamUpdated(team: Team) {
+        Log.d(TAG, "onTeamUpdated: $team")
+        binding.switchCouponAmount.isChecked = true
+        binding.cardViewShareRoom.visibility = android.view.View.VISIBLE
+        Glide.with(binding.ivShareRoomImage.context)
+            .load(team.teamImage)
+            .into(binding.ivShareRoomImage)
+        binding.tvShareRoomName.text = team.teamName
+        Glide.with(binding.ivShareRoomUserImage01.context)
+            .load(team.teamMembers?.get(0)?.profileImageUrl)
+            .into(binding.ivShareRoomUserImage01)
+        if (team.teamMembers?.size!! > 1) {
+            binding.ivShareRoomUserImage02.visibility = ViewGroup.VISIBLE
+            if (team.teamMembers?.size!! > 2) {
+                binding.tvShareRoomCount.visibility = ViewGroup.VISIBLE
+                "+${team.teamMembers?.size!! - 2}".also { binding.tvShareRoomCount.text = it }
+            }
+            Glide.with(binding.ivShareRoomUserImage02.context)
+                .load(team.teamMembers?.get(0)?.profileImageUrl)
+                .into(binding.ivShareRoomUserImage02)
+        }
     }
 
     /*private fun getJsonData() {

@@ -29,7 +29,7 @@ import retrofit2.Response
 class Login2Activity: AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-    private val TAG = "LoginActivity"
+    private val TAG = "Login2Activity"
 
     private val sharedPreference = SaveSharedPreference()
 

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.giftmoa.Data.CategoryItem
 import com.example.giftmoa.Data.Gifticon
 import com.example.giftmoa.Data.GifticonData
 
@@ -14,6 +15,7 @@ class GifticonViewModel: ViewModel() {
     val allCouponList = MutableLiveData<List<Gifticon>>()
     val availableCouponList = MutableLiveData<List<Gifticon>>()
     val usedCouponList = MutableLiveData<List<Gifticon>>()
+    val selectedCategory = MutableLiveData<CategoryItem>()
 
     /*init {
         couponList.addSource(allCouponList) {
@@ -39,6 +41,7 @@ class GifticonViewModel: ViewModel() {
         couponList.addSource(usedCouponList) {
             value -> couponList.value = value
         }
+        selectedCategory.value = CategoryItem(0L, "전체")
     }
 
     fun addCoupon(coupon: Gifticon) {
@@ -76,15 +79,15 @@ class GifticonViewModel: ViewModel() {
     // 정렬 기준
     fun sortCouponList(sort: String) {
         when (sort) {
-            "최신순" -> {
+            "최신 등록순" -> {
                 datas.sortByDescending { x -> x.id }
                 setData(datas)
             }
-            "이름순" -> {
+            "상품명순" -> {
                 datas.sortBy { x -> x.name }
                 setData(datas)
             }
-            "마감임박순" -> {
+            "마감 임박순" -> {
                 datas.sortBy { x -> x.dueDate }
                 setData(datas)
             }
@@ -128,5 +131,9 @@ class GifticonViewModel: ViewModel() {
         availableCouponList.value = data.filter { x -> x.status == "AVAILABLE" }.toList()
         usedCouponList.value = data.filter {  x -> x.status == "UNAVAILABLE" }.toList()
         couponList.value = data
+    }
+
+    fun setCategory(category: CategoryItem) {
+        selectedCategory.value = category
     }
 }

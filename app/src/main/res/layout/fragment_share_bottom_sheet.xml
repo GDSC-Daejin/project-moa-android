@@ -5,57 +5,39 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/et_category"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/tv_share_room_title"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="26dp"
-        android:layout_marginEnd="20dp"
-        android:background="@drawable/background_edit_text"
         android:fontFamily="@font/pretendard_medium"
-        android:hint="카테고리를 입력해주세요"
-        android:inputType="text"
-        android:paddingStart="16dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="15dp"
+        android:text="내 공유방 목록"
         android:textColor="@color/moa_gray_900"
-        android:textColorHint="@color/moa_gray_400"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        tools:layout_editor_absoluteX="20dp" />
-    
-    <LinearLayout
-        android:id="@+id/ll_chip_group"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_category"
-        android:paddingBottom="20dp"
-        android:orientation="horizontal">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chip_group_category"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nsv_share_room"
+        android:layout_width="match_parent"
+        android:layout_height="192dp"
+        android:layout_marginTop="20dp"
+        android:scrollbars="vertical"
+        app:layout_constraintTop_toBottomOf="@id/tv_share_room_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_share_room"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:layout_gravity="center_vertical"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:visibility="visible"
-            app:chipSpacingHorizontal="11dp"
-            app:chipSpacingVertical="6dp"
-            app:singleSelection="true"
-            tools:visibility="visible">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:listitem="@layout/item_share_bottom_sheet"
+            tools:itemCount="3" />
 
-        </com.google.android.material.chip.ChipGroup>
-
-    </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
         android:id="@+id/ll_button"
@@ -63,20 +45,20 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="40dp"
         android:orientation="horizontal"
-        android:paddingTop="38dp"
-        app:layout_constraintTop_toBottomOf="@id/ll_chip_group"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:paddingTop="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nsv_share_room">
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_cancel"
+            android:id="@+id/btn_back"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_marginStart="20dp"
             android:layout_weight="1"
             android:background="@drawable/background_disabled_button"
-            android:text="취소"
             android:fontFamily="@font/pretendard_medium"
+            android:text="뒤로"
             android:textColor="#b7b7b7"
             android:textSize="16sp" />
 
@@ -85,15 +67,15 @@
             android:layout_height="1dp" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_confirm"
+            android:id="@+id/btn_share"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_marginEnd="20dp"
             android:layout_weight="1"
-            android:fontFamily="@font/pretendard_medium"
             android:background="@drawable/background_enabled_button"
-            android:text="확인"
+            android:fontFamily="@font/pretendard_medium"
+            android:text="공유하기"
             android:textColor="@color/moa_gray_white"
             android:textSize="16sp" />
 

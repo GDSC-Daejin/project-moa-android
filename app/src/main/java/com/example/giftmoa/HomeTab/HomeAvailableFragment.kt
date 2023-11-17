@@ -161,8 +161,9 @@ class HomeAvailableFragment : Fragment() {
                     Log.d(TAG, "updatedGifticon: $updatedGifticon")
                     Log.d(TAG, "couponList: $couponList")
                     if (isEdit == true) {
+                        val selectedCategory = gifticonViewModel.selectedCategory.value
                         // 현재 선택된 카테고리와 기프티콘의 카테고리가 다른 경우
-                        if (updatedGifticon?.category?.id != couponList?.get(0)?.category?.id) {
+                        if (selectedCategory?.id != updatedGifticon?.category?.id && selectedCategory?.id != 0L) {
                             updatedGifticon?.let { it1 -> it1.id?.let { it2 ->
                                 gifticonViewModel.deleteCouponById(
                                     it2

@@ -195,7 +195,7 @@ class HomeUsedFragment : Fragment() {
             }
         }
 
-        giftAdapter.itemLongClickListener = object : GifticonListAdapter.OnItemLongClickListener {
+        /*giftAdapter.itemLongClickListener = object : GifticonListAdapter.OnItemLongClickListener {
             override fun onItemLongClick(position: Int) {
                 // 길게 클릭한 아이템에 대한 처리 로직을 여기에 작성
                 //val selectedGifticon = couponListAdapter.Coupons[position]
@@ -211,10 +211,10 @@ class HomeUsedFragment : Fragment() {
                             //myViewModel.postCheckSearchFilter(getBottomSheetData)
                             when (value) {
                                 "수정하기" -> {
-                                    /*val intent = Intent(requireActivity(), ManualRegistrationActivity::class.java)
+                                    *//*val intent = Intent(requireActivity(), ManualRegistrationActivity::class.java)
                                     intent.putExtra("gifticonId", gifticonId)
                                     intent.putExtra("isEdit", true)
-                                    startActivity(intent)*/
+                                    startActivity(intent)*//*
                                     manualAddGifticonResult.launch(
                                         Intent(
                                             requireActivity(),
@@ -226,16 +226,16 @@ class HomeUsedFragment : Fragment() {
                                 }
 
                                 "삭제하기" -> {
-                                    /*gifticonList.remove(gifticon)
+                                    *//*gifticonList.remove(gifticon)
                                     giftAdapter.submitList(gifticonList)
-                                    giftAdapter.notifyDataSetChanged()*/
+                                    giftAdapter.notifyDataSetChanged()*//*
                                 }
                             }
                         }
                     })
                 }
             }
-        }
+        }*/
 
         /*if (gifticonViewModel.usedCouponList.value == null) {
             binding.llNoGifticon.visibility = View.VISIBLE
