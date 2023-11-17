@@ -9,11 +9,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.giftmoa.Data.GetMyProfileResponse
 import com.example.giftmoa.Data.LogoutUserResponse
 import com.example.giftmoa.Data.MyProfileData
 import com.example.giftmoa.Data.RefreshTokenRequest
+import com.example.giftmoa.Data.UpdateUserResponse
+import com.example.giftmoa.HomeTab.GifticonViewModel
 import com.example.giftmoa.Login2Activity
 import com.example.giftmoa.LoginActivity
 import com.example.giftmoa.MyProfileActivity
@@ -44,6 +48,8 @@ class AccountFragment : Fragment() {
 
     private var myProfile: MyProfileData? = null
 
+    private lateinit var gifticonViewModel: GifticonViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -56,6 +62,8 @@ class AccountFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        gifticonViewModel = ViewModelProvider(requireActivity(), ViewModelProvider.NewInstanceFactory())[GifticonViewModel::class.java]
+
         // Inflate the layout for this fragment
         binding = FragmentAccountBinding.inflate(inflater, container, false)
 
@@ -68,6 +76,25 @@ class AccountFragment : Fragment() {
             intent.putExtra("nickname", myProfile?.nickname)
             intent.putExtra("profileImageUrl", myProfile?.profileImageUrl)
             startActivity(intent)
+        }
+        // 스위치 버튼이 클릭되어 있으면
+        if (binding.switchCouponAmount.isChecked) {
+            binding.tvPushNotificationDate.setTextColor(ContextCompat.getColor(requireActivity(), R.color.moa_gray_800))
+            binding.tvPushNotificationTime.setTextColor(ContextCompat.getColor(requireActivity(), R.color.moa_gray_800))
+        } else {
+            binding.tvPushNotificationDate.setTextColor(ContextCompat.getColor(requireActivity(), R.color.moa_gray_400))
+            binding.tvPushNotificationTime.setTextColor(ContextCompat.getColor(requireActivity(), R.color.moa_gray_400))
+        }
+
+        // 스위치 버튼 클릭 시
+        binding.switchCouponAmount.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                binding.tvPushNotificationDate.setTextColor(ContextCompat.getColor(requireActivity(), R.color.moa_gray_800))
+                binding.tvPushNotificationTime.setTextColor(ContextCompat.getColor(requireActivity(), R.color.moa_gray_800))
+            } else {
+                binding.tvPushNotificationDate.setTextColor(ContextCompat.getColor(requireActivity(), R.color.moa_gray_400))
+                binding.tvPushNotificationTime.setTextColor(ContextCompat.getColor(requireActivity(), R.color.moa_gray_400))
+            }
         }
 
         binding.tvLogout.setOnClickListener {
@@ -117,6 +144,51 @@ class AccountFragment : Fragment() {
         })
     }
 
+    private fun getAllGifticonCount() {
+        Retrofit2Generator.create(requireActivity()).getMyGifticonCount().enqueue(object : Callback<LogoutUserResponse> {
+            override fun onResponse(call: Call<LogoutUserResponse>, response: Response<LogoutUserResponse>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "onResponse: ${response.body()}")
+                    binding.tvAllCouponCount.text = "${response.body()?.data}개"
+                }
+            }
+
+            override fun onFailure(call: Call<LogoutUserResponse>, t: Throwable) {
+                Log.d(TAG, "onFailure: ${t.message}")
+            }
+        })
+    }
+
+    private fun getAvaliableGifticonCount() {
+        Retrofit2Generator.create(requireActivity()).getUsableGifticonCount().enqueue(object : Callback<LogoutUserResponse> {
+            override fun onResponse(call: Call<LogoutUserResponse>, response: Response<LogoutUserResponse>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "onResponse: ${response.body()}")
+                    binding.tvAvailableCouponCount.text = "${response.body()?.data}개"
+                }
+            }
+
+            override fun onFailure(call: Call<LogoutUserResponse>, t: Throwable) {
+                Log.d(TAG, "onFailure: ${t.message}")
+            }
+        })
+    }
+
+    private fun getUsedGifticonCount() {
+        Retrofit2Generator.create(requireActivity()).getUsedGifticonCount().enqueue(object : Callback<LogoutUserResponse> {
+            override fun onResponse(call: Call<LogoutUserResponse>, response: Response<LogoutUserResponse>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "onResponse: ${response.body()}")
+                    binding.tvUsedCouponCount.text = "${response.body()?.data}개"
+                }
+            }
+
+            override fun onFailure(call: Call<LogoutUserResponse>, t: Throwable) {
+                Log.d(TAG, "onFailure: ${t.message}")
+            }
+        })
+    }
+
     private fun logout(refreshToken: RefreshTokenRequest) {
         Log.d(TAG, "logout: $refreshToken")
 
@@ -157,6 +229,9 @@ class AccountFragment : Fragment() {
         super.onStart()
 
         getMyProfile()
+        getAllGifticonCount()
+        getAvaliableGifticonCount()
+        getUsedGifticonCount()
     }
 
     companion object {

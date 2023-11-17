@@ -86,10 +86,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/pretendard_bold"
-                        tools:text="서정우"
                         android:textColor="@color/moa_gray_900"
                         android:textSize="18sp"
-                        app:drawableRightCompat="@drawable/baseline_keyboard_arrow_right_24" />
+                        app:drawableRightCompat="@drawable/baseline_keyboard_arrow_right_24"
+                        tools:text="서정우" />
 
                 </LinearLayout>
 
@@ -138,12 +138,13 @@
                             android:textSize="12sp" />
 
                         <TextView
+                            android:id="@+id/tv_all_coupon_count"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/pretendard_medium"
-                            android:text="0개"
                             android:textColor="@color/moa_carrot_700"
-                            android:textSize="18sp" />
+                            android:textSize="18sp"
+                            tools:text="0개" />
 
                     </LinearLayout>
 
@@ -173,17 +174,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/pretendard_medium"
-                            android:text="내 쿠폰"
+                            android:text="사용가능 쿠폰"
                             android:textColor="@color/moa_gray_600"
                             android:textSize="12sp" />
 
                         <TextView
+                            android:id="@+id/tv_available_coupon_count"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/pretendard_medium"
-                            android:text="0개"
                             android:textColor="@color/moa_carrot_700"
-                            android:textSize="18sp" />
+                            android:textSize="18sp"
+                            tools:text="0개" />
 
                     </LinearLayout>
 
@@ -214,17 +216,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/pretendard_medium"
-                            android:text="내 쿠폰"
+                            android:text="사용한 쿠폰"
                             android:textColor="@color/moa_gray_600"
                             android:textSize="12sp" />
 
                         <TextView
+                            android:id="@+id/tv_used_coupon_count"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/pretendard_medium"
-                            android:text="0개"
                             android:textColor="@color/moa_carrot_700"
-                            android:textSize="18sp" />
+                            android:textSize="18sp"
+                            tools:text="0개" />
 
                     </LinearLayout>
 
@@ -250,7 +253,6 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingTop="31dp"
-                android:paddingBottom="31dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/view_divider_my_coupons">
@@ -279,6 +281,43 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/ll_push_notification_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:gravity="end"
+                android:orientation="horizontal"
+                android:paddingBottom="31dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ll_push_notification">
+
+                <TextView
+                    android:id="@+id/tv_push_notification_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:text="D-3"
+                    android:textColor="@color/moa_gray_800"
+                    android:textSize="18sp"
+                    app:drawableRightCompat="@drawable/baseline_keyboard_arrow_down_28" />
+
+                <TextView
+                    android:id="@+id/tv_push_notification_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:text="10:00"
+                    android:textColor="@color/moa_gray_800"
+                    android:textSize="18sp"
+                    app:drawableRightCompat="@drawable/baseline_keyboard_arrow_down_28" />
+
+            </LinearLayout>
+
             <View
                 android:id="@+id/view_divider_push_notification"
                 android:layout_width="0dp"
@@ -286,7 +325,7 @@
                 android:background="@color/moa_gray_100"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ll_push_notification" />
+                app:layout_constraintTop_toBottomOf="@id/ll_push_notification_time" />
 
             <TextView
                 android:id="@+id/tv_customer_center"
