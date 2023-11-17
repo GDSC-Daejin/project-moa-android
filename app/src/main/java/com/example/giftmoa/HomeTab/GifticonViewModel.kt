@@ -79,15 +79,15 @@ class GifticonViewModel: ViewModel() {
     // 정렬 기준
     fun sortCouponList(sort: String) {
         when (sort) {
-            "최신순" -> {
+            "최신 등록순" -> {
                 datas.sortByDescending { x -> x.id }
                 setData(datas)
             }
-            "이름순" -> {
+            "상품명순" -> {
                 datas.sortBy { x -> x.name }
                 setData(datas)
             }
-            "마감임박순" -> {
+            "마감 임박순" -> {
                 datas.sortBy { x -> x.dueDate }
                 setData(datas)
             }

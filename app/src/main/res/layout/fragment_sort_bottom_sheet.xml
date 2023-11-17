@@ -13,12 +13,12 @@
     tools:context=".BottomSheetFragment.BottomSheetFragment">
 
     <TextView
-        android:id="@+id/tv_recent"
+        android:id="@+id/tv_due_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/pretendard_medium"
         android:gravity="center"
-        android:text="최신 순"
+        android:text="마감 임박순"
         android:textColor="@color/moa_gray_900"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -27,29 +27,57 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/ll_first_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="30dp"
         android:layout_marginBottom="30dp"
         android:background="@color/moa_gray_600"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@id/tv_due_date"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_due_date"
+        tools:layout_editor_absoluteX="3dp" />
+
+    <TextView
+        android:id="@+id/tv_recent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pretendard_medium"
+        android:gravity="center"
+        android:text="최신 등록순"
+        android:textColor="@color/moa_gray_900"
+        android:layout_marginTop="30dp"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/ll_first_line"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/ll_second_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
+        android:background="@color/moa_gray_600"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_recent"
         tools:layout_editor_absoluteX="3dp" />
 
     <TextView
-        android:id="@+id/tv_due_date"
+        android:id="@+id/tv_coupon_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/pretendard_medium"
         android:gravity="center"
-        android:text="마감임박 순"
+        android:text="상품명순"
         android:textColor="@color/moa_gray_900"
+        android:layout_marginTop="30dp"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ll_second_line"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent" />

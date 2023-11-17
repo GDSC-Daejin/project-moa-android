@@ -180,8 +180,8 @@ class CouponFragment : Fragment(), CategoryListener {
                         updatedGifticon?.let { it1 -> gifticonViewModel.updateCoupon(it1) }
                     } else {
                         // 기프티콘 수동 등록
-                        binding.tvSort.text = "최신순"
-                        gifticonViewModel.sortCouponList("최신순")
+                        binding.tvSort.text = "최신 등록순"
+                        gifticonViewModel.sortCouponList("최신 등록순")
                         updatedGifticon?.let { it1 -> gifticonViewModel.addCoupon(it1) }
                     }
                 }
