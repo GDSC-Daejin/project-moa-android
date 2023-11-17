@@ -27,7 +27,7 @@
             android:textSize="16sp"
             tools:text="스타벅스" />
 
-        <!--<TextView
+        <TextView
             android:id="@+id/tv_toolbar_confirm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
             android:fontFamily="@font/pretendard_medium"
             android:text="확인"
             android:textColor="@color/moa_carrot_700"
-            android:textSize="16sp" />-->
+            android:textSize="16sp" />
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -602,16 +602,19 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_back"
+            android:id="@+id/btn_share"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_marginStart="20dp"
             android:layout_weight="1"
-            android:background="@drawable/background_disabled_button"
+            android:paddingStart="35dp"
+            android:paddingEnd="35dp"
+            android:background="@drawable/background_enabled_button"
+            android:drawableLeft="@drawable/baseline_share_24"
             android:fontFamily="@font/pretendard_medium"
-            android:text="뒤로"
-            android:textColor="@color/moa_gray_400"
+            android:text="공유하기"
+            android:textColor="@color/moa_gray_white"
             android:textSize="16sp" />
 
         <View
@@ -625,7 +628,10 @@
             android:layout_height="48dp"
             android:layout_marginEnd="20dp"
             android:layout_weight="1"
+            android:paddingStart="35dp"
+            android:paddingEnd="35dp"
             android:background="@drawable/background_enabled_button"
+            android:drawableLeft="@drawable/baseline_check_24"
             android:fontFamily="@font/pretendard_medium"
             android:textColor="@color/moa_gray_white"
             android:textSize="16sp"

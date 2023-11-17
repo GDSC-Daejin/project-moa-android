@@ -98,7 +98,7 @@ class HomeFragment : Fragment() {
                     hBinding.ivShareRoomImage.setPadding(100, 100, 100, 100)
                 } else {
                     Glide.with(requireActivity())
-                        .load(teamDetail?.teamImage)
+                        .load(teamDetail.teamImage)
                         .into(hBinding.ivShareRoomImage)
                 }
             }
