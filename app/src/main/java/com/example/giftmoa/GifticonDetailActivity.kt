@@ -121,17 +121,16 @@ class GifticonDetailActivity: AppCompatActivity() {
 
                             binding.tvToolbarCategoryName.text = gifticonDetail?.gifticon?.category?.categoryName
                             binding.tvCouponName.text = gifticonDetail?.gifticon?.name
-                            // 자르고 싶은 위치와 크기 지정
-                            val cropX = 20 // X 시작 위치
-                            val cropY = 20 // Y 시작 위치
-                            val cropWidth = 220 // 잘라낼 너비
-                            val cropHeight = 205 // 잘라낼 높이
 
-                            Glide.with(binding.ivCouponImage.context)
-                                .asBitmap()
-                                .load(gifticonDetail?.gifticon?.gifticonImagePath)
-                                .apply(RequestOptions().transform(CustomCropTransformation(cropX, cropY, cropWidth, cropHeight)))
-                                .into(binding.ivCouponImage)
+                            if (gifticonDetail?.gifticon?.gifticonImagePath != null) {
+                                Glide.with(binding.ivCouponImage.context)
+                                    .load(gifticonDetail?.gifticon?.gifticonImagePath)
+                                    .into(binding.ivCouponImage)
+                            } else {
+                                binding.ivCouponImage.setPadding(50, 50, 50, 50)
+                                binding.ivCouponImage.setBackgroundColor(binding.ivCouponImage.context.getColor(R.color.moa_gray_200))
+                                binding.ivCouponImage.setImageResource(R.drawable.icon_logo)
+                            }
 
                             binding.tvBarcodeNumber.text = gifticonDetail?.gifticon?.barcodeNumber
                             binding.tvCouponExchangePlace.text = gifticonDetail?.gifticon?.exchangePlace
