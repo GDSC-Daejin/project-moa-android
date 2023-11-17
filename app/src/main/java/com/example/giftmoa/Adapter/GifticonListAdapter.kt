@@ -51,9 +51,9 @@ class GifticonListAdapter(private val onClick: (Gifticon) -> Unit, var Gifticons
                     .into(binding.ivCouponImage)
 
             } else {
-                binding.ivCouponImage.setPadding(100, 100, 100, 100)
-                binding.ivCouponImage.setBackgroundColor(binding.ivCouponImage.context.getColor(R.color.moa_gray_200))
-                binding.ivCouponImage.setImageResource(R.drawable.icon_logo)
+                //binding.ivCouponImage.setPadding(100, 100, 100, 100)
+                //binding.ivCouponImage.setBackgroundColor(binding.ivCouponImage.context.getColor(R.color.moa_gray_200))
+                binding.ivCouponImage.setImageResource(R.drawable.icon_gifticon_null)
             }
 
             binding.tvCouponName.text = gifticon.name
