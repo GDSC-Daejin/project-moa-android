@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.giftmoa.Data.GiftData
 import com.example.giftmoa.Data.ShareRoomGifticon
 import com.example.giftmoa.Data.TeamGifticon
@@ -19,7 +20,7 @@ import kotlin.collections.ArrayList
 
 
 class HomeGiftAdapter : RecyclerView.Adapter<HomeGiftAdapter.HomeGiftViewHolder>(){
-    private lateinit var binding : HomeItemBinding
+    private lateinit var binding : ItemGifticonBinding
     var giftItemData = ArrayList<TeamGifticon>()
     private lateinit var context : Context
 
@@ -27,33 +28,45 @@ class HomeGiftAdapter : RecyclerView.Adapter<HomeGiftAdapter.HomeGiftViewHolder>
         setHasStableIds(true)
     }
 
-    inner class HomeGiftViewHolder(private val binding : HomeItemBinding ) : RecyclerView.ViewHolder(binding.root) {
+    inner class HomeGiftViewHolder(private val binding : ItemGifticonBinding ) : RecyclerView.ViewHolder(binding.root) {
         private var position : Int? = null
-        private var giftBrand = binding.giftBrand
-        private var giftName = binding.giftName
-        private var giftImg = binding.giftImg
-        private var giftRemainingDay = binding.giftRemainingDay
+        private var giftBrand = binding.tvCouponExchangePlace
+        private var giftName = binding.tvCouponName
+        private var giftImg = binding.ivCouponImage
+        private var giftRemainingDay = binding.tvDDay
 
 
         fun bind(itemData: TeamGifticon, position : Int) {
             this.position = position
-            val s = itemData.dueDate
+            val s : String? = itemData.dueDate
 
             giftBrand.text = itemData.exchangePlace
             giftName.text = itemData.name
             if (itemData.gifticonImagePath != null) {
-                giftImg.setImageURI(itemData.gifticonImagePath.toUri())
+                Glide.with(context)
+                    .load(itemData.gifticonImagePath)
+                    .into(binding.ivCouponImage)
             } else {
-                giftImg.setImageResource(R.drawable.image)
+                Glide.with(context)
+                    .load(R.drawable.image)
+                    .into(binding.ivCouponImage)
             }
+            if (itemData.status == "AVAILABLE") {
+                binding.tvCouponUsedComplete.visibility = View.GONE
+                binding.viewAlpha.visibility = View.GONE
+            } else {
+                binding.tvCouponUsedComplete.visibility = View.VISIBLE
+                binding.viewAlpha.visibility = View.VISIBLE
+            }
+
 
             val now = System.currentTimeMillis()
             val date = Date(now)
-            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA)
+            val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.KOREA)
             val currentDate = sdf.format(date)
 
-            val nowFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).parse(currentDate)
-            val beforeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).parse(s)
+            val nowFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.KOREA).parse(currentDate)
+            val beforeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.KOREA).parse(s!!)
 
             val diffMilliseconds = beforeFormat?.time?.minus(nowFormat?.time!!)
 
@@ -79,7 +92,7 @@ class HomeGiftAdapter : RecyclerView.Adapter<HomeGiftAdapter.HomeGiftViewHolder>
                 }
 
                 if (diffDays > 0) {
-                    giftRemainingDay.text = "D+${diffDays.toString()}"
+                    giftRemainingDay.text = "D-${diffDays.toString()}"
                 }
 
                 if (diffDays < 0) {
@@ -93,7 +106,7 @@ class HomeGiftAdapter : RecyclerView.Adapter<HomeGiftAdapter.HomeGiftViewHolder>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeGiftViewHolder {
         context = parent.context
-        binding = HomeItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        binding = ItemGifticonBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return HomeGiftViewHolder(binding)
     }
 

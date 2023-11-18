@@ -22,6 +22,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     companion object {
         private const val TAG = "FirebaseMessagingService"
     }
+    private var FCMToken = ""
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
@@ -45,15 +46,30 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         Log.d(TAG, "Message notification : ${message.notification?.body!!}")
 
 
-        if (message.notification?.body!!.isNotEmpty()) {
+        /*if (message.notification?.body!!.isNotEmpty()) {
             setNotification(message)
+            if (true) {
+
+            }
         } else {
             Log.e(TAG, "data가 비어있습니다. 메시지를 수신하지 못했습니다.")
             //메세지에 전송된 알림 데이터가 포함되어있는지 확인하기위함
             setNotification(
                 message
             )
+        }*/
+
+        if (message.data.isNotEmpty()) {
+            scheduleJob()
+        } else {
+            handleNow()
         }
+
+        //알람 내용이 비어 있지 않은 경우
+        if (message.notification != null) {
+            setNotification(message)
+        }
+
     }
 
     // 메시지에 데이터 페이로드가 포함 되어 있을 때 실행되는 메서드
@@ -127,11 +143,13 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     //필요한 곳 토큰 가져오기
-    fun getFirebaseToken() {
+    fun getFirebaseToken() : String {
         //비동기 방식
         FirebaseMessaging.getInstance().token.addOnSuccessListener {
             Log.d(TAG, "token=${it}")
+            FCMToken = it
         }
+        return FCMToken
     }
 
     internal class MyWorker(appContext: Context, workerParams: WorkerParameters) :

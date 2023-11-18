@@ -81,7 +81,8 @@ interface ApiService {
 
     // auth-controller-----------------------------------------------------------------------------
     @GET("/api/v1/kakaologin")
-    fun kakaoLogin(@Query("accessToken") accessToken: String): Call<GetKakaoLoginResponse>
+    fun kakaoLogin(@Query("accessToken") accessToken: String,
+                   @Query("tokenId") tokenId : String): Call<GetKakaoLoginResponse>
 
     // 토큰 재발급
     @POST("/api/v1/token")
@@ -126,9 +127,22 @@ interface ApiService {
         @Query("page") page: Int?
     ): Call<GetGifticonListResponse>
 
-    //리더의 공유방 삭제
-   @DELETE("/api/v1/team/{teamId}")
+    //팀 탈퇴하기
+    @DELETE("/api/v1/team/{teamId}")
     fun deleteShareRoom(@Path("teamId") teamId : Int) : Call<ShareRoomResponseData>
+
+    //팀 수정하기
+    @PUT("/api/v1/team/{teamId}")
+    fun editShareRoom(@Path("teamId") teamId : Int,
+                      @Body editRequestData : EditRequestShareRoomData) : Call<ShareRoomResponseData>
+
+    //팀 기프티콘 각종 목록 조회(필터)
+    @GET("/api/v1/team/gifticon/{teamId}/{request}")
+    fun getShareRoomGifticonFilterData(@Path("request") request : String,
+                                       @Path("teamId") teamId : Int,
+                                       @Query("page") page : Int,
+                                       @Query("size") size : Int,) : Call<GetGifticonListResponse>
+
 
     // user-controller-----------------------------------------------------------------------------
     // 유저 정보 수정
@@ -159,4 +173,10 @@ interface ApiService {
     // 카테고리 가져오기
     @GET("/api/v1/category")
     fun getCategoryList(): Call<GetCategoryListResponse>
+
+
+    // fcm-controller-------------------------------------------------------------------------
+    // fcm에 알람 전송용?
+    @POST("/api/v1/fcm")
+    fun postFCM(@Query("request") request : PostFcmRequestData) : Call<PostFcmResponseData>
 }

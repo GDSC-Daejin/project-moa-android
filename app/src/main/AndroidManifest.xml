@@ -28,6 +28,9 @@
         android:windowSoftInputMode="adjustResize"
         tools:targetApi="31">
         <activity
+            android:name=".ShareRoomMenu.ShareRoomSettingEditActivity"
+            android:exported="false" />
+        <activity
             android:name=".ShareRoomMenu.SharedLockerActivity"
             android:exported="false" />
         <activity
@@ -55,7 +58,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
+        <!--<activity android:name=".LoginActivity" />-->
         <activity
             android:name=".MainActivity"
             android:exported="false" />
@@ -72,7 +75,6 @@
                 <data
                     android:host="oauth"
                     android:scheme="kakaod29ddc6cfc3ed526d82d8889f045c746" />
-
             </intent-filter>
         </activity>
 
@@ -83,7 +85,8 @@
         <activity android:name=".GifticonRegistrationActivity" />
         <activity android:name=".CouponTab.AutoRegistrationActivity" />
         <activity android:name=".CouponTab.ManualRegistrationActivity" />
-        <!--<activity
+        <!--
+<activity
             android:name=".SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.GiftMoa.Splash">
@@ -92,11 +95,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>-->
+        </activity>
+        -->
         <activity android:name=".GifticonDetailActivity" />
-        <activity android:name=".MyProfileActivity" />
-        <!--<activity android:name=".LoginActivity"  />-->
-
+        <activity android:name=".MyProfileActivity" /> <!-- <activity android:name=".LoginActivity"  /> -->
         <service
             android:name=".FCM.MyFirebaseMessagingService"
             android:enabled="true"
@@ -106,18 +108,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <!--
-            TODO: enabled: 시스템에서 활동을 인스턴스화할 수 있는지 여부
-            true: 인스턴스화 가능(기본값)
-            flase: 인스턴스화 불가능
-
-            TODO: exported: 다른 애플리케이션의 구성요소에서 활동을 시작할 수 있는지를 설정
-            'true': 모든 앱에서 활동에 액세스할 수 있으며 정확한 클래스 이름으로 활동을 시작할 수 있습니다.
-            'false': 활동은 같은 애플리케이션의 구성요소나 사용자 ID가 같은 애플리케이션, 권한이 있는 시스템 구성요소에서만 시작될 수 있음. 이는 인텐트 필터가 없는 경우의 기본값
-
-            TODO: stopWithTask: 휴대폰의 태스크에서 모두닫기 및 스와이프했을때 현상
-            true: 휴대폰의 태스크에서 모두닫기 및 스와이프 했을 때 액티비는 종료되고 서비스도 종료
-            false: 휴대폰의 태스크에서 모두닫기 및 스와이프 했을 때 액티비티는 종료되고 서비스는 onTackRemoved() 호출이 되며 곧바로 서비스가 재시작되어 onCreate()를 타게 된다.
-        -->
     </application>
+
 </manifest>

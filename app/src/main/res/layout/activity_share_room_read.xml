@@ -86,12 +86,19 @@
                     android:orientation="horizontal"
                     >
 
+                    <ImageView
+                        android:id="@+id/back_arrow"
+                        android:layout_marginStart="20dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/baseline_arrow_back_24"
+                        />
+
                     <TextView
                         android:id="@+id/share_title"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:layout_marginStart="44dp"
                         android:gravity="center"
                         android:fontFamily="@font/pretendard_bold"
                         android:text="공유방"
@@ -142,6 +149,7 @@
 
 
             <LinearLayout
+                android:id="@+id/share_read_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
@@ -170,21 +178,26 @@
                     android:src="@drawable/home_locker_move_icon" />
             </LinearLayout>
 
-            <LinearLayout
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/nestedScrollView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="20dp"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/share_read_ll">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/share_gift_rv"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
                     android:visibility="visible"
-                    tools:listitem="@layout/home_item" />
-            </LinearLayout>
+                    tools:listitem="@layout/item_gifticon"/>
 
+            </androidx.core.widget.NestedScrollView>
 
         </LinearLayout>
 

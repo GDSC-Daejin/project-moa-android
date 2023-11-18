@@ -12,6 +12,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.giftmoa.Data.Data1
 import com.example.giftmoa.Data.GetKakaoLoginResponse
 import com.example.giftmoa.Data.SaveSharedPreference
+import com.example.giftmoa.FCM.MyFirebaseMessagingService
 import com.example.giftmoa.databinding.ActivityLoginBinding
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.AuthError
@@ -97,7 +98,11 @@ class Login2Activity: AppCompatActivity() {
     }
 
     private fun sendAccessTokenToServer(accessToken: String) {
-        Retrofit2Generator.create(this).kakaoLogin(accessToken).enqueue(object : Callback<GetKakaoLoginResponse> {
+        //FCM 설정 및 token값 가져오기
+        val fcmToken = MyFirebaseMessagingService().getFirebaseToken()
+        //또는 저장한 값 val sharedPref = getSharedPreferences("firebaseToken", Context.MODE_PRIVATE)
+        //val fcm = sharedPref.getString("firebaseToken", null)
+        Retrofit2Generator.create(this).kakaoLogin(accessToken, fcmToken).enqueue(object : Callback<GetKakaoLoginResponse> {
             override fun onResponse(call: Call<GetKakaoLoginResponse>, response: Response<GetKakaoLoginResponse>) {
                 if (response.isSuccessful) {
                     // 로그인 데이터 저장

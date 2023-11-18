@@ -1,5 +1,6 @@
 package com.example.giftmoa.ShareRoomMenu
 
+import android.content.Context
 import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
@@ -43,11 +44,6 @@ class ShareUsedFragment : Fragment(), CategoryListener {
     private var param2: String? = null
     private lateinit var binding : FragmentShareUsedBinding
 
-    private val SERVER_URL = BuildConfig.server_URL
-    private val retrofit = Retrofit.Builder().baseUrl(SERVER_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    val service: MoaInterface = retrofit.create(MoaInterface::class.java)
 
     private var giftAdapter: ShareRoomGifticonAdapter? = null
 
@@ -57,6 +53,9 @@ class ShareUsedFragment : Fragment(), CategoryListener {
 
     private var gridManager = GridLayoutManager(activity, 2, GridLayoutManager.VERTICAL, false)
     private var getBottomSheetData = ""
+
+    private var teamId : Int? = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -72,6 +71,10 @@ class ShareUsedFragment : Fragment(), CategoryListener {
         binding = FragmentShareUsedBinding.inflate(inflater, container, false)
         initUsedRecyclerview()
         getCategoryListFromServer()
+
+        val sharedPref = activity?.getSharedPreferences("readTeamId", Context.MODE_PRIVATE)
+        teamId = sharedPref?.getInt("teamId", 0) // 기본값은 null
+        println("used"+teamId)
 
         binding.ivAddCategory.setOnClickListener {
             showCategoryBottomSheet(categoryList)
@@ -130,7 +133,7 @@ class ShareUsedFragment : Fragment(), CategoryListener {
 
 
     private fun getAvailableListFromServer(page: Int) {
-        Retrofit2Generator.create(requireActivity()).getShareGifticonList(size = 30, page = page).enqueue(object :
+        Retrofit2Generator.create(requireActivity()).getShareRoomGifticonFilterData("All_USED_NAME_DESC", teamId!!, size = 30, page = page).enqueue(object :
             Callback<GetGifticonListResponse> {
             override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
                 if (response.isSuccessful) {

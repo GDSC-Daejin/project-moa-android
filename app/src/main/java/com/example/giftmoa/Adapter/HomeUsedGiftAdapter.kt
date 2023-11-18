@@ -1,15 +1,18 @@
 package com.example.giftmoa.Adapter
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
-import com.example.giftmoa.Data.GiftData
-import com.example.giftmoa.Data.ShareRoomGifticon
-import com.example.giftmoa.Data.TeamGifticon
-import com.example.giftmoa.Data.UsedGiftData
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.example.giftmoa.Data.*
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.HomeItemBinding
 import com.example.giftmoa.databinding.HomeUsedCouponItemBinding
@@ -22,7 +25,7 @@ import kotlin.collections.ArrayList
 
 class HomeUsedGiftAdapter : RecyclerView.Adapter<HomeUsedGiftAdapter.HomeUsedGiftViewHolder>(){
     private lateinit var binding : HomeUsedCouponItemBinding
-    var usedGiftItemData = ArrayList<TeamGifticon>()
+    var usedGiftItemData = ArrayList<Gifticon>()
     private lateinit var context : Context
 
     init {
@@ -39,18 +42,74 @@ class HomeUsedGiftAdapter : RecyclerView.Adapter<HomeUsedGiftAdapter.HomeUsedGif
         private var usedUser = binding.usedUser
 
 
-        fun bind(itemData: TeamGifticon, position : Int) {
+        fun bind(itemData: Gifticon, position : Int) {
             this.position = position
 
             usedBrand.text = itemData.exchangePlace
             usedName.text = itemData.name
-            usedCost.text = "사용금액 | " + itemData.gifticonMoney.toString()
+            usedCost.text = "사용금액 | " + 0
             usedUser.text = "사용자 | " + itemData.author?.nickname
 
             if (itemData.gifticonImagePath != null) {
-                usedImage.setImageURI(itemData.gifticonImagePath!!.toUri())
+                Glide.with(context)
+                    .load(itemData.gifticonImagePath)
+                    .error(R.drawable.image)
+                    .centerCrop()
+                    .override(200, 200)
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: com.bumptech.glide.request.target.Target<Drawable>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            Log.d("Glide", "Image load failed: ${e?.message}")
+                            println(e?.message.toString())
+                            return false
+                        }
+
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any?,
+                            target: com.bumptech.glide.request.target.Target<Drawable>?,
+                            dataSource: DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            println("glide")
+                            return false
+                        }
+                    })
+                    .into(binding.usedCouponIv)
             } else {
-                usedImage.setImageResource(R.drawable.image)
+                Glide.with(context)
+                    .load(R.drawable.image)
+                    .error(R.drawable.image)
+                    .centerCrop()
+                    .override(200, 200)
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: com.bumptech.glide.request.target.Target<Drawable>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            Log.d("Glide", "Image load failed: ${e?.message}")
+                            println(e?.message.toString())
+                            return false
+                        }
+
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any?,
+                            target: com.bumptech.glide.request.target.Target<Drawable>?,
+                            dataSource: DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            println("glide")
+                            return false
+                        }
+                    })
+                    .into(binding.usedCouponIv)
             }
 
 

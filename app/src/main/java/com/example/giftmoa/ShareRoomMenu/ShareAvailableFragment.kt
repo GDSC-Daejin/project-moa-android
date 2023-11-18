@@ -1,5 +1,6 @@
 package com.example.giftmoa.ShareRoomMenu
 
+import android.content.Context
 import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
@@ -53,6 +54,8 @@ class ShareAvailableFragment : Fragment(), CategoryListener{
     private var gridManager = GridLayoutManager(activity, 2, GridLayoutManager.VERTICAL, false)
     private var getBottomSheetData = ""
 
+    private var teamId : Int? = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -68,6 +71,10 @@ class ShareAvailableFragment : Fragment(), CategoryListener{
         binding = FragmentShareAvailableBinding.inflate(inflater, container, false)
         getCategoryListFromServer()
         initShareEntireRecyclerView()
+
+        val sharedPref = activity?.getSharedPreferences("readTeamId", Context.MODE_PRIVATE)
+        teamId = sharedPref?.getInt("teamId", 0) // 기본값은 null
+        println("avail"+teamId)
 
         binding.ivAddCategory.setOnClickListener {
             showCategoryBottomSheet(categoryList)
@@ -106,7 +113,6 @@ class ShareAvailableFragment : Fragment(), CategoryListener{
         getAvailableListFromServer(0)
         println("available")
         binding.giftRv.apply {
-
             giftAdapter = ShareRoomGifticonAdapter()
             adapter = giftAdapter
             giftAdapter!!.shareRoomGifticonItemData = gifticonList
@@ -128,12 +134,12 @@ class ShareAvailableFragment : Fragment(), CategoryListener{
 
 
     private fun getAvailableListFromServer(page: Int) {
-        //여기 수정 Todo
-        Retrofit2Generator.create(requireActivity()).getShareGifticonList(size = 30, page = page).enqueue(object :
+        Retrofit2Generator.create(requireActivity()).getShareRoomGifticonFilterData("All_USABLE_NAME_DESC", teamId!! ,size = 10, page = page).enqueue(object :
             Callback<GetGifticonListResponse> {
             override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
                 if (response.isSuccessful) {
                     val responseBody = response.body()
+                    println(responseBody?.data?.dataList)
                     gifticonList.clear()
                     for (i in responseBody?.data?.dataList?.indices!!) {
                         // 새로운 데이터를 리스트에 추가합니다.
@@ -154,13 +160,13 @@ class ShareAvailableFragment : Fragment(), CategoryListener{
                             "null",
                             false
                         ))
-
-                        var temp = ArrayList<ShareRoomGifticon>()
+                        /*var temp = ArrayList<ShareRoomGifticon>()
                         for (i in gifticonList.indices) {
                             temp = gifticonList.filter { it.status == "AVAILABLE" } as ArrayList<ShareRoomGifticon>
                         }
-                        gifticonList.addAll(temp)
+                        gifticonList.addAll(temp)*/
                     }
+                    println(gifticonList)
                     giftAdapter!!.notifyDataSetChanged()
 
                 } else {

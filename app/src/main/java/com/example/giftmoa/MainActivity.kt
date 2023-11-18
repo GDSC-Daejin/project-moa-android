@@ -51,8 +51,7 @@ class MainActivity : AppCompatActivity() {
 
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
-        //FCM 설정 및 token값 가져오기
-        MyFirebaseMessagingService().getFirebaseToken()
+
 
         checkPostNotificationPermission()
         setFragment(TAG_HOME, HomeFragment())

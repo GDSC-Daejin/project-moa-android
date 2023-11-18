@@ -75,7 +75,7 @@ class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(
                 .override(300, 100) // 원하는 크기로 조절
 
             Glide.with(context)
-                .load(itemData.teamImage!!.toUri())
+                .load(itemData.teamImage)
                 .error(R.drawable.image)
                 .apply(requestOptions)
                 .listener(object : RequestListener<Drawable> {
@@ -85,7 +85,7 @@ class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(
                         target: com.bumptech.glide.request.target.Target<Drawable>?,
                         isFirstResource: Boolean
                     ): Boolean {
-                        Log.d("Glide", "Image load failed: ${e?.message}")
+                        Log.d("Glide", "share adapter Image load failed: ${e?.message}")
                         println(e?.message.toString())
                         return false
                     }

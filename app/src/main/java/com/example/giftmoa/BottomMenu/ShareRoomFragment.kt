@@ -270,19 +270,11 @@ class ShareRoomFragment : Fragment() {
                     0 -> {
                         setRoomData()
                     }
-                    //수정 테스트 해보기 todo//edit
                     1 -> {
-                        /*oldFragment = HomeFragment()
-                        oldTAG = TAG_HOME
-                        //setToolbarView(TAG_HOME, oldTAG)
-                        setFragment(TAG_HOME, HomeFragment())
 
-                        mBinding.bottomNavigationView.selectedItemId = R.id.navigation_home
-
-                        CoroutineScope(Dispatchers.Main).launch {
-                            supportFragmentManager.beginTransaction()
-                                .replace(R.id.fragment_content, HomeFragment())
-                                .commit()*/
+                    }
+                    4 -> {
+                      setRoomData()
                     }
 
                     //finish()

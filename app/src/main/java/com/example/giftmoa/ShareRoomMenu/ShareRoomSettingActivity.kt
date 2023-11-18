@@ -1,29 +1,31 @@
 package com.example.giftmoa.ShareRoomMenu
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
-import com.example.giftmoa.BuildConfig
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.example.giftmoa.BottomMenu.ShareRoomFragment
 import com.example.giftmoa.Data.*
-import com.example.giftmoa.MoaInterface
 import com.example.giftmoa.R
 import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.ActivityShareRoomSettingBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+
 
 class ShareRoomSettingActivity : AppCompatActivity() {
     private lateinit var sBinding : ActivityShareRoomSettingBinding
@@ -32,6 +34,7 @@ class ShareRoomSettingActivity : AppCompatActivity() {
 
     private var sharedGifticonAllData = ArrayList<TeamGifticon>()
 
+    private var isEdit = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +56,38 @@ class ShareRoomSettingActivity : AppCompatActivity() {
             sBinding.shareLl2.visibility = View.VISIBLE
             sBinding.shareV2.visibility = View.VISIBLE
 
-            sBinding.shareSettingIv.setImageURI(shareRoomData!!.teamImage!!.toUri())
+            //sBinding.shareSettingIv.setImageURI(shareRoomData!!.teamImage!!.toUri())
+            Glide.with(this@ShareRoomSettingActivity)
+                .load(shareRoomData!!.teamImage!!.toUri())
+                .error(R.drawable.image)
+                //.apply(requestOptions)
+                .centerCrop()
+                .override(200, 200)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: com.bumptech.glide.request.target.Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        Log.d("Glide", "Image load failed: ${e?.message}")
+                        println(e?.message.toString())
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: com.bumptech.glide.request.target.Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        println("glide")
+                        return false
+                    }
+                })
+                .into(sBinding.shareSettingIv)
+
             sBinding.shareSettingRoomCode.text = shareRoomData!!.teamCode
             sBinding.shareSettingRoomName.text = shareRoomData!!.teamName
             sBinding.shareSettingRoomLeadername.text = shareRoomData?.teamLeaderNickname
@@ -77,6 +111,12 @@ class ShareRoomSettingActivity : AppCompatActivity() {
         }
 
         sBinding.backArrow.setOnClickListener {
+            if (isEdit) {
+                val intent = Intent(this@ShareRoomSettingActivity, ShareRoomFragment::class.java).apply {
+                    putExtra("flag", 4)
+                }
+                setResult(RESULT_OK, intent)
+            }
             this.finish()
         }
 
@@ -85,6 +125,13 @@ class ShareRoomSettingActivity : AppCompatActivity() {
                 putExtra("RoomId", shareRoomData!!.id)
             }
             startActivity(intent)
+        }
+
+        sBinding.shareSettingEdit.setOnClickListener {
+            val intent = Intent(this@ShareRoomSettingActivity, ShareRoomSettingEditActivity::class.java).apply {
+                putExtra("data", shareRoomData)
+            }
+            requestActivity.launch(intent)
         }
     }
 
@@ -163,5 +210,74 @@ class ShareRoomSettingActivity : AppCompatActivity() {
             }
 
         })
+    }
+    private val requestActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { it ->
+        when (it.resultCode) {
+            AppCompatActivity.RESULT_OK -> {
+                val afterShareRoomData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    it.data?.getParcelableExtra("data", Team::class.java)
+                } else {
+                    it.data?.getParcelableExtra("data")
+                }
+
+                when(it.data?.getIntExtra("flag", -1)) {
+                    0 -> {
+
+                    }
+                    1 -> {
+
+                    }
+                    //방 수정
+                    4 -> {
+                        shareRoomData = afterShareRoomData
+
+                        sBinding.shareSettingRoomName.text = afterShareRoomData?.teamName
+                        Glide.with(this@ShareRoomSettingActivity)
+                            .load(afterShareRoomData?.teamImage?.toUri())
+                            .error(R.drawable.image)
+                            //.apply(requestOptions)
+                            .centerCrop()
+                            .override(200, 200)
+                            .listener(object : RequestListener<Drawable> {
+                                override fun onLoadFailed(
+                                    e: GlideException?,
+                                    model: Any?,
+                                    target: com.bumptech.glide.request.target.Target<Drawable>?,
+                                    isFirstResource: Boolean
+                                ): Boolean {
+                                    Log.d("Glide", "Image load failed: ${e?.message}")
+                                    println(e?.message.toString())
+                                    return false
+                                }
+
+                                override fun onResourceReady(
+                                    resource: Drawable?,
+                                    model: Any?,
+                                    target: com.bumptech.glide.request.target.Target<Drawable>?,
+                                    dataSource: DataSource?,
+                                    isFirstResource: Boolean
+                                ): Boolean {
+                                    println("glide")
+                                    return false
+                                }
+                            })
+                            .into(sBinding.shareSettingIv)
+
+                        isEdit = true
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onBackPressed() {
+        if (isEdit) {
+            val intent = Intent(this@ShareRoomSettingActivity, ShareRoomReadActivity::class.java).apply {
+                putExtra("flag", 4)
+                putExtra("data", shareRoomData)
+            }
+            setResult(RESULT_OK, intent)
+        }
+        this@ShareRoomSettingActivity.finish()
     }
 }

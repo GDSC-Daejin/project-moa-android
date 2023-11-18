@@ -1,5 +1,6 @@
 package com.example.giftmoa.ShareRoomMenu
 
+import android.content.Context
 import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
@@ -48,6 +49,9 @@ class ShareEntireFragment : Fragment(), CategoryListener {
     private var getBottomSheetData = ""
 
     private var gridManager = GridLayoutManager(activity, 2, GridLayoutManager.VERTICAL, false)
+
+    private var teamId : Long? = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -63,6 +67,10 @@ class ShareEntireFragment : Fragment(), CategoryListener {
         binding = FragmentShareEntireBinding.inflate(inflater, container, false)
         getCategoryListFromServer()
         initShareEntireRecyclerView()
+
+        val sharedPref = activity?.getSharedPreferences("readTeamId", Context.MODE_PRIVATE)
+        teamId = sharedPref?.getInt("teamId", 0)?.toLong()// 기본값은 null
+        println("entire"+teamId)
 
         binding.ivAddCategory.setOnClickListener {
             showCategoryBottomSheet(categoryList)
@@ -132,16 +140,16 @@ class ShareEntireFragment : Fragment(), CategoryListener {
 
 
     private fun getAllGifticonListFromServer(page: Int) {
-        Retrofit2Generator.create(requireActivity()).getShareGifticonList(size = 30, page = page).enqueue(object :
-            Callback<GetGifticonListResponse> {
-            override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
+        Retrofit2Generator.create(requireActivity()).getTeamGifticonList(teamId!! ,size = 10, page = page).enqueue(object :
+            Callback<GetTeamGifticonListResponse> {
+            override fun onResponse(call: Call<GetTeamGifticonListResponse>, response: Response<GetTeamGifticonListResponse>) {
                 if (response.isSuccessful) {
                     gifticonList.clear()
                     val responseBody = response.body()
 
                     for (i in responseBody?.data?.dataList?.indices!!) {
                         gifticonList.add(ShareRoomGifticon(
-                            responseBody.data.dataList[i].id!!.toInt(),
+                            responseBody.data.dataList[i].gifticonId!!.toInt(),
                             responseBody.data.dataList[i].name!!,
                             "null",
                             responseBody.data.dataList[i].gifticonImagePath!!,
@@ -164,7 +172,7 @@ class ShareEntireFragment : Fragment(), CategoryListener {
                 }
             }
 
-            override fun onFailure(call: Call<GetGifticonListResponse>, t: Throwable) {
+            override fun onFailure(call: Call<GetTeamGifticonListResponse>, t: Throwable) {
                 Log.e("ERROR", "Retrofit onFailure: ", t)
             }
         })

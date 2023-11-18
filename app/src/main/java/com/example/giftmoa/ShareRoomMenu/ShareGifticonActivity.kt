@@ -1,5 +1,6 @@
 package com.example.giftmoa.ShareRoomMenu
 
+import android.content.Intent
 import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -43,7 +44,7 @@ class ShareGifticonActivity : AppCompatActivity() {
         initSharedRecyclerView()
         getCategoryListFromServer()
 
-        teamId = intent.getIntExtra("teamId", 0).toInt()
+        teamId = intent.getLongExtra("teamId", 0L).toInt()
 
         sBinding.shareGifticonTv.setOnClickListener {
             if (selectGifticonList.isNotEmpty()) {
@@ -57,6 +58,13 @@ class ShareGifticonActivity : AppCompatActivity() {
                             ) {
                                 if (response.isSuccessful) {
                                     println("ssisisisi")
+                                    Toast.makeText(this@ShareGifticonActivity, "공유가 완료되었습니다.", Toast.LENGTH_SHORT).show()
+
+                                    val intent = Intent(this@ShareGifticonActivity, ShareRoomReadActivity::class.java).apply {
+
+                                    }
+
+                                    this@ShareGifticonActivity.finish()
                                 } else {
                                     println("faafa")
                                     Log.d("test", response.errorBody()?.string()!!)
