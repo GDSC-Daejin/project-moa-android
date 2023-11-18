@@ -1,22 +1,19 @@
 package com.example.giftmoa.Adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.example.giftmoa.Data.Gifticon
-import com.example.giftmoa.utils.CustomCropTransformation
-import com.example.giftmoa.Data.GifticonDetailItem
+import com.example.giftmoa.Data.TeamGifticon
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.ItemGifticonBinding
 import java.text.SimpleDateFormat
 import java.util.Date
 
-class GifticonListAdapter(private val onClick: (Gifticon) -> Unit, var Gifticons: List<Gifticon>): ListAdapter<Gifticon, GifticonListAdapter.ViewHolder>(diffUtil) {
+class TeamGifticonListAdapter(private val onClick: (TeamGifticon) -> Unit, var Gifticons: List<TeamGifticon>): ListAdapter<TeamGifticon, TeamGifticonListAdapter.ViewHolder>(diffUtil) {
 
     interface OnItemLongClickListener {
         fun onItemLongClick(position: Int)
@@ -33,7 +30,7 @@ class GifticonListAdapter(private val onClick: (Gifticon) -> Unit, var Gifticons
             }
         }
 
-        fun bind(gifticon: Gifticon) {
+        fun bind(gifticon: TeamGifticon) {
             if (gifticon.gifticonImagePath != null) {
                 // 자르고 싶은 위치와 크기 지정
                 val cropX = 30 // X 시작 위치
@@ -111,12 +108,12 @@ class GifticonListAdapter(private val onClick: (Gifticon) -> Unit, var Gifticons
     }*/
 
     companion object {
-        val diffUtil = object : DiffUtil.ItemCallback<Gifticon>() {
-            override fun areItemsTheSame(oldItem: Gifticon, newItem: Gifticon): Boolean {
-                return oldItem.id == newItem.id
+        val diffUtil = object : DiffUtil.ItemCallback<TeamGifticon>() {
+            override fun areItemsTheSame(oldItem: TeamGifticon, newItem: TeamGifticon): Boolean {
+                return oldItem.gifticonId == newItem.gifticonId
             }
 
-            override fun areContentsTheSame(oldItem: Gifticon, newItem: Gifticon): Boolean {
+            override fun areContentsTheSame(oldItem: TeamGifticon, newItem: TeamGifticon): Boolean {
                 return oldItem == newItem
             }
         }

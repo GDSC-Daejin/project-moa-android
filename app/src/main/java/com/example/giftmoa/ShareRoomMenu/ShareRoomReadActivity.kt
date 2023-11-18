@@ -40,26 +40,32 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class ShareRoomReadActivity : AppCompatActivity() {
-    private lateinit var sBinding : ActivityShareRoomReadBinding
-    private var gridManager = GridLayoutManager(this@ShareRoomReadActivity, 2, GridLayoutManager.VERTICAL, false)
-    private var shareGiftAdapter : HomeGiftAdapter? = null
-    private var shareUsedGiftAdapter : HomeUsedGiftAdapter? = null
+    private lateinit var sBinding: ActivityShareRoomReadBinding
+    private var gridManager =
+        GridLayoutManager(this@ShareRoomReadActivity, 2, GridLayoutManager.VERTICAL, false)
+    private var shareGiftAdapter: HomeGiftAdapter? = null
+    private var shareUsedGiftAdapter: HomeUsedGiftAdapter? = null
 
     private var saveSharedPreference = SaveSharedPreference()
 
-    private var shareRoomReadData : Team? = null
+    private var shareRoomReadData: Team? = null
     private var shareUsedGiftAllData = ArrayList<UsedGifticon>()
     private var shareGiftAllData = ArrayList<TeamGifticon>()
     private var type = ""
 
-    private var totalCount : Int? = null
-    private var nextPage : Int? = null
+    private var totalCount: Int? = null
+    private var nextPage: Int? = null
 
     private var isEdit = false
 
-    private var identification : String? = ""
+    private var identification: String? = ""
+
+    private val TAG = "ShareRoomReadActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,7 +123,10 @@ class ShareRoomReadActivity : AppCompatActivity() {
 
             if (shareRoomReadData?.teamLeaderNickname == identification) {
                 sBinding.shareSettingIcon.setOnClickListener {
-                    val intent = Intent(this@ShareRoomReadActivity, ShareRoomSettingActivity::class.java).apply {
+                    val intent = Intent(
+                        this@ShareRoomReadActivity,
+                        ShareRoomSettingActivity::class.java
+                    ).apply {
                         putExtra("type", "SETTING_LEADER")
                         putExtra("data", shareRoomReadData)
                     }
@@ -125,7 +134,10 @@ class ShareRoomReadActivity : AppCompatActivity() {
                 }
             } else {
                 sBinding.shareSettingIcon.setOnClickListener {
-                    val intent = Intent(this@ShareRoomReadActivity, ShareRoomSettingActivity::class.java).apply {
+                    val intent = Intent(
+                        this@ShareRoomReadActivity,
+                        ShareRoomSettingActivity::class.java
+                    ).apply {
                         putExtra("type", "SETTING_MEMBER")
                         putExtra("data", shareRoomReadData)
                     }
@@ -152,33 +164,37 @@ class ShareRoomReadActivity : AppCompatActivity() {
 
 
         sBinding.shareGifticonBtn.setOnClickListener {
-            val intent = Intent(this@ShareRoomReadActivity, ShareGifticonActivity::class.java).apply {
-                putExtra("teamId", shareRoomReadData?.id)
-            }
+            val intent =
+                Intent(this@ShareRoomReadActivity, ShareGifticonActivity::class.java).apply {
+                    putExtra("teamId", shareRoomReadData?.id)
+                }
             requestActivity.launch(intent)
         }
 
         sBinding.shareMoveIv.setOnClickListener {
-            val intent = Intent(this@ShareRoomReadActivity, SharedLockerActivity::class.java).apply {
-                putExtra("teamId", shareRoomReadData?.id)
-            }
+            val intent =
+                Intent(this@ShareRoomReadActivity, SharedLockerActivity::class.java).apply {
+                    putExtra("teamId", shareRoomReadData?.id)
+                }
             startActivity(intent)
         }
 
-        shareGiftAdapter!!.setItemClickListener(object : HomeGiftAdapter.ItemClickListener{
+        shareGiftAdapter!!.setItemClickListener(object : HomeGiftAdapter.ItemClickListener {
             override fun onClick(view: View, position: Int, itemId: Long?) {
-                val intent = Intent(this@ShareRoomReadActivity, GifticonDetailActivity::class.java).apply {
-                    putExtra("gifticonId", itemId)
-                }
+                val intent =
+                    Intent(this@ShareRoomReadActivity, GifticonDetailActivity::class.java).apply {
+                        putExtra("gifticonId", itemId)
+                    }
                 requestActivity.launch(intent)
             }
         })
 
         sBinding.backArrow.setOnClickListener {
             if (isEdit) {
-                val intent = Intent(this@ShareRoomReadActivity, ShareRoomFragment::class.java).apply {
-                    putExtra("flag", 4)
-                }
+                val intent =
+                    Intent(this@ShareRoomReadActivity, ShareRoomFragment::class.java).apply {
+                        putExtra("flag", 4)
+                    }
                 setResult(RESULT_OK, intent)
             }
             this@ShareRoomReadActivity.finish()
@@ -188,8 +204,7 @@ class ShareRoomReadActivity : AppCompatActivity() {
 
 
     //여긴 공유된것을 사용한거
-   private fun initUsedRecyclerView() {
-        setUsedGiftData()
+    private fun initUsedRecyclerView() {
         shareUsedGiftAdapter = HomeUsedGiftAdapter()
         shareUsedGiftAdapter!!.usedGiftItemData = shareUsedGiftAllData
         sBinding.shareUsedRv.adapter = shareUsedGiftAdapter
@@ -198,7 +213,6 @@ class ShareRoomReadActivity : AppCompatActivity() {
 
     //여긴 공유된거
     private fun initSharedGifticonRecyclerView() {
-        setSharedGiftData()
         shareGiftAdapter = HomeGiftAdapter()
         shareGiftAdapter!!.giftItemData = shareGiftAllData
         sBinding.shareGiftRv.adapter = shareGiftAdapter
@@ -216,172 +230,205 @@ class ShareRoomReadActivity : AppCompatActivity() {
         (this * Resources.getSystem().displayMetrics.density).toInt()
 
     private fun setUsedGiftData() {
-        Retrofit2Generator.create(this@ShareRoomReadActivity).getRecentUsedTeamGifticonData(shareRoomReadData?.id?.toInt()!!, 0, 10).enqueue(object : Callback<GetUsedTeamGifticonResponseData> {
-            override fun onResponse(
-                call: Call<GetUsedTeamGifticonResponseData>,
-                response: Response<GetUsedTeamGifticonResponseData>
-            ) {
-                if (response.isSuccessful) {
-                    shareUsedGiftAllData.clear()
+        Retrofit2Generator.create(this@ShareRoomReadActivity)
+            .getRecentUsedTeamGifticonData(shareRoomReadData?.id?.toInt()!!, 0, 10)
+            .enqueue(object : Callback<GetUsedTeamGifticonResponseData> {
+                override fun onResponse(
+                    call: Call<GetUsedTeamGifticonResponseData>,
+                    response: Response<GetUsedTeamGifticonResponseData>
+                ) {
+                    if (response.isSuccessful) {
+                        shareUsedGiftAllData.clear()
 
-                    for (i in response.body()?.data?.dataList?.indices!!) {
-                        shareUsedGiftAllData.add(UsedGifticon(
-                            response.body()?.data?.dataList!![i].id,
-                            response.body()?.data?.dataList!![i].name,
-                            response.body()?.data?.dataList!![i].gifticonImagePath,
-                            response.body()?.data?.dataList!![i].exchangePlace,
-                            response.body()?.data?.dataList!![i].dueDate,
-                            response.body()?.data?.dataList!![i].gifticonType,
-                            response.body()?.data?.dataList!![i].status,
-                            response.body()?.data?.dataList!![i].usedDate,
-                            response.body()?.data?.dataList!![i].author,
-                            response.body()?.data?.dataList!![i].category,
-                            response.body()?.data?.dataList!![i].gifticonHistories
-                        ))
+                        for (i in response.body()?.data?.dataList?.indices!!) {
+                            shareUsedGiftAllData.add(
+                                UsedGifticon(
+                                    response.body()?.data?.dataList!![i].id,
+                                    response.body()?.data?.dataList!![i].name,
+                                    response.body()?.data?.dataList!![i].gifticonImagePath,
+                                    response.body()?.data?.dataList!![i].exchangePlace,
+                                    response.body()?.data?.dataList!![i].dueDate,
+                                    response.body()?.data?.dataList!![i].gifticonType,
+                                    response.body()?.data?.dataList!![i].status,
+                                    response.body()?.data?.dataList!![i].usedDate,
+                                    response.body()?.data?.dataList!![i].author,
+                                    response.body()?.data?.dataList!![i].category,
+                                    response.body()?.data?.dataList!![i].gifticonHistories
+                                )
+                            )
+                        }
+                        shareUsedGiftAdapter!!.notifyDataSetChanged()
+
+                    } else {
+                        println("faafa")
+                        Log.d("test", response.errorBody()?.string()!!)
+                        Log.d("message", call.request().toString())
+                        println(response.code())
                     }
-                    shareUsedGiftAdapter!!.notifyDataSetChanged()
-
-                } else {
-                    println("faafa")
-                    Log.d("test", response.errorBody()?.string()!!)
-                    Log.d("message", call.request().toString())
-                    println(response.code())
                 }
-            }
 
-            override fun onFailure(call: Call<GetUsedTeamGifticonResponseData>, t: Throwable) {
-                Log.e("ERROR get Used Data", t.message.toString())
-            }
+                override fun onFailure(call: Call<GetUsedTeamGifticonResponseData>, t: Throwable) {
+                    Log.e("ERROR get Used Data", t.message.toString())
+                }
 
-        })
+            })
 
     }
 
     private fun setSharedGiftData() {
-        Retrofit2Generator.create(this@ShareRoomReadActivity).getTeamGifticonList(shareRoomReadData?.id!!, 0, 10).enqueue(object : Callback<GetTeamGifticonListResponse> {
-            override fun onResponse(
-                call: Call<GetTeamGifticonListResponse>,
-                response: Response<GetTeamGifticonListResponse>
-            ) {
-                if (response.isSuccessful) {
-                    println("est gift")
+        Retrofit2Generator.create(this@ShareRoomReadActivity)
+            .getTeamGifticonList(shareRoomReadData?.id!!, 0, 20)
+            .enqueue(object : Callback<GetTeamGifticonListResponse> {
+                override fun onResponse(
+                    call: Call<GetTeamGifticonListResponse>,
+                    response: Response<GetTeamGifticonListResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        println("est gift")
 
-                    shareGiftAllData.clear()
+                        shareGiftAllData.clear()
 
-                    val responseBody = response.body()
-                    responseBody?.data?.dataList?.let { newList ->
+                        val responseBody = response.body()
+                        responseBody?.data?.dataList?.let { newList ->
+                            // SimpleDateFormat을 사용하여 날짜를 파싱합니다.
+                            val dateFormat =
+                                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.KOREA)
+                            val currentDate = Date()
 
-                        Log.d("TAG", "read: newList = $newList")
-                        // 새로운 데이터를 리스트에 추가합니다.
-                        val currentPosition = shareGiftAllData.size
-                        shareGiftAllData.addAll(newList)
+                            Log.d(TAG, "currentDate = $currentDate")
 
-                        // 어댑터에 데이터가 변경되었음을 알립니다.
-                        // DiffUtil.Callback 사용을 위한 submitList는 비동기 처리를 하므로 리스트의 사본을 넘깁니다.
-                        //sAdapter.submitList(shareRoomDetailList.toList())
-                        // 또는
-                        // DiffUtil을 사용하지 않는 경우
+                            val filteredList = newList
+                                .filter { it.dueDate != null }
+                                .mapNotNull { gifticon ->
+                                    gifticon.dueDate?.let { dueDateString ->
+                                        try {
+                                            val dueDate = dateFormat.parse(dueDateString)
+                                            if (dueDate != null && dueDate.after(currentDate)) gifticon else null
+                                        } catch (e: Exception) {
+                                            null
+                                        }
+                                    }
+                                }
+                                .sortedBy { it.dueDate }
+                                .take(6 - shareGiftAllData.size)
+
+                            shareGiftAllData.addAll(filteredList)
+                        }
+                        shareGiftAdapter?.notifyDataSetChanged()
+
+                        totalCount = response.body()!!.data?.totalCount?.toInt()
+                        nextPage = response.body()!!.data?.nextPage?.toInt()
+
+                    } else {
+                        println("faafa")
+                        Log.d("add", response.errorBody()?.string()!!)
+                        Log.d("message", call.request().toString())
+                        println(response.code())
                     }
-                    shareGiftAdapter?.notifyDataSetChanged()
-
-                    totalCount = response.body()!!.data?.totalCount?.toInt()
-                    nextPage = response.body()!!.data?.nextPage?.toInt()
-
-                } else {
-                    println("faafa")
-                    Log.d("add", response.errorBody()?.string()!!)
-                    Log.d("message", call.request().toString())
-                    println(response.code())
                 }
-            }
 
-            override fun onFailure(call: Call<GetTeamGifticonListResponse>, t: Throwable) {
+                override fun onFailure(call: Call<GetTeamGifticonListResponse>, t: Throwable) {
 
-            }
+                }
 
-        })
+            })
     }
 
-    private val requestActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { it ->
-        when (it.resultCode) {
-            AppCompatActivity.RESULT_OK -> {
-                val afterShareRoomData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    it.data?.getParcelableExtra("data", Team::class.java)
-                } else {
-                    it.data?.getParcelableExtra("data")
-                }
-
-                when(it.data?.getIntExtra("flag", -1)) {
-                    //delete shareRoom
-                    0 -> {
-                        val intent = Intent(this@ShareRoomReadActivity, ShareRoomFragment::class.java).apply {
-                            putExtra("flag", 0)
-                        }
-                        setResult(RESULT_OK, intent)
-                        this@ShareRoomReadActivity.finish()
-                    }
-
-                    1 -> {
-                        setSharedGiftData()
-                    }
-
-                    //use Gifticon
-                    3 -> {
-                        val updatedGifticonWithStatus = if (Build.VERSION.SDK_INT >= 33) {
-                            it.data?.getParcelableExtra(
-                                "updatedGifticonWithStatus",
-                                Gifticon::class.java
-                            )
+    private val requestActivity =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { it ->
+            when (it.resultCode) {
+                AppCompatActivity.RESULT_OK -> {
+                    val afterShareRoomData =
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            it.data?.getParcelableExtra("data", Team::class.java)
                         } else {
-                            it.data?.getParcelableExtra<Gifticon>("updatedGifticonWithStatus")
+                            it.data?.getParcelableExtra("data")
                         }
-                        Log.d("SHARE_READ", "updatedGifticonWithStatus: $updatedGifticonWithStatus")
-                        setSharedGiftData()
-                        setUsedGiftData()
-                    }
 
-                    4 -> {
-                        shareRoomReadData = afterShareRoomData
-                        CoroutineScope(Dispatchers.Main).launch {
-                            sBinding.shareTitle.text = afterShareRoomData?.teamName
-                            Glide.with(this@ShareRoomReadActivity)
-                                .load(afterShareRoomData?.teamImage?.toUri())
-                                .error(R.drawable.image)
-                                //.apply(requestOptions)
-                                .centerCrop()
-                                .override(200, 200)
-                                .listener(object : RequestListener<Drawable> {
-                                    override fun onLoadFailed(
-                                        e: GlideException?,
-                                        model: Any?,
-                                        target: com.bumptech.glide.request.target.Target<Drawable>?,
-                                        isFirstResource: Boolean
-                                    ): Boolean {
-                                        Log.d("Glide", "Image load failed: ${e?.message}")
-                                        println(e?.message.toString())
-                                        return false
-                                    }
+                    when (it.data?.getIntExtra("flag", -1)) {
+                        //delete shareRoom
+                        0 -> {
+                            val intent = Intent(
+                                this@ShareRoomReadActivity,
+                                ShareRoomFragment::class.java
+                            ).apply {
+                                putExtra("flag", 0)
+                            }
+                            setResult(RESULT_OK, intent)
+                            this@ShareRoomReadActivity.finish()
+                        }
 
-                                    override fun onResourceReady(
-                                        resource: Drawable?,
-                                        model: Any?,
-                                        target: com.bumptech.glide.request.target.Target<Drawable>?,
-                                        dataSource: DataSource?,
-                                        isFirstResource: Boolean
-                                    ): Boolean {
-                                        println("glide")
-                                        return false
-                                    }
-                                })
-                                .into(sBinding.shareBackgroundImageview)
+                        1 -> {
+                            setSharedGiftData()
+                        }
 
-                            isEdit = true
+                        //use Gifticon
+                        3 -> {
+                            val updatedGifticonWithStatus = if (Build.VERSION.SDK_INT >= 33) {
+                                it.data?.getParcelableExtra(
+                                    "updatedGifticonWithStatus",
+                                    Gifticon::class.java
+                                )
+                            } else {
+                                it.data?.getParcelableExtra<Gifticon>("updatedGifticonWithStatus")
+                            }
+                            Log.d("SHARE_READ", "updatedGifticonWithStatus: $updatedGifticonWithStatus")
+                            setSharedGiftData()
+                            setUsedGiftData()
+                        }
+
+                        4 -> {
+                            shareRoomReadData = afterShareRoomData
+                            CoroutineScope(Dispatchers.Main).launch {
+                                sBinding.shareTitle.text = afterShareRoomData?.teamName
+                                Glide.with(this@ShareRoomReadActivity)
+                                    .load(afterShareRoomData?.teamImage?.toUri())
+                                    .error(R.drawable.image)
+                                    //.apply(requestOptions)
+                                    .centerCrop()
+                                    .override(200, 200)
+                                    .listener(object : RequestListener<Drawable> {
+                                        override fun onLoadFailed(
+                                            e: GlideException?,
+                                            model: Any?,
+                                            target: com.bumptech.glide.request.target.Target<Drawable>?,
+                                            isFirstResource: Boolean
+                                        ): Boolean {
+                                            Log.d("Glide", "Image load failed: ${e?.message}")
+                                            println(e?.message.toString())
+                                            return false
+                                        }
+
+                                        override fun onResourceReady(
+                                            resource: Drawable?,
+                                            model: Any?,
+                                            target: com.bumptech.glide.request.target.Target<Drawable>?,
+                                            dataSource: DataSource?,
+                                            isFirstResource: Boolean
+                                        ): Boolean {
+                                            println("glide")
+                                            return false
+                                        }
+                                    })
+                                    .into(sBinding.shareBackgroundImageview)
+
+                                isEdit = true
+                            }
                         }
                     }
                 }
             }
         }
+
+    override fun onStart() {
+        super.onStart()
+
+        if (type == "READ") {
+            setUsedGiftData()
+            setSharedGiftData()
+        }
     }
+
     override fun onBackPressed() {
         if (isEdit) {
             val intent = Intent(this@ShareRoomReadActivity, ShareRoomFragment::class.java).apply {

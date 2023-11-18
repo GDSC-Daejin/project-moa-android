@@ -216,7 +216,7 @@ class HomeFragment : Fragment() {
                         }
 
                         // SimpleDateFormat을 사용하여 날짜를 파싱합니다.
-                        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault())
+                        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.KOREA)
                         val currentDate = Date()
 
                         Log.d(TAG, "currentDate = $currentDate")

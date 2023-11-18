@@ -1,24 +1,34 @@
 package com.example.giftmoa.ShareRoomMenu
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
 import android.icu.lang.UCharacter.GraphemeClusterBreak.L
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.giftmoa.*
+import com.example.giftmoa.Adapter.GifticonListAdapter
 import com.example.giftmoa.Adapter.MemberListAdapter
 import com.example.giftmoa.Adapter.ShareRoomGifticonAdapter
+import com.example.giftmoa.Adapter.TeamGifticonListAdapter
 import com.example.giftmoa.BottomMenu.CategoryListener
 import com.example.giftmoa.BottomSheetFragment.CategoryBottomSheet
 import com.example.giftmoa.BottomSheetFragment.SortBottomSheet
 import com.example.giftmoa.Data.*
 import com.example.giftmoa.GridSpacingItemDecoration
+import com.example.giftmoa.HomeTab.GifticonViewModel
 import com.example.giftmoa.databinding.FragmentShareEntireBinding
 import com.google.android.material.chip.Chip
 import retrofit2.Call
@@ -35,23 +45,21 @@ private const val ARG_PARAM2 = "param2"
  * Use the [ShareEntireFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class ShareEntireFragment : Fragment(), CategoryListener {
+class ShareEntireFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var binding : FragmentShareEntireBinding
 
-    private var giftAdapter: ShareRoomGifticonAdapter? = null
-
-    var gifticonList = ArrayList<ShareRoomGifticon>()
-
-    private var categoryList = mutableListOf<CategoryItem>()
-
-    private var getBottomSheetData = ""
+    private val TAG = "ShareEntireFragment"
 
     private var gridManager = GridLayoutManager(activity, 2, GridLayoutManager.VERTICAL, false)
 
     private var teamId : Int? = 0
+
+    private lateinit var giftAdapter: TeamGifticonListAdapter
+    private lateinit var teamGifticonViewModel: TeamGifticonViewModel
+    private lateinit var gifticonStatusResult: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,49 +69,71 @@ class ShareEntireFragment : Fragment(), CategoryListener {
         }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        teamGifticonViewModel.couponList.observe(viewLifecycleOwner, Observer {
+            binding.giftRv.post(Runnable {
+                giftAdapter.submitList(it.toList())
+            })
+        })
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+        teamGifticonViewModel = ViewModelProvider(requireActivity(), ViewModelProvider.NewInstanceFactory())[TeamGifticonViewModel::class.java]
         binding = FragmentShareEntireBinding.inflate(inflater, container, false)
 
         val sharedPref = activity?.getSharedPreferences("readTeamId", Context.MODE_PRIVATE)
         teamId = sharedPref?.getInt("teamId", 0)?.toInt()// 기본값은 null
         println("entire"+teamId)
 
+        val allCouponList = teamGifticonViewModel.allCouponList.value
 
-        getCategoryListFromServer()
+        Log.d(TAG, "allCouponList: $allCouponList")
+
+        giftAdapter = TeamGifticonListAdapter({ gifticon ->
+            gifticonStatusResult.launch(
+                Intent(
+                    requireActivity(),
+                    GifticonDetailActivity::class.java
+                ).apply {
+                    putExtra("gifticonId", gifticon.gifticonId)
+                })
+        }, allCouponList ?: emptyList<TeamGifticon>())
+
         initShareEntireRecyclerView()
 
+        gifticonStatusResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                val updatedGifticonWithStatus = if (Build.VERSION.SDK_INT >= 33) {
+                    it.data?.getParcelableExtra(
+                        "updatedGifticonWithStatus",
+                        Gifticon::class.java
+                    )
+                } else {
+                    it.data?.getParcelableExtra<Gifticon>("updatedGifticonWithStatus")
+                }
 
+                val teamGifticon = TeamGifticon(
+                    gifticonId = updatedGifticonWithStatus?.id,
+                    name = updatedGifticonWithStatus?.name,
+                    gifticonImagePath = updatedGifticonWithStatus?.gifticonImagePath,
+                    exchangePlace = updatedGifticonWithStatus?.exchangePlace,
+                    dueDate = updatedGifticonWithStatus?.dueDate,
+                    gifticonType = updatedGifticonWithStatus?.gifticonType,
+                    orderNumber = null,
+                    status = updatedGifticonWithStatus?.status,
+                    usedDate = updatedGifticonWithStatus?.usedDate,
+                    author = updatedGifticonWithStatus?.author,
+                    category = updatedGifticonWithStatus?.category,
+                    gifticonMoney = null
+                )
 
-        binding.ivAddCategory.setOnClickListener {
-            showCategoryBottomSheet(categoryList)
-        }
-
-        binding.tvSort.setOnClickListener {
-            val bottomSheet = SortBottomSheet()
-            bottomSheet.show(requireActivity().supportFragmentManager, bottomSheet.tag)
-            bottomSheet.apply {
-                setCallback(object : SortBottomSheet.OnSendFromBottomSheetDialog{
-                    override fun sendValue(value: String) {
-                        Log.d("test", "BottomSheetDialog -> 액티비티로 전달된 값 : $value")
-                        getBottomSheetData = value
-                        when (value) {
-                            "최신 순" -> {
-                                binding.tvSort.text = "최신 순"
-                                gifticonList.sortByDescending { it.gifticonId }
-                                giftAdapter!!.notifyDataSetChanged()
-                            }
-
-                            "마감임박 순" -> {
-                                binding.tvSort.text = "마감임박 순"
-                                gifticonList.sortBy { it.dueDate }
-                                giftAdapter!!.notifyDataSetChanged()
-                            }
-                        }
-                    }
-                })
+                Log.d(TAG, "updatedGifticonWithStatus: $updatedGifticonWithStatus")
+                teamGifticonViewModel.updateCoupon(teamGifticon)
             }
         }
 
@@ -111,11 +141,11 @@ class ShareEntireFragment : Fragment(), CategoryListener {
     }
 
 
-    private fun initShareEntireRecyclerView() {
+    /*private fun initShareEntireRecyclerView() {
         getEntireListFromServer(0)
         println("entire")
 
-        giftAdapter = ShareRoomGifticonAdapter()
+        giftAdapter = TeamGifticonListAdapter()
         giftAdapter!!.shareRoomGifticonItemData = gifticonList
         binding.giftRv.adapter = giftAdapter
         binding.giftRv.setHasFixedSize(true)
@@ -125,238 +155,29 @@ class ShareEntireFragment : Fragment(), CategoryListener {
             GridSpacingItemDecoration(spanCount = 2, spacing = 10f.fromDpToPx())
         )
 
-        /*binding.giftRv.apply {
+        *//*binding.giftRv.apply {
             giftAdapter = ShareRoomGifticonAdapter()
             adapter = giftAdapter
             giftAdapter!!.shareRoomGifticonItemData = gifticonList
             layoutManager = gridManager
 
-        }*/
+        }*//*
+    }*/
+
+    private fun initShareEntireRecyclerView() {
+        binding.giftRv.apply {
+            adapter = giftAdapter
+            //adapter = couponListAdapter
+            layoutManager = gridManager
+            binding.giftRv.addItemDecoration(
+                GridSpacingItemDecoration(spanCount = 2, spacing = 10f.fromDpToPx())
+            )
+        }
     }
 
     private fun Float.fromDpToPx(): Int =
         (this * Resources.getSystem().displayMetrics.density).toInt()
 
-    private fun showCategoryBottomSheet(categoryList: List<CategoryItem>) {
-        val categoryBottomSheet = CategoryBottomSheet(categoryList, this@ShareEntireFragment)
-        categoryBottomSheet.setStyle(DialogFragment.STYLE_NORMAL, R.style.RoundCornerBottomSheetDialogTheme)
-        categoryBottomSheet.show(requireActivity().supportFragmentManager, categoryBottomSheet.tag)
-    }
-
-
-    private fun getEntireListFromServer(page: Int) {
-        Retrofit2Generator.create(requireActivity()).getTeamGifticonList(teamId!!.toLong() ,0, 10).enqueue(object :
-            Callback<GetTeamGifticonListResponse> {
-            override fun onResponse(call: Call<GetTeamGifticonListResponse>, response: Response<GetTeamGifticonListResponse>) {
-                if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    gifticonList.clear()
-                    for (i in responseBody?.data?.dataList?.indices!!) {
-                        // 새로운 데이터를 리스트에 추가합니다.
-                        val currentPosition = gifticonList.size
-                        gifticonList.add(ShareRoomGifticon(
-                            responseBody.data.dataList[i].gifticonId!!.toInt(),
-                            responseBody.data.dataList[i].name!!,
-                            "null",
-                            responseBody.data.dataList[i].gifticonImagePath!!,
-                            responseBody.data.dataList[i].exchangePlace!!,
-                            responseBody.data.dataList[i].dueDate!!,
-                            responseBody.data.dataList[i].gifticonType!!,
-                            "null",
-                            responseBody.data.dataList[i].status!!,
-                            responseBody.data.dataList[i].usedDate,
-                            responseBody.data.dataList[i].author,
-                            responseBody.data.dataList[i].category,
-                            "null",
-                            false
-                        ))
-                    }
-                    println("avaivvaivivaivaivaiavavlavvelevlvelvelev"+gifticonList)
-                    giftAdapter!!.notifyDataSetChanged()
-
-                } else {
-                    Log.e("ERROR", "Error: ${response.errorBody()?.string()}")
-                }
-            }
-
-            override fun onFailure(call: Call<GetTeamGifticonListResponse>, t: Throwable) {
-                Log.e("ERROR", "Retrofit onFailure: ", t)
-            }
-        })
-    }
-    /*private fun getTeamGifticonListFromServer(teamId: Long) {
-        Log.d("ENTRIRIRE", "getTeamGifticonListFromServer: teamId = $teamId")
-
-        Retrofit2Generator.create(requireActivity()).getTeamGifticonList(teamId, 0, 10).enqueue(object :
-            Callback<GetTeamGifticonListResponse> {
-            override fun onResponse(call: Call<GetTeamGifticonListResponse>, response: Response<GetTeamGifticonListResponse>) {
-                if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    responseBody?.data?.dataList?.let { newList ->
-                        // 새로운 데이터를 리스트에 추가합니다.
-
-                        if (newList.isNotEmpty()) {
-                            val currentPosition = gifticonList.size
-                            responseBody?.data?.dataList?.forEach {
-                                gifticonList.add(ShareRoomGifticon(
-                                    it.gifticonId?.toInt()!!,
-                                    it.name!!,
-                                    "null",
-                                    it.gifticonImagePath,
-                                    it.exchangePlace!!,
-                                    it.dueDate!!,
-                                    it.gifticonType!!,
-                                    "null",
-                                    it.status!!,
-                                    it.usedDate,
-                                    it.author,
-                                    it.category,
-                                    "null",
-                                    false
-                                ))
-                            }
-
-                            Log.d("ENTRIRIRE", "getTeamGifticonListFromServer: teamGifticonList = $gifticonList")
-
-                            giftAdapter?.notifyItemRangeInserted(currentPosition, newList.size)
-                        } else {
-
-                        }
-                    }
-                } else {
-                    Log.e("ENTRIRIRE", "Error: ${response.errorBody()?.string()}")
-                }
-            }
-
-            override fun onFailure(call: Call<GetTeamGifticonListResponse>, t: Throwable) {
-                Log.e("ENTRIRIRE", "Retrofit onFailure: ", t)
-            }
-        })
-    }*/
-
-    private fun getCategoryListFromServer() {
-        Retrofit2Generator.create(requireActivity()).getCategoryList().enqueue(object :
-            Callback<GetCategoryListResponse> {
-            override fun onResponse(call: Call<GetCategoryListResponse>, response: Response<GetCategoryListResponse>) {
-                if (response.isSuccessful) {
-                    Log.d("Success", "Retrofit onResponse: ${response.body()}")
-                    val responseBody = response.body()
-                    if (responseBody != null) {
-                        val resposeBody = responseBody.data
-
-                        if (resposeBody != null) {
-                            for (category in resposeBody) {
-                                if (category.categoryName == null) {
-                                    continue
-                                }
-                                if (category.categoryName == "미분류") {
-                                    // 항상 가장 마지막에 미분류 카테고리가 추가되도록
-                                    // categoryList의 맨 뒤에 추가
-                                    binding.chipUnclassified.visibility = View.VISIBLE
-                                    categoryList.add(category)
-                                    continue
-                                }
-                                val chip = category.categoryName!!.let { createNewChip(it) }
-
-                                // 마지막 Chip 뷰의 인덱스를 계산
-                                val lastChildIndex = binding.chipGroupCategory.childCount - 1
-
-                                // 마지막 Chip 뷰의 인덱스가 0보다 큰 경우에만
-                                // 현재 Chip을 바로 그 앞에 추가
-                                if (lastChildIndex >= 0) {
-                                    binding.chipGroupCategory.addView(chip, lastChildIndex)
-                                } else {
-                                    // ChipGroup에 자식이 없는 경우, 그냥 추가
-                                    binding.chipGroupCategory.addView(chip)
-                                }
-
-                                categoryList.add(category)
-                            }
-                        }
-                    }
-                } else {
-                    Log.e("ERROR", "Error: ${response.errorBody()?.string()}")
-                }
-            }
-
-            override fun onFailure(call: Call<GetCategoryListResponse>, t: Throwable) {
-                Log.e("ERROR", "Retrofit onFailure: ", t)
-            }
-        })
-    }
-
-    private fun createNewChip(text: String): Chip {
-        val chip = layoutInflater.inflate(R.layout.category_chip_layout, null, false) as Chip
-        chip.text = text
-        //chip.isCloseIconVisible = false
-        chip.setOnCloseIconClickListener {
-            // 닫기 아이콘 클릭 시 Chip 제거
-            (it.parent as? ViewGroup)?.removeView(it)
-        }
-        return chip
-    }
-
-    private fun deleteChip(text: String) {
-        for (i in 0 until binding.chipGroupCategory.childCount) {
-            val childView = binding.chipGroupCategory.getChildAt(i)
-            if (childView is Chip) {
-                val chip = childView as Chip
-                if (chip.text == text) {
-                    binding.chipGroupCategory.removeView(chip)
-                    break
-                }
-            }
-        }
-    }
-
-    override fun onCategoryUpdated(categoryName: String) {
-        val categoryRequest = AddCategoryRequest(categoryName)
-        // Retrofit을 이용해서 서버에 카테고리 추가 요청
-        // 서버에서 카테고리 추가가 완료되면 아래 코드를 실행
-        Retrofit2Generator.create(requireActivity()).addCategory(categoryRequest).enqueue(object : Callback<AddCategoryResponse> {
-            override fun onResponse(call: Call<AddCategoryResponse>, response: Response<AddCategoryResponse>) {
-                if (response.isSuccessful) {
-                    Log.d("TAG", "Retrofit onResponse: ${response.body()}")
-                    val responseBody = response.body()
-
-                    Log.d("TAG", "responseBody category: $responseBody")
-                    if (responseBody != null) {
-                        val category = responseBody.data
-                        // categoryList에 추가
-                        if (category != null) {
-                            val chip = category.categoryName?.let { createNewChip(it) }
-                            val positionToInsert = binding.chipGroupCategory.childCount - 1
-                            binding.chipGroupCategory.addView(chip, positionToInsert)
-                            categoryList.add(category)
-                        }
-                    }
-                } else {
-                    Log.e("TAG", "Error: ${response.errorBody()?.string()}")
-                }
-            }
-
-            override fun onFailure(call: Call<AddCategoryResponse>, t: Throwable) {
-                Log.e("TAG", "Retrofit onFailure: ", t)
-            }
-        })
-    }
-
-    override fun onCategoryDeleted(categoryName: String) {
-        var categoryId: Long? = null
-        Log.d("TAG", "onCategoryDeleted: $categoryName")
-        for (category in categoryList) {
-            if (categoryName == category.categoryName) {
-                // categoryList에서 해당 카테고리의 id 값 가져오기
-                categoryId = category.id
-                // categoryList에서 해당 카테고리 삭제
-                categoryList.remove(category)
-                deleteChip(categoryName)
-                Log.d("TAG", "onCategoryDeleted: $categoryId")
-                Log.d("TAG", "onCategoryDeleted: $categoryList")
-                break
-            }
-        }
-    }
     companion object {
         /**
          * Use this factory method to create a new instance of

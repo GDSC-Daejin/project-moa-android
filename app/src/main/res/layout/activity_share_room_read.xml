@@ -102,7 +102,7 @@
                         android:gravity="center"
                         android:fontFamily="@font/pretendard_bold"
                         android:text="공유방"
-                        android:textColor="@color/moa_gray_black"
+                        android:textColor="@color/moa_gray_white"
                         android:textSize="16sp" />
 
                     <ImageView
@@ -127,7 +127,7 @@
                     android:fontFamily="@font/pretendard_bold"
                     android:gravity="start"
                     android:text="쿠폰 사용현황"
-                    android:textColor="@color/moa_gray_black"
+                    android:textColor="@color/moa_gray_white"
                     android:textSize="16sp" />
 
                 <FrameLayout

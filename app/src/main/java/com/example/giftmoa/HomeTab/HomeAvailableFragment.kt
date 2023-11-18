@@ -116,6 +116,8 @@ class HomeAvailableFragment : Fragment() {
 
         val availableCouponList = gifticonViewModel.availableCouponList.value
 
+        Log.d(TAG, "availableCouponList: $availableCouponList")
+
         giftAdapter = GifticonListAdapter({ gifticon ->
             /*val intent = Intent(requireActivity(), GifticonDetailActivity::class.java)
             intent.putExtra("gifticonId", gifticon.id)

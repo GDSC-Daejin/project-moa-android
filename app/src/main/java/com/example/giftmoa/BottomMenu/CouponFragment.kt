@@ -135,7 +135,7 @@ class CouponFragment : Fragment(), CategoryListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         gifticonViewModel = ViewModelProvider(requireActivity(), ViewModelProvider.NewInstanceFactory())[GifticonViewModel::class.java]
 
         _binding = FragmentCouponBinding.inflate(inflater, container, false)
