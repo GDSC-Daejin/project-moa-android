@@ -48,7 +48,7 @@ class HomeGiftAdapter : RecyclerView.Adapter<HomeGiftAdapter.HomeGiftViewHolder>
                     .into(binding.ivCouponImage)
             } else {
                 Glide.with(context)
-                    .load(R.drawable.image)
+                    .load(R.drawable.icon_gifticon_null)
                     .into(binding.ivCouponImage)
             }
             if (itemData.status == "AVAILABLE") {

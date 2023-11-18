@@ -63,15 +63,14 @@
                 android:id="@+id/share_top_rl"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:orientation="vertical"
-                >
+                android:orientation="vertical">
+
                 <ImageView
                     android:id="@+id/share_background_imageview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
-                    android:src="@drawable/image"
-                    />
+                    android:src="@drawable/image" />
 
 
                 <LinearLayout
@@ -83,24 +82,22 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="20dp"
                     android:gravity="center"
-                    android:orientation="horizontal"
-                    >
+                    android:orientation="horizontal">
 
                     <ImageView
                         android:id="@+id/back_arrow"
-                        android:layout_marginStart="20dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/baseline_arrow_back_24"
-                        />
+                        android:layout_marginStart="20dp"
+                        android:src="@drawable/baseline_arrow_back_24" />
 
                     <TextView
                         android:id="@+id/share_title"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:gravity="center"
                         android:fontFamily="@font/pretendard_bold"
+                        android:gravity="center"
                         android:text="공유방"
                         android:textColor="@color/moa_gray_white"
                         android:textSize="16sp" />
@@ -110,8 +107,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="20dp"
-                        android:background="@drawable/share_setting_icon"
-                        />
+                        android:background="@drawable/share_setting_icon" />
 
                 </LinearLayout>
 
@@ -195,7 +191,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
                     android:visibility="visible"
-                    tools:listitem="@layout/item_gifticon"/>
+                    tools:listitem="@layout/item_gifticon" />
 
             </androidx.core.widget.NestedScrollView>
 

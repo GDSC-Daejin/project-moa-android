@@ -51,22 +51,18 @@ class ShareRoomGifticonAdapter : RecyclerView.Adapter<ShareRoomGifticonAdapter.S
                     .load(itemData.gifticonImagePath)
                     .into(binding.ivCouponImage)
             } else {
-                giftImg.setImageResource(R.drawable.image)
+                giftImg.setImageResource(R.drawable.icon_gifticon_null)
             }
 
             if (itemData.status == "AVAILABLE") {
                 binding.tvCouponUsedComplete.visibility = View.GONE
                 binding.viewAlpha.visibility = View.GONE
-                Glide.with(binding.ivCouponImage.context)
-                    .load(itemData.gifticonImagePath)
-                    .into(binding.ivCouponImage)
             } else {
                 binding.tvCouponUsedComplete.visibility = View.VISIBLE
                 binding.viewAlpha.visibility = View.VISIBLE
-                Glide.with(binding.ivCouponImage.context)
-                    .load(itemData.gifticonImagePath)
-                    .into(binding.ivCouponImage)
             }
+
+            binding.checkbox.visibility = View.VISIBLE
 
             try {
                 //2024-01-26T00:00:00.000+00:00 -> inputFormat
@@ -109,13 +105,15 @@ class ShareRoomGifticonAdapter : RecyclerView.Adapter<ShareRoomGifticonAdapter.S
                 pos = position
                 if (shareRoomGifticonItemData[position].isSelected == true) {
                     shareRoomGifticonItemData[pos].isSelected = false
-                    binding.viewAlpha.visibility = View.GONE
+                    binding.viewAlphaBlack.visibility = View.GONE
                     binding.ivCouponImage.alpha = 1.0.toFloat()
+                    binding.checkbox.isChecked = false
                     //setMultipleSelection(binding, pos)
                 } else {
                     shareRoomGifticonItemData[pos].isSelected = true
-                    binding.viewAlpha.visibility = View.VISIBLE
+                    binding.viewAlphaBlack.visibility = View.VISIBLE
                     binding.ivCouponImage.alpha = 0.7.toFloat()
+                    binding.checkbox.isChecked = true
                     //setMultipleSelection(binding, pos)
                 }
             }

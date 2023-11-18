@@ -3,6 +3,7 @@ package com.example.giftmoa.BottomMenu
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -101,18 +102,21 @@ class AccountFragment : Fragment() {
             val requestBody = RefreshTokenRequest(refreshToken!!)
             Log.d(TAG, "onCreateView: $requestBody")
 
-            Toast.makeText(requireActivity(), "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(requireActivity(), Login2Activity::class.java))
-            requireActivity().finish()
+            Handler().postDelayed({
+                Toast.makeText(requireActivity(), "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(requireActivity(), Login2Activity::class.java))
+                requireActivity().finish()
+            }, 1000)
 
             //logout(requestBody)
         }
 
         binding.tvWithdrawal.setOnClickListener {
-            Toast.makeText(requireActivity(), "회원탈퇴 되었습니다.", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(requireActivity(), Login2Activity::class.java))
-            requireActivity().finish()
-
+            Handler().postDelayed({
+                Toast.makeText(requireActivity(), "회원탈퇴 되었습니다.", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(requireActivity(), Login2Activity::class.java))
+                requireActivity().finish()
+            }, 1000)
             //withdraw()
         }
 
