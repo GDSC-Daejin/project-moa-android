@@ -109,6 +109,7 @@
         tools:text="아이스 아메리카노"
         android:textColor="@color/moa_gray_900"
         android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/tv_d_day"
         app:layout_constraintTop_toBottomOf="@id/tv_d_day" />
 

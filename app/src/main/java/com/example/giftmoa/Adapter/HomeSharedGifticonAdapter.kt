@@ -30,20 +30,12 @@ class HomeSharedGifticonAdapter(private val onClick: (TeamGifticon) -> Unit, pri
             } else {
                 binding.llNoGifticon.visibility = android.view.View.GONE
                 // binding.root의 width를 316dp로 설정
-                binding.root.layoutParams.width = 316
+                //binding.root.layoutParams.width = 316
             }
 
             if (gifticon.gifticonImagePath != null) {
-                // 자르고 싶은 위치와 크기 지정
-                val cropX = 23 // X 시작 위치
-                val cropY = 25 // Y 시작 위치
-                val cropWidth = 270 // 잘라낼 너비
-                val cropHeight = 250 // 잘라낼 높이
-
                 Glide.with(binding.ivCouponImage.context)
-                    .asBitmap()
                     .load(gifticon.gifticonImagePath)
-                    .apply(RequestOptions().transform(CustomCropTransformation(cropX, cropY, cropWidth, cropHeight)))
                     .into(binding.ivCouponImage)
             } else {
                 binding.ivCouponImage.setImageResource(R.drawable.asset_gifticon_coffee)
