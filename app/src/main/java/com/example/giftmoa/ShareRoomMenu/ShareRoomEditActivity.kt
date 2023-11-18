@@ -64,12 +64,6 @@ class ShareRoomEditActivity : AppCompatActivity() {
     private var isCheckShareRoomName = false
     private var isComplete = false
 
-    private val SERVER_URL = BuildConfig.server_URL
-    private val retrofit = Retrofit.Builder().baseUrl(SERVER_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    val service: MoaInterface = retrofit.create(MoaInterface::class.java)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sBinding = ActivityShareRoomEditBinding.inflate(layoutInflater)

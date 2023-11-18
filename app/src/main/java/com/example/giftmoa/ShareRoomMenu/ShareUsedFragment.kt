@@ -69,12 +69,13 @@ class ShareUsedFragment : Fragment(), CategoryListener {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentShareUsedBinding.inflate(inflater, container, false)
-        initUsedRecyclerview()
-        getCategoryListFromServer()
 
         val sharedPref = activity?.getSharedPreferences("readTeamId", Context.MODE_PRIVATE)
         teamId = sharedPref?.getInt("teamId", 0) // 기본값은 null
         println("used"+teamId)
+
+        initUsedRecyclerview()
+        getCategoryListFromServer()
 
         binding.ivAddCategory.setOnClickListener {
             showCategoryBottomSheet(categoryList)
@@ -133,7 +134,7 @@ class ShareUsedFragment : Fragment(), CategoryListener {
 
 
     private fun getAvailableListFromServer(page: Int) {
-        Retrofit2Generator.create(requireActivity()).getShareRoomGifticonFilterData("All_USED_NAME_DESC", teamId!!, size = 30, page = page).enqueue(object :
+        Retrofit2Generator.create(requireActivity()).getShareRoomGifticonFilterData("All_USED_NAME_DESC", teamId!!, 0, 10).enqueue(object :
             Callback<GetGifticonListResponse> {
             override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
                 if (response.isSuccessful) {
@@ -159,11 +160,11 @@ class ShareUsedFragment : Fragment(), CategoryListener {
                             false
                         ))
 
-                        var temp = ArrayList<ShareRoomGifticon>()
+                        /*var temp = ArrayList<ShareRoomGifticon>()
                         for (i in gifticonList.indices) {
                             temp = gifticonList.filter { it.status != "AVAILABLE" } as ArrayList<ShareRoomGifticon>
                         }
-                        gifticonList.addAll(temp)
+                        gifticonList.addAll(temp)*/
                     }
                     giftAdapter!!.notifyDataSetChanged()
                 } else {

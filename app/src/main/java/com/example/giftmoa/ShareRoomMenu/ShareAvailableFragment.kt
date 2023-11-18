@@ -69,12 +69,13 @@ class ShareAvailableFragment : Fragment(), CategoryListener{
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentShareAvailableBinding.inflate(inflater, container, false)
-        getCategoryListFromServer()
-        initShareEntireRecyclerView()
 
         val sharedPref = activity?.getSharedPreferences("readTeamId", Context.MODE_PRIVATE)
         teamId = sharedPref?.getInt("teamId", 0) // 기본값은 null
         println("avail"+teamId)
+
+        getCategoryListFromServer()
+        initShareEntireRecyclerView()
 
         binding.ivAddCategory.setOnClickListener {
             showCategoryBottomSheet(categoryList)
@@ -134,12 +135,11 @@ class ShareAvailableFragment : Fragment(), CategoryListener{
 
 
     private fun getAvailableListFromServer(page: Int) {
-        Retrofit2Generator.create(requireActivity()).getShareRoomGifticonFilterData("All_USABLE_NAME_DESC", teamId!! ,size = 10, page = page).enqueue(object :
+        Retrofit2Generator.create(requireActivity()).getShareRoomGifticonFilterData("All_USABLE_NAME_DESC",teamId!! ,0, 10).enqueue(object :
             Callback<GetGifticonListResponse> {
             override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
                 if (response.isSuccessful) {
                     val responseBody = response.body()
-                    println(responseBody?.data?.dataList)
                     gifticonList.clear()
                     for (i in responseBody?.data?.dataList?.indices!!) {
                         // 새로운 데이터를 리스트에 추가합니다.
@@ -160,13 +160,8 @@ class ShareAvailableFragment : Fragment(), CategoryListener{
                             "null",
                             false
                         ))
-                        /*var temp = ArrayList<ShareRoomGifticon>()
-                        for (i in gifticonList.indices) {
-                            temp = gifticonList.filter { it.status == "AVAILABLE" } as ArrayList<ShareRoomGifticon>
-                        }
-                        gifticonList.addAll(temp)*/
                     }
-                    println(gifticonList)
+                    println("avaivvaivivaivaivaiavavlavvelevlvelvelev"+gifticonList)
                     giftAdapter!!.notifyDataSetChanged()
 
                 } else {

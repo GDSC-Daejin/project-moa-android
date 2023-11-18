@@ -1,5 +1,6 @@
 package com.example.giftmoa.ShareRoomMenu
 
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -7,14 +8,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.giftmoa.Adapter.MemberListAdapter
 import com.example.giftmoa.Adapter.ShareRoomAdapter
 import com.example.giftmoa.BuildConfig
-import com.example.giftmoa.Data.GetMyTeamListResponse
-import com.example.giftmoa.Data.GetTeamMembers
-import com.example.giftmoa.Data.SaveSharedPreference
-import com.example.giftmoa.Data.ShareRoomGetTeamData
+import com.example.giftmoa.Data.*
 import com.example.giftmoa.MoaInterface
 import com.example.giftmoa.R
 import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.ActivityShareRoomFriendListBinding
+import com.kakao.sdk.common.KakaoSdk.type
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,13 +32,19 @@ class ShareRoomFriendListActivity : AppCompatActivity() {
     private var mAdapter : MemberListAdapter? = null
     private var memberList = ArrayList<GetTeamMembers>()
     private var manager : LinearLayoutManager = LinearLayoutManager(this)
+    private var temp = ArrayList<Team>()
+
+    private var roomId:Int? = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sBinding = ActivityShareRoomFriendListBinding.inflate(layoutInflater)
         setContentView(sBinding.root)
 
+        roomId = intent.getLongExtra("RoomId", 0L).toInt()
+
         initRecyclerView()
+        setMemberList()
 
         sBinding.backArrow.setOnClickListener {
             this.finish()
@@ -47,14 +52,20 @@ class ShareRoomFriendListActivity : AppCompatActivity() {
     }
 
     private fun initRecyclerView() {
-        setMemberList()
         mAdapter = MemberListAdapter()
         mAdapter!!.shareRoomMemberListData = memberList
         sBinding.memberListRv.adapter = mAdapter
         sBinding.memberListRv.setHasFixedSize(true)
         sBinding.memberListRv.layoutManager = manager
+
     }
 
+   /* private fun setMemberList() {
+        val teamMembers: Array<Member>? = intent.getParcelableArrayExtra("teamMembers")?.map { it as Member }?.toTypedArray()
+        for
+            mAdapter?.notifyDataSetChanged()
+        Log.d("memberList", "memberList" + memberList)
+    }*/
     private fun setMemberList() {
         Retrofit2Generator.create(this@ShareRoomFriendListActivity).getMyTeamList().enqueue(object : Callback<GetMyTeamListResponse>{
             override fun onResponse(
@@ -65,34 +76,23 @@ class ShareRoomFriendListActivity : AppCompatActivity() {
                     println("dssdsds")
                     memberList.clear()
                     val responseBody = response.body()
-                    responseBody?.data?.let { newList ->
-                        val currentPosition = memberList.size
-                        newList.forEach { it ->
-                            it.teamMembers?.forEach {
-                                memberList.add(
-                                    GetTeamMembers(
-                                        it.id?.toInt()!!,
-                                        it.nickname?.toString()!!,
-                                        it.profileImageUrl
-                                    )
-                                )
-                            }
-                        }
-                        //mAdapter?.notifyItemRangeInserted(currentPosition, newList.size)
+
+                    responseBody?.data?.let {
+                        temp.addAll(it)
                     }
-                    mAdapter?.notifyDataSetChanged()
-                    /*for (i in response.body()!!.data.indices) {
-                        for (j in response.body()!!.data[i].teamMembers.indices) {
+
+                    val t = temp.filter { it.id?.toInt() == roomId }
+                    for (i in t.indices) {
+                        for (j in t[i].teamMembers?.indices!!) {
+                            println("memberList"+t[i].teamMembers)
                             memberList.add(GetTeamMembers(
-                                response.body()!!.data[i].teamMembers[j].id,
-                                response.body()!!.data[i].teamMembers[j].nickname,
-                                response.body()!!.data[i].teamMembers[j].profileImageUrl
+                                t[i].teamMembers?.get(j)?.id?.toInt()!!,
+                                t[i].teamMembers?.get(j)?.nickname!!,
+                                t[i].teamMembers?.get(j)?.profileImageUrl
                             ))
                         }
-                    }*/
-
-                    //mAdapter!!.notifyDataSetChanged()
-
+                    }
+                    mAdapter?.notifyDataSetChanged()
                 } else {
                     println("faafa")
                     Log.d("test", response.errorBody()?.string()!!)

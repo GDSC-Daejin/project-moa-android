@@ -35,6 +35,7 @@ class Login2Activity: AppCompatActivity() {
     private val sharedPreference = SaveSharedPreference()
 
     private var isReady = false
+    private var name : String? = ""
 
     // 카카오계정으로 로그인 공통 callback 구성
     // 카카오톡으로 로그인 할 수 없어 카카오계정으로 로그인할 경우 사용됨
@@ -48,6 +49,21 @@ class Login2Activity: AppCompatActivity() {
         } else if (token != null) {
             Toast.makeText(this, "카카오계정으로 로그인 성공", Toast.LENGTH_SHORT).show()
             Log.i("LoginActivity", "카카오계정으로 로그인 성공: ${token.accessToken}")
+
+            UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
+                UserApiClient.instance.me { user, error ->
+                    name = user?.kakaoAccount?.profile?.nickname
+                    Log.i("1 login", "${name}")
+                    Log.i("2 login", "${user?.kakaoAccount?.profile?.nickname}")
+                    val sharedPref = getSharedPreferences("profile_nickname", Context.MODE_PRIVATE)
+                    with(sharedPref.edit()) {
+                        putString("profileNickname", user?.kakaoAccount?.profile?.nickname)
+                        apply() // 비동기적으로 데이터를 저장
+                    }
+                }
+            }
+
+
 
             sendAccessTokenToServer(token.accessToken)
         }
@@ -78,13 +94,10 @@ class Login2Activity: AppCompatActivity() {
                         // 카카오톡에 연결된 카카오계정이 없는 경우, 카카오계정으로 로그인 시도
                         UserApiClient.instance.loginWithKakaoAccount(this, callback = callback)
                     } else if (token != null) {
-                        UserApiClient.instance.me { user, error ->
-                            sharedPreference.setName(this@Login2Activity, user!!.kakaoAccount!!.name).toString()
-                        }
-
                         Toast.makeText(this, "카카오톡으로 로그인 성공", Toast.LENGTH_SHORT).show()
 
                         Log.i(TAG, "accessToken: ${token}")
+                        Log.i("5 login", "${name}")
 
 
                         sendAccessTokenToServer(token.accessToken)

@@ -66,7 +66,7 @@ class MemberListAdapter : RecyclerView.Adapter<MemberListAdapter.MemberViewHolde
                     .override(300, 300) // 원하는 크기로 조절
 
                 Glide.with(context)
-                    .load(itemData.profileImageUrl!!.toUri())
+                    .load(itemData.profileImageUrl)
                     .error(R.drawable.member_profile_default_icon)
                     .apply(requestOptions)
                     .listener(object : RequestListener<Drawable> {
@@ -104,7 +104,7 @@ class MemberListAdapter : RecyclerView.Adapter<MemberListAdapter.MemberViewHolde
                 .override(300, 100) // 원하는 크기로 조절
 
             Glide.with(context)
-                .load(itemData.profileImageUrl!!.toUri())
+                .load(itemData.profileImageUrl)
                 .error(R.drawable.image)
                 .apply(requestOptions)
                 .listener(object : RequestListener<Drawable> {

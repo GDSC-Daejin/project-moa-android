@@ -1,5 +1,6 @@
 package com.example.giftmoa.ShareRoomMenu
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -36,6 +37,10 @@ class ShareRoomSettingActivity : AppCompatActivity() {
 
     private var isEdit = false
 
+    private var saveSharedPreference = SaveSharedPreference()
+
+    private var identification : String? = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sBinding = ActivityShareRoomSettingBinding.inflate(layoutInflater)
@@ -48,7 +53,11 @@ class ShareRoomSettingActivity : AppCompatActivity() {
             intent.getParcelableExtra("data")
         }
 
+        /*identification = saveSharedPreference.getName(this@ShareRoomSettingActivity).toString()*/
+
         setSharedGiftData()
+        val sharedPref = this.getSharedPreferences("profile_nickname", Context.MODE_PRIVATE)
+        identification = sharedPref.getString("profileNickname", null) // 기본값은 null
 
         if (type == "SETTING_LEADER") {
             sBinding.shareLl1.visibility = View.VISIBLE
@@ -56,9 +65,17 @@ class ShareRoomSettingActivity : AppCompatActivity() {
             sBinding.shareLl2.visibility = View.VISIBLE
             sBinding.shareV2.visibility = View.VISIBLE
 
+            sBinding.shareSettingEdit.visibility = View.VISIBLE
+            sBinding.shareSettingEdit.setOnClickListener {
+                val intent = Intent(this@ShareRoomSettingActivity, ShareRoomSettingEditActivity::class.java).apply {
+                    putExtra("data", shareRoomData)
+                }
+                requestActivity.launch(intent)
+            }
+
             //sBinding.shareSettingIv.setImageURI(shareRoomData!!.teamImage!!.toUri())
             Glide.with(this@ShareRoomSettingActivity)
-                .load(shareRoomData!!.teamImage!!.toUri())
+                .load(shareRoomData!!.teamImage)
                 .error(R.drawable.image)
                 //.apply(requestOptions)
                 .centerCrop()
@@ -103,6 +120,7 @@ class ShareRoomSettingActivity : AppCompatActivity() {
             sBinding.shareV1.visibility = View.GONE
             sBinding.shareLl2.visibility = View.GONE
             sBinding.shareV2.visibility = View.GONE
+            sBinding.shareSettingEdit.visibility = View.GONE
 
             sBinding.shareSettingRoomCode.text = shareRoomData!!.teamCode
             sBinding.shareSettingRoomLeadername.text = shareRoomData!!.teamLeaderNickname
@@ -123,15 +141,10 @@ class ShareRoomSettingActivity : AppCompatActivity() {
         sBinding.shareLl5.setOnClickListener {
             val intent = Intent(this@ShareRoomSettingActivity, ShareRoomFriendListActivity::class.java).apply {
                 putExtra("RoomId", shareRoomData!!.id)
+                putExtra("teamMembers", shareRoomData?.teamMembers?.toTypedArray())
             }
+            println("temtemtemetmetmetmte"+shareRoomData?.teamMembers)
             startActivity(intent)
-        }
-
-        sBinding.shareSettingEdit.setOnClickListener {
-            val intent = Intent(this@ShareRoomSettingActivity, ShareRoomSettingEditActivity::class.java).apply {
-                putExtra("data", shareRoomData)
-            }
-            requestActivity.launch(intent)
         }
     }
 
@@ -233,7 +246,7 @@ class ShareRoomSettingActivity : AppCompatActivity() {
 
                         sBinding.shareSettingRoomName.text = afterShareRoomData?.teamName
                         Glide.with(this@ShareRoomSettingActivity)
-                            .load(afterShareRoomData?.teamImage?.toUri())
+                            .load(afterShareRoomData?.teamImage)
                             .error(R.drawable.image)
                             //.apply(requestOptions)
                             .centerCrop()

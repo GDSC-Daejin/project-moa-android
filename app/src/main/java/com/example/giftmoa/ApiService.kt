@@ -120,6 +120,13 @@ interface ApiService {
                             @Query("page") page : Int,
                             @Query("size") size : Int): Call<GetTeamGifticonListResponse>
 
+
+    @GET("/api/v1/team/gifticon/{teamId}")
+    fun getShareTeamGifticonList(@Path("teamId") teamId : Int,
+                            @Query("page") page : Int,
+                            @Query("size") size : Int): Call<ShareRoomGetTeamGifticonData>
+
+
     // 팀에 공유하기 위한 자기 기프티콘 가져오기
     @GET("/api/v1/gifticon/recent_list")
     fun getShareGifticonList(
@@ -143,6 +150,13 @@ interface ApiService {
                                        @Query("page") page : Int,
                                        @Query("size") size : Int,) : Call<GetGifticonListResponse>
 
+    //팀에서 최근 사용한 기프티콘 리스트
+    @GET("/api/v1/team/gifticon/recent/{teamId}")
+    fun getRecentUsedTeamGifticonData(@Path("teamId") teamId : Int,
+                                      @Query("page") page : Int,
+                                      @Query("size") size : Int) : Call<GetUsedTeamGifticonResponseData>
+
+    //팀에서 공유안된 자기 기프티콘 리스트
 
     // user-controller-----------------------------------------------------------------------------
     // 유저 정보 수정

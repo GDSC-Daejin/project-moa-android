@@ -152,7 +152,7 @@ class ShareRoomSettingEditActivity : AppCompatActivity() {
 
         println("iameg" + beforeShareRoomData?.teamImage)
         Glide.with(this@ShareRoomSettingEditActivity)
-            .load(beforeShareRoomData?.teamImage?.toUri())
+            .load(beforeShareRoomData?.teamImage)
             .error(R.drawable.image)
             .apply(requestOptions)
             .listener(object : RequestListener<Drawable> {
