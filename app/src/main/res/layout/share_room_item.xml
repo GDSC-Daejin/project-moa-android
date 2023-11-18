@@ -8,9 +8,12 @@
     <FrameLayout
         android:id="@+id/share_fl"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="156dp"
+        android:background="@drawable/background_disabled_button"
+        android:clipToOutline="true"
         android:orientation="horizontal"
-        android:background="@drawable/post_round_drawable"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -18,38 +21,40 @@
         <ImageView
             android:id="@+id/share_main_iv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:src="@drawable/image"
-            />
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:src="@drawable/image" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.5"
+            android:background="@drawable/background_share_room_item_alpha" />
 
         <TextView
             android:id="@+id/share_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="start|bottom"
             android:layout_marginStart="20dp"
             android:layout_marginBottom="10dp"
             android:fontFamily="@font/pretendard_bold"
-            android:layout_gravity="start|bottom"
             android:text="기본"
             android:textColor="@color/black"
-            android:textSize="16sp"
-            />
+            android:textSize="16sp" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="10dp"
-            android:orientation="horizontal"
-            android:layout_gravity="end|bottom"
-            >
+            android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/share_profile"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                />
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/share_numberOfPeople"
@@ -57,75 +62,9 @@
                 android:layout_height="wrap_content"
                 android:text="+2"
                 android:textColor="@color/black"
-                android:textSize="16sp"
-                />
-
-        </LinearLayout>
-       <!-- &lt;!&ndash;방 정보&ndash;&gt;
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginBottom="20dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/share_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/pretendard_bold"
-                android:text="기본"
-                android:textColor="@color/black"
                 android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/share_master"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="방장 : 누구" />
-
-            <TextView
-                android:id="@+id/share_number_of_people"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="인원수 : 1" />
-
-            <TextView
-                android:id="@+id/share_coupon_cnt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="공유중인 쿠폰 : 0" />
-
         </LinearLayout>
-
-        &lt;!&ndash;방 버튼설정&ndash;&gt;
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginBottom="10dp"
-            android:orientation="vertical">
-
-            <Button
-                android:id="@+id/share_invite_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="120dp"
-                android:background="@drawable/home_item_remaining_day_layout"
-                android:text="친구 초대"
-                android:textColor="@color/white" />
-
-            <Button
-                android:id="@+id/share_delete_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginStart="120dp"
-                android:background="@drawable/home_item_remaining_day_layout"
-                android:text="삭제하기"
-                android:textColor="@color/white" />
-        </LinearLayout>-->
-
 
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

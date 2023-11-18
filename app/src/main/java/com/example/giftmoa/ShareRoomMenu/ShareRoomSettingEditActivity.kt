@@ -28,6 +28,7 @@ import com.example.giftmoa.Data.Team
 import com.example.giftmoa.R
 import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.ActivityShareRoomSettingEditBinding
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,6 +48,8 @@ class ShareRoomSettingEditActivity : AppCompatActivity() {
     private var afterShareRoomData : Team? = null
 
     private var isEdit = false
+
+    private var imageUrl: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -150,7 +153,7 @@ class ShareRoomSettingEditActivity : AppCompatActivity() {
             .centerCrop() // 또는 .fitCenter()
             .override(200, 200) // 원하는 크기로 조절
 
-        println("iameg" + beforeShareRoomData?.teamImage)
+        println("image" + beforeShareRoomData?.teamImage)
         Glide.with(this@ShareRoomSettingEditActivity)
             .load(beforeShareRoomData?.teamImage)
             .error(R.drawable.image)
@@ -255,6 +258,12 @@ class ShareRoomSettingEditActivity : AppCompatActivity() {
         if (it.resultCode == RESULT_OK) {
             val imageUri = it.data?.data
             afterImageFile = getRealPathFromURI(imageUri!!).toUri()
+            uploadImageToFirebase(imageUri, {
+                imageUrl = it
+                Log.d("imageUrl", it)
+            }, {
+                Log.d("error", it.toString())
+            })
             imageUri.let {
                 CoroutineScope(Dispatchers.Main).launch {
                     Glide.with(this@ShareRoomSettingEditActivity)
@@ -289,5 +298,19 @@ class ShareRoomSettingEditActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    fun uploadImageToFirebase(uri: Uri, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
+        val storageReference = FirebaseStorage.getInstance().reference.child("teams/${System.currentTimeMillis()}_image.jpeg")
+        storageReference.putFile(uri)
+            .addOnSuccessListener {
+                storageReference.downloadUrl.addOnSuccessListener { downloadUri ->
+                    onSuccess(downloadUri.toString())
+                    //Toast.makeText(this, downloadUri.toString(), Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener {
+                onFailure(it)
+            }
     }
 }

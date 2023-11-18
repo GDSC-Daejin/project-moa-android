@@ -27,6 +27,7 @@ import com.example.giftmoa.MoaInterface
 import com.example.giftmoa.R
 import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.ActivityShareRoomEditBinding
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
@@ -63,6 +64,8 @@ class ShareRoomEditActivity : AppCompatActivity() {
     private var isCheckName = false
     private var isCheckShareRoomName = false
     private var isComplete = false
+
+    private var imageUrl: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -175,7 +178,7 @@ class ShareRoomEditActivity : AppCompatActivity() {
                     val retrofit2: Retrofit = retrofit.build()
                     val api = retrofit2.create(MoaInterface::class.java)*/
 
-                    tempTeamData = TeamCreateData(shareRoomName, imageFile.toString())
+                    tempTeamData = TeamCreateData(shareRoomName, imageUrl.toString())
                     Retrofit2Generator.create(this@ShareRoomEditActivity).createShareRoom(tempTeamData!!).enqueue(object :
                         Callback<ShareRoomResponseData> {
                         override fun onResponse(
@@ -185,6 +188,21 @@ class ShareRoomEditActivity : AppCompatActivity() {
                             if (response.isSuccessful) {
                                 println("succcc")
                                 println(response.body()!!.code)
+
+                                val team = Team(
+                                    response.body()!!.data.teamId.toLong(),
+                                    response.body()!!.data.teamCode,
+                                    response.body()!!.data.teamName,
+                                    response.body()!!.data.teamImage,
+                                    response.body()!!.data.teamLeaderNickName,
+                                    null
+                                )
+                                val data = Intent().apply {
+                                    putExtra("uploadedTeam", team)
+                                }
+                                setResult(RESULT_OK, data)
+
+                                finish()
                             } else {
                                 println("faafa")
                                 Log.d("add", response.errorBody()?.string()!!)
@@ -200,12 +218,12 @@ class ShareRoomEditActivity : AppCompatActivity() {
                     })
 
 
-                    val intent = Intent(this@ShareRoomEditActivity, ShareRoomFragment::class.java).apply {
+                    /*val intent = Intent(this@ShareRoomEditActivity, ShareRoomFragment::class.java).apply {
                         putExtra("flag", 0)
                         putExtra("data", shareRoomData)
                     }
                     setResult(RESULT_OK, intent)
-                    finish()
+                    finish()*/
                 }
             } else {
                 CoroutineScope(Main).launch {
@@ -261,6 +279,14 @@ class ShareRoomEditActivity : AppCompatActivity() {
         if (it.resultCode == RESULT_OK) {
             val imageUri = it.data?.data
             imageFile = getRealPathFromURI(imageUri!!).toUri()
+
+            uploadImageToFirebase(imageUri, {
+                imageUrl = it
+                Log.d("imageUrl", it)
+            }, {
+                Log.d("error", it.toString())
+            })
+
             imageUri?.let {
                 CoroutineScope(Main).launch {
                     Glide.with(this@ShareRoomEditActivity)
@@ -298,5 +324,19 @@ class ShareRoomEditActivity : AppCompatActivity() {
                 isCheckImage = true
             }
         }
+    }
+
+    fun uploadImageToFirebase(uri: Uri, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
+        val storageReference = FirebaseStorage.getInstance().reference.child("teams/${System.currentTimeMillis()}_image.jpeg")
+        storageReference.putFile(uri)
+            .addOnSuccessListener {
+                storageReference.downloadUrl.addOnSuccessListener { downloadUri ->
+                    onSuccess(downloadUri.toString())
+                    //Toast.makeText(this, downloadUri.toString(), Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener {
+                onFailure(it)
+            }
     }
 }

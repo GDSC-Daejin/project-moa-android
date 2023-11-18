@@ -28,6 +28,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.giftmoa.Data.*
 import com.example.giftmoa.R
 import com.example.giftmoa.databinding.HomeItemBinding
+import com.example.giftmoa.databinding.ItemLargeShareRoomBinding
 import com.example.giftmoa.databinding.ShareRoomItemBinding
 import com.kakao.sdk.common.KakaoSdk.init
 import com.kakao.sdk.common.util.SdkLogLevel
@@ -35,7 +36,7 @@ import org.w3c.dom.Text
 
 
 class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(){
-    private lateinit var binding : ShareRoomItemBinding
+    private lateinit var binding : ItemLargeShareRoomBinding
     var shareRoomItemData = ArrayList<Team>()
     private lateinit var context : Context
     private var inviteCode = ""
@@ -44,10 +45,10 @@ class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(
         setHasStableIds(true)
     }
 
-    inner class ShareViewHolder(private val binding : ShareRoomItemBinding ) : RecyclerView.ViewHolder(binding.root) {
+    inner class ShareViewHolder(private val binding : ItemLargeShareRoomBinding ) : RecyclerView.ViewHolder(binding.root) {
         private var position : Int? = null
-        private var shareTitle = binding.shareTitle
-        private var shareNOP = binding.shareNumberOfPeople
+        private var shareTitle = binding.tvShareRoomName
+        private var shareNOP = binding.tvShareRoomCount
         /*private var shareMaster = binding.shareMaster
         private var shareCouponCnt = binding.shareCouponCnt*/
 
@@ -55,13 +56,13 @@ class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(
         fun bind(itemData: Team, position : Int) {
             this.position = position
 
-            if (itemData.teamImage != null) {
+            /*if (itemData.teamImage != null) {
                 shareTitle.text = itemData.teamName
-                binding.shareTitle.setTextColor(ContextCompat.getColor(context ,R.color.moa_gray_white))
+                binding.tvShareRoomName.setTextColor(ContextCompat.getColor(context ,R.color.moa_gray_white))
 
                 //shareCouponCnt.text = "공유중인 쿠폰 : ${itemData.shareCouponCount.toString()}"
                 shareNOP.text = "+${itemData.teamMembers?.size.toString()}"
-                binding.shareNumberOfPeople.setTextColor(ContextCompat.getColor(context ,R.color.moa_gray_white))
+                binding.tvShareRoomCount.setTextColor(ContextCompat.getColor(context ,R.color.moa_gray_white))
 
             } else {
                 shareTitle.text = itemData.teamName
@@ -72,7 +73,7 @@ class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(
 
             val requestOptions = RequestOptions()
                 .centerCrop() // 또는 .fitCenter()
-                .override(300, 100) // 원하는 크기로 조절
+                .override(350, 156) // 원하는 크기로 조절
 
             Glide.with(context)
                 .load(itemData.teamImage)
@@ -101,14 +102,38 @@ class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(
                         return false
                     }
                 })
-                .into(binding.shareMainIv)
+                .into(binding.ivShareRoomImage)*/
+
+            Glide.with(binding.ivShareRoomImage.context)
+                .load(itemData.teamImage)
+                .into(binding.ivShareRoomImage)
+            binding.tvShareRoomName.text = itemData.teamName
+            Glide.with(binding.ivShareRoomUserImage01.context)
+                .load(itemData.teamMembers?.get(0)?.profileImageUrl)
+                .into(binding.ivShareRoomUserImage01)
+
+            if (itemData.teamMembers != null) {
+                if (itemData.teamMembers?.size!! > 1) {
+                    binding.ivShareRoomUserImage02.visibility = ViewGroup.VISIBLE
+                    if (itemData.teamMembers?.size!! > 2) {
+                        binding.tvShareRoomCount.visibility = ViewGroup.VISIBLE
+                        "+${itemData.teamMembers?.size!! - 2}".also { binding.tvShareRoomCount.text = it }
+                    }
+                    Glide.with(binding.ivShareRoomUserImage02.context)
+                        .load(itemData.teamMembers?.get(2)?.profileImageUrl)
+                        .into(binding.ivShareRoomUserImage02)
+                }
+            } else {
+                binding.ivShareRoomUserImage02.visibility = ViewGroup.GONE
+                binding.tvShareRoomCount.visibility = ViewGroup.GONE
+            }
 
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShareRoomAdapter.ShareViewHolder {
         context = parent.context
-        binding = ShareRoomItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        binding = ItemLargeShareRoomBinding.inflate(LayoutInflater.from(context), parent, false)
         return ShareViewHolder(binding)
     }
 

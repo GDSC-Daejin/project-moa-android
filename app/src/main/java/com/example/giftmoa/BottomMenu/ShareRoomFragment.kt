@@ -1,8 +1,10 @@
 package com.example.giftmoa.BottomMenu
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -60,6 +63,9 @@ class ShareRoomFragment : Fragment() {
     private val saveSharedPreference = SaveSharedPreference()
     private var identification : String? = ""
 
+    private lateinit var teamAddResult: ActivityResultLauncher<Intent>
+    private val TAG = "ShareRoomFragment"
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,6 +97,26 @@ class ShareRoomFragment : Fragment() {
             }
         })
 
+        teamAddResult =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                if (it.resultCode == Activity.RESULT_OK) {
+                    val uploadedTeam = if (Build.VERSION.SDK_INT >= 33) {
+                        it.data?.getParcelableExtra(
+                            "uploadedTeam",
+                            Team::class.java
+                        )
+                    } else {
+                        it.data?.getParcelableExtra<Team>("uploadedTeam")
+                    }
+                    Log.d(TAG, "uploadedTeam: $uploadedTeam")
+
+                    uploadedTeam?.let { team ->
+                        shareRoomAllData.add(team)
+                        sAdapter?.notifyDataSetChanged()
+                    }
+                }
+            }
+
 
         sBinding.shareCreateBtn.setOnClickListener {
             println(identification)
@@ -109,7 +135,8 @@ class ShareRoomFragment : Fragment() {
                 val intent = Intent(requireActivity(), ShareRoomEditActivity::class.java).apply {
                     putExtra("type", "ADD")
                 }
-                requestActivity.launch(intent)
+                //requestActivity.launch(intent)
+                teamAddResult.launch(intent)
                 alertDialog.dismiss()
             }
 
@@ -174,6 +201,7 @@ class ShareRoomFragment : Fragment() {
     }
 
     private fun setRoomData() {
+        shareRoomAllData.clear()
         Retrofit2Generator.create(requireActivity()).getMyTeamList().enqueue(object : Callback<GetMyTeamListResponse> {
             override fun onResponse(
                 call: Call<GetMyTeamListResponse>,
@@ -268,10 +296,14 @@ class ShareRoomFragment : Fragment() {
             AppCompatActivity.RESULT_OK -> {
                 val shareRoomData = it.data?.getSerializableExtra("data") as ShareRoomData
 
-                when(it.data?.getIntExtra("flag", -1)) {
+                val flag = it.data?.getIntExtra("flag", -1)
+                Log.d(TAG, "flag: $flag")
+
+                when(flag) {
                     //add
                     0 -> {
                         setRoomData()
+                        Log.d(TAG, "flag가 0이래요: ")
                     }
                     1 -> {
 

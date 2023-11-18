@@ -1,6 +1,8 @@
 package com.example.giftmoa.Data
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
 class ShareRoomResponseData(
     @SerializedName("data")
@@ -11,6 +13,7 @@ class ShareRoomResponseData(
     var code : String
 )
 
+@Parcelize
 data class TeamData (
     @SerializedName("teamId")
     var teamId : Int,
@@ -24,4 +27,4 @@ data class TeamData (
     var teamLeaderNickName : String,
     @SerializedName("teamImage")
     var teamImage : String?
-)
+): Parcelable
