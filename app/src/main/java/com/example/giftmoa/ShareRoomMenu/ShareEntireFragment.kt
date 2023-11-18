@@ -2,6 +2,7 @@ package com.example.giftmoa.ShareRoomMenu
 
 import android.content.Context
 import android.content.res.Resources
+import android.icu.lang.UCharacter.GraphemeClusterBreak.L
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -50,7 +51,7 @@ class ShareEntireFragment : Fragment(), CategoryListener {
 
     private var gridManager = GridLayoutManager(activity, 2, GridLayoutManager.VERTICAL, false)
 
-    private var teamId : Long? = 0
+    private var teamId : Int? = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,12 +66,16 @@ class ShareEntireFragment : Fragment(), CategoryListener {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentShareEntireBinding.inflate(inflater, container, false)
+
+        val sharedPref = activity?.getSharedPreferences("readTeamId", Context.MODE_PRIVATE)
+        teamId = sharedPref?.getInt("teamId", 0)?.toInt()// 기본값은 null
+        println("entire"+teamId)
+
+
         getCategoryListFromServer()
         initShareEntireRecyclerView()
 
-        val sharedPref = activity?.getSharedPreferences("readTeamId", Context.MODE_PRIVATE)
-        teamId = sharedPref?.getInt("teamId", 0)?.toLong()// 기본값은 null
-        println("entire"+teamId)
+
 
         binding.ivAddCategory.setOnClickListener {
             showCategoryBottomSheet(categoryList)
@@ -107,7 +112,7 @@ class ShareEntireFragment : Fragment(), CategoryListener {
 
 
     private fun initShareEntireRecyclerView() {
-        getAllGifticonListFromServer(0)
+        getEntireListFromServer(0)
         println("entire")
 
         giftAdapter = ShareRoomGifticonAdapter()
@@ -139,15 +144,16 @@ class ShareEntireFragment : Fragment(), CategoryListener {
     }
 
 
-    private fun getAllGifticonListFromServer(page: Int) {
-        Retrofit2Generator.create(requireActivity()).getTeamGifticonList(teamId!! ,size = 10, page = page).enqueue(object :
+    private fun getEntireListFromServer(page: Int) {
+        Retrofit2Generator.create(requireActivity()).getTeamGifticonList(teamId!!.toLong() ,0, 10).enqueue(object :
             Callback<GetTeamGifticonListResponse> {
             override fun onResponse(call: Call<GetTeamGifticonListResponse>, response: Response<GetTeamGifticonListResponse>) {
                 if (response.isSuccessful) {
-                    gifticonList.clear()
                     val responseBody = response.body()
-
+                    gifticonList.clear()
                     for (i in responseBody?.data?.dataList?.indices!!) {
+                        // 새로운 데이터를 리스트에 추가합니다.
+                        val currentPosition = gifticonList.size
                         gifticonList.add(ShareRoomGifticon(
                             responseBody.data.dataList[i].gifticonId!!.toInt(),
                             responseBody.data.dataList[i].name!!,
@@ -165,7 +171,8 @@ class ShareEntireFragment : Fragment(), CategoryListener {
                             false
                         ))
                     }
-                    giftAdapter?.notifyDataSetChanged()
+                    println("avaivvaivivaivaivaiavavlavvelevlvelvelev"+gifticonList)
+                    giftAdapter!!.notifyDataSetChanged()
 
                 } else {
                     Log.e("ERROR", "Error: ${response.errorBody()?.string()}")
@@ -177,6 +184,55 @@ class ShareEntireFragment : Fragment(), CategoryListener {
             }
         })
     }
+    /*private fun getTeamGifticonListFromServer(teamId: Long) {
+        Log.d("ENTRIRIRE", "getTeamGifticonListFromServer: teamId = $teamId")
+
+        Retrofit2Generator.create(requireActivity()).getTeamGifticonList(teamId, 0, 10).enqueue(object :
+            Callback<GetTeamGifticonListResponse> {
+            override fun onResponse(call: Call<GetTeamGifticonListResponse>, response: Response<GetTeamGifticonListResponse>) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    responseBody?.data?.dataList?.let { newList ->
+                        // 새로운 데이터를 리스트에 추가합니다.
+
+                        if (newList.isNotEmpty()) {
+                            val currentPosition = gifticonList.size
+                            responseBody?.data?.dataList?.forEach {
+                                gifticonList.add(ShareRoomGifticon(
+                                    it.gifticonId?.toInt()!!,
+                                    it.name!!,
+                                    "null",
+                                    it.gifticonImagePath,
+                                    it.exchangePlace!!,
+                                    it.dueDate!!,
+                                    it.gifticonType!!,
+                                    "null",
+                                    it.status!!,
+                                    it.usedDate,
+                                    it.author,
+                                    it.category,
+                                    "null",
+                                    false
+                                ))
+                            }
+
+                            Log.d("ENTRIRIRE", "getTeamGifticonListFromServer: teamGifticonList = $gifticonList")
+
+                            giftAdapter?.notifyItemRangeInserted(currentPosition, newList.size)
+                        } else {
+
+                        }
+                    }
+                } else {
+                    Log.e("ENTRIRIRE", "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<GetTeamGifticonListResponse>, t: Throwable) {
+                Log.e("ENTRIRIRE", "Retrofit onFailure: ", t)
+            }
+        })
+    }*/
 
     private fun getCategoryListFromServer() {
         Retrofit2Generator.create(requireActivity()).getCategoryList().enqueue(object :

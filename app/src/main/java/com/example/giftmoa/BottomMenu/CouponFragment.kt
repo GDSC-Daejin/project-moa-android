@@ -39,6 +39,7 @@ import com.example.giftmoa.Data.Gifticon
 import com.example.giftmoa.Data.LogoutUserResponse
 import com.example.giftmoa.Data.UpdateGifticonRequest
 import com.example.giftmoa.HomeTab.GifticonViewModel
+import com.example.giftmoa.HomeTab.HomeEntireFragment
 import com.example.giftmoa.R
 import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.FragmentCouponBinding
@@ -550,9 +551,11 @@ class CouponFragment : Fragment(), CategoryListener {
                             gifticonViewModel.addCoupon(gifticon)
                         }
                         gifticonViewModel.sortCouponList(binding.tvSort.text.toString())
-                        /*newList.forEach { gifticon ->
-                            gifticonViewModel.addCoupon(gifticon)
-                        }*/
+
+                        val allCouponList = gifticonViewModel.allCouponList.value
+                        val availableCouponList = gifticonViewModel.availableCouponList.value
+                        val usedCouponList = gifticonViewModel.usedCouponList.value
+
                     }
                 } else {
                     Log.e(TAG, "Error: ${response.errorBody()?.string()}")

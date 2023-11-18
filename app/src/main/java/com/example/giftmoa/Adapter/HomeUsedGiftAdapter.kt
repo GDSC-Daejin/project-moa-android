@@ -25,7 +25,7 @@ import kotlin.collections.ArrayList
 
 class HomeUsedGiftAdapter : RecyclerView.Adapter<HomeUsedGiftAdapter.HomeUsedGiftViewHolder>(){
     private lateinit var binding : HomeUsedCouponItemBinding
-    var usedGiftItemData = ArrayList<Gifticon>()
+    var usedGiftItemData = ArrayList<UsedGifticon>()
     private lateinit var context : Context
 
     init {
@@ -42,13 +42,20 @@ class HomeUsedGiftAdapter : RecyclerView.Adapter<HomeUsedGiftAdapter.HomeUsedGif
         private var usedUser = binding.usedUser
 
 
-        fun bind(itemData: Gifticon, position : Int) {
+        fun bind(itemData: UsedGifticon, position : Int) {
             this.position = position
 
             usedBrand.text = itemData.exchangePlace
-            usedName.text = itemData.name
-            usedCost.text = "사용금액 | " + 0
-            usedUser.text = "사용자 | " + itemData.author?.nickname
+            if (itemData.name?.length!! >= 16) {
+                usedName.textSize = 12F
+                usedName.text = itemData.name
+            } else {
+                usedName.text = itemData.name
+            }
+
+
+            //binding.usedCost.text = "사용금액 | ${itemData.gifticonHistories?.get(0)?.usedPrice.toString()}"
+            binding.usedUser.text = "사용자 | ${itemData.author?.nickname.toString()}"
 
             if (itemData.gifticonImagePath != null) {
                 Glide.with(context)
@@ -116,11 +123,11 @@ class HomeUsedGiftAdapter : RecyclerView.Adapter<HomeUsedGiftAdapter.HomeUsedGif
             if (itemData.usedDate != null ) {
                 val now = System.currentTimeMillis()
                 val date = Date(now)
-                val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA)
+                val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.KOREA)
                 val currentDate = sdf.format(date)
 
-                val nowFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).parse(currentDate)
-                val beforeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).parse(itemData.usedDate!!)
+                val nowFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.KOREA).parse(currentDate)
+                val beforeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.KOREA).parse(itemData.usedDate)
 
                 val diffMilliseconds = nowFormat?.time?.minus(beforeFormat?.time!!)
 

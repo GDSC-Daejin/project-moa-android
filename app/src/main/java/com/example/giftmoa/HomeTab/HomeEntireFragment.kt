@@ -72,7 +72,7 @@ class HomeEntireFragment : Fragment() {
     private var param2: String? = null
 
 
-    private lateinit var binding: FragmentHomeEntireBinding
+    public lateinit var binding: FragmentHomeEntireBinding
     private val TAG = "HomeEntireFragment"
 
     private lateinit var giftAdapter: GifticonListAdapter
@@ -113,6 +113,15 @@ class HomeEntireFragment : Fragment() {
                 //*(binding.giftRv.adapter as? CouponListAdapter)?.setAllCouponsData(coupons)*//*
                 //couponListAdapter.setAllCouponsData(it)
                 giftAdapter.submitList(it.toList())
+                // 1초 후 리스트가 비어있는지 확인하고 비어있으면 안내 문구를 보여줍니다.
+                /*binding.giftRv.postDelayed({
+                    if (it.toList().isEmpty()) {
+                        binding.llNoGifticon.visibility = View.VISIBLE
+                    } else {
+                        binding.llNoGifticon.visibility = View.GONE
+                    }
+                }, 1000)*/
+
                 /*if (it.toList().isEmpty()) {
                     binding.llNoGifticon.visibility = View.VISIBLE
                 } else {
@@ -328,6 +337,7 @@ class HomeEntireFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume: ")
+
     }
 
     override fun onPause() {

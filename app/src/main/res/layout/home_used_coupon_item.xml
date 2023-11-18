@@ -65,7 +65,6 @@
                 android:id="@+id/used_cost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:fontFamily="@font/pretendard_medium"
                 android:text="사용금액 | 0"
                 android:textColor="@color/moa_gray_800"
@@ -81,8 +80,6 @@
                 android:text="16분 전"
                 android:textColor="@color/moa_gray_400"
                 android:textSize="12sp" />
-
-
         </LinearLayout>
 
 

@@ -1,6 +1,7 @@
 package com.example.giftmoa.BottomMenu
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -57,7 +58,7 @@ class ShareRoomFragment : Fragment() {
     private var shareRoomAllData = ArrayList<Team>()
     private var manager : LinearLayoutManager = LinearLayoutManager(activity)
     private val saveSharedPreference = SaveSharedPreference()
-    private var identification = ""
+    private var identification : String? = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,8 +77,7 @@ class ShareRoomFragment : Fragment() {
 
         initRoomRecyclerView()
 
-        identification = saveSharedPreference.getName(activity).toString()
-
+        //identification = saveSharedPreference.getName(activity).toString()
 
         sAdapter!!.setItemClickListener(object : ShareRoomAdapter.ItemClickListener{
             override fun onClick(view: View, position: Int, itemId: String?) {
@@ -163,6 +163,9 @@ class ShareRoomFragment : Fragment() {
 
     private fun initRoomRecyclerView() {
         setRoomData()
+        val sharedPref = requireActivity().getSharedPreferences("profile_nickname", Context.MODE_PRIVATE)
+        identification = sharedPref.getString("profileNickname", null) // 기본값은 null
+
         sAdapter = ShareRoomAdapter()
         sAdapter!!.shareRoomItemData = shareRoomAllData
         sBinding.shareRoomRv.adapter = sAdapter
