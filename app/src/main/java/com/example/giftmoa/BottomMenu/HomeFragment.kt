@@ -301,7 +301,8 @@ class HomeFragment : Fragment() {
 
                         if (newList.isNotEmpty()) {
                             val currentPosition = teamGifticonList.size
-                            teamGifticonList.addAll(newList)
+                            // dueDate를 기준으로 정렬합니다.
+                            teamGifticonList.addAll(newList.sortedBy { it.dueDate })
 
                             Log.d(TAG, "getTeamGifticonListFromServer: teamGifticonList = $teamGifticonList")
 
@@ -340,6 +341,7 @@ class HomeFragment : Fragment() {
 
         //getHomeGifticonListFromServer(0)
         getAllGifticonListFromServer(0)
+        triggerFirstItemOfShareRoomNameAdapter()
 
     }
 
