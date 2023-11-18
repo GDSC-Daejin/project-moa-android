@@ -97,11 +97,11 @@ class HomeAvailableFragment : Fragment() {
                 //couponListAdapter.setAvailableCouponsData(it.filter { x -> x.status == "AVAILABLE" })
                 giftAdapter.submitList(it.filter { x -> x.status == "AVAILABLE" }.toList())
 
-                if (it.filter { x -> x.status == "AVAILABLE" }.toList().isEmpty()) {
+                /*if (it.filter { x -> x.status == "AVAILABLE" }.toList().isEmpty()) {
                     binding.llNoGifticon.visibility = View.VISIBLE
                 } else {
                     binding.llNoGifticon.visibility = View.GONE
-                }
+                }*/
             })
         })
     }

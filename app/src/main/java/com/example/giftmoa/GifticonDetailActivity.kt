@@ -198,6 +198,10 @@ class GifticonDetailActivity: AppCompatActivity(), ShareBottomSheetListener {
                                         .load(gifticonDetail?.teamList?.get(0)?.teamMembers?.get(0)?.profileImageUrl)
                                         .into(binding.ivShareRoomUserImage02)
                                 }
+                                binding.btnShare.apply {
+                                    text = "공유됨"
+                                    isClickable = false
+                                }
                             } else {
                                 binding.switchCouponAmount.isChecked = false
                                 binding.cardViewShareRoom.visibility = android.view.View.GONE

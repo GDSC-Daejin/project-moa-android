@@ -342,7 +342,6 @@ class HomeFragment : Fragment() {
         //getHomeGifticonListFromServer(0)
         getAllGifticonListFromServer(0)
         triggerFirstItemOfShareRoomNameAdapter()
-
     }
 
     companion object {

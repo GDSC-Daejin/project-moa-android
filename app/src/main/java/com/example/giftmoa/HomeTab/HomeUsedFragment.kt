@@ -97,11 +97,11 @@ class HomeUsedFragment : Fragment() {
                 giftAdapter.submitList(it.filter { x -> x.status == "UNAVAILABLE" }.toList())
 
                 // 필터된 리스트가 비어있으면
-                if (it.filter { x -> x.status == "UNAVAILABLE" }.toList().isEmpty()) {
+                /*if (it.filter { x -> x.status == "UNAVAILABLE" }.toList().isEmpty()) {
                     binding.llNoGifticon.visibility = View.VISIBLE
                 } else {
                     binding.llNoGifticon.visibility = View.GONE
-                }
+                }*/
             })
         })
     }

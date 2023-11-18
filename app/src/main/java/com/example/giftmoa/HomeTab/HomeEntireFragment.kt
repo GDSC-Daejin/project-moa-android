@@ -113,11 +113,11 @@ class HomeEntireFragment : Fragment() {
                 //*(binding.giftRv.adapter as? CouponListAdapter)?.setAllCouponsData(coupons)*//*
                 //couponListAdapter.setAllCouponsData(it)
                 giftAdapter.submitList(it.toList())
-                if (it.toList().isEmpty()) {
+                /*if (it.toList().isEmpty()) {
                     binding.llNoGifticon.visibility = View.VISIBLE
                 } else {
                     binding.llNoGifticon.visibility = View.GONE
-                }
+                }*/
             })
         })
     }
