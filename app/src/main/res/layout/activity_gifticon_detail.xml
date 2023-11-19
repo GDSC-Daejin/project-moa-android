@@ -462,7 +462,7 @@
             <LinearLayout
                 android:id="@+id/ll_coupon_share_room"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="22dp"
                 android:layout_marginTop="20dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
@@ -479,6 +479,18 @@
                     android:textColor="@color/moa_gray_900"
                     android:textSize="16sp" />
 
+                <TextView
+                    android:id="@+id/tv_share_author"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:text="(공유자: 홍길동)"
+                    android:textColor="@color/moa_gray_400"
+                    android:textSize="16sp" />
+
                 <View
                     android:layout_width="0dp"
                     android:layout_height="0dp"
@@ -487,7 +499,7 @@
                 <Switch
                     android:id="@+id/switch_coupon_amount"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="22dp"
                     android:layout_marginEnd="20dp"
                     android:clickable="false"
                     android:thumb="@drawable/switch_thumb"

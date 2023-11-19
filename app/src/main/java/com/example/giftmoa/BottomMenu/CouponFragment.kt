@@ -87,7 +87,7 @@ class CouponFragment : Fragment(), CategoryListener {
     private var param2: String? = null
 
     private var _binding: FragmentCouponBinding? = null
-    private val binding get() = _binding!!
+    val binding get() = _binding!!
 
     private val TAG = "CouponFragment"
 

@@ -180,6 +180,10 @@ class GifticonDetailActivity: AppCompatActivity(), ShareBottomSheetListener {
 
                             if (gifticonDetail?.teamList?.isEmpty() == false) {
                                 binding.switchCouponAmount.isChecked = true
+                                binding.tvShareAuthor.apply {
+                                    visibility = android.view.View.VISIBLE
+                                    text = ("(공유자: ${gifticonDetail?.gifticon?.author?.nickname})")
+                                }
                                 binding.cardViewShareRoom.visibility = android.view.View.VISIBLE
                                 Glide.with(binding.ivShareRoomImage.context)
                                     .load(gifticonDetail?.teamList?.get(0)?.teamImage)
@@ -372,6 +376,10 @@ class GifticonDetailActivity: AppCompatActivity(), ShareBottomSheetListener {
     override fun onTeamUpdated(team: Team) {
         Log.d(TAG, "onTeamUpdated: $team")
         binding.switchCouponAmount.isChecked = true
+        binding.tvShareAuthor.apply {
+            visibility = android.view.View.VISIBLE
+            text = ("(공유자: ${gifticonDetail?.gifticon?.author?.nickname})")
+        }
         binding.cardViewShareRoom.visibility = android.view.View.VISIBLE
         Glide.with(binding.ivShareRoomImage.context)
             .load(team.teamImage)

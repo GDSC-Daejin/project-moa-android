@@ -125,6 +125,16 @@ class HomeFragment : Fragment() {
             bottomNavigationView.findViewById<View>(R.id.navigation_coupon).performClick()
         }
 
+        hBinding.tvAddCoupon?.setOnClickListener {
+            // CouponFragment로 이동하고 CouponFragment의 tvAddCoupon을 클릭한 것처럼 설정
+            val bottomNavigationView = requireActivity().findViewById<View>(R.id.bottom_navigation_view)
+            bottomNavigationView.findViewById<View>(R.id.navigation_coupon).performClick()
+
+            /*// CouponFragment의 tvAddCoupon을 클릭한 것처럼 설정
+            val couponFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.navigation_coupon) as CouponFragment
+            couponFragment.hBinding.tvAddCoupon.performClick()*/
+        }
+
         return hBinding.root
     }
 
@@ -236,10 +246,22 @@ class HomeFragment : Fragment() {
                             .sortedBy { it.dueDate }
                             .take(6 - gifticonList.size)
 
-                        gifticonList.addAll(filteredList)
+                        if (filteredList.isNotEmpty()) {
+                            hBinding.llNoGifticon?.visibility = View.GONE
+                            hBinding.homeMoveIv.visibility = View.VISIBLE
+                            gifticonList.addAll(filteredList)
+                            giftAdapter.submitList(gifticonList.toList())
+                        } else {
+                            hBinding.homeMoveIv.visibility = View.GONE
+                            hBinding.llNoGifticon?.visibility = View.VISIBLE
+                        }
 
                         Log.d(TAG, "filteredList = $filteredList")
-                        giftAdapter.submitList(gifticonList.toList())
+
+                       /* gifticonList.addAll(filteredList)
+
+                        Log.d(TAG, "filteredList = $filteredList")
+                        giftAdapter.submitList(gifticonList.toList())*/
                     }
                 } else {
                     Log.e(TAG, "Error: ${response.errorBody()?.string()}")
