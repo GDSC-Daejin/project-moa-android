@@ -219,9 +219,9 @@ class ShareRoomReadActivity : AppCompatActivity() {
         sBinding.shareUsedRv.adapter = shareUsedGiftAdapter
         sBinding.shareUsedRv.setHasFixedSize(true)
 
-        val dp20 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20f, resources.displayMetrics).toInt()
-        sBinding.shareUsedRv.addItemDecoration(LeftMarginItemDecoration(dp20))
-        sBinding.shareUsedRv.addItemDecoration(RightMarginItemDecoration(dp20))
+        val dp16 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, resources.displayMetrics).toInt()
+        sBinding.shareUsedRv.addItemDecoration(LeftMarginItemDecoration(dp16))
+        sBinding.shareUsedRv.addItemDecoration(RightMarginItemDecoration(dp16))
     }
 
     //여긴 공유된거
