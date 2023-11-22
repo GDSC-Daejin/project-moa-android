@@ -178,6 +178,7 @@ class HomeAvailableFragment : Fragment() {
                         // 기프티콘 추가
                         updatedGifticon?.let { it1 -> gifticonViewModel.addCoupon(it1) }
                     }
+                    getAllGifticonListFromServer(0)
                 }
             }
 
@@ -260,6 +261,37 @@ class HomeAvailableFragment : Fragment() {
     private fun Float.fromDpToPx(): Int =
         (this * Resources.getSystem().displayMetrics.density).toInt()
 
+
+    fun getAllGifticonListFromServer(page: Int) {
+        gifticonViewModel.clearCouponList()
+        Retrofit2Generator.create(requireActivity()).getAllGifticonList(size = 30, page = page).enqueue(object :
+            Callback<GetGifticonListResponse> {
+            override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    responseBody?.data?.dataList?.let { newList ->
+                        // newList를 gifticonViewModel의 addCoupon함수를 이용해서 넣어준다.
+                        // id가 높은 것 부터 넣어줘야 한다.
+                        newList.forEach { gifticon ->
+                            gifticonViewModel.addCoupon(gifticon)
+                        }
+                        //gifticonViewModel.sortCouponList(binding.tvSort.text.toString())
+
+                        val allCouponList = gifticonViewModel.allCouponList.value
+                        val availableCouponList = gifticonViewModel.availableCouponList.value
+                        val usedCouponList = gifticonViewModel.usedCouponList.value
+
+                    }
+                } else {
+                    Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<GetGifticonListResponse>, t: Throwable) {
+                Log.e(TAG, "Retrofit onFailure: ", t)
+            }
+        })
+    }
 
     companion object {
         /**

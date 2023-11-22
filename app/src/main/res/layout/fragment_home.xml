@@ -83,10 +83,12 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <View
+                        android:id="@+id/view_alpha"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:alpha="0.4"
                         android:background="@color/moa_gray_900"
+                        android:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="@id/iv_share_room_image"
                         app:layout_constraintEnd_toEndOf="@id/iv_share_room_image"
                         app:layout_constraintStart_toStartOf="@id/iv_share_room_image"
@@ -132,7 +134,7 @@
                 android:id="@+id/used_rv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:elevation="5dp"
+                android:elevation="3dp"
                 android:orientation="horizontal"
                 app:fastScrollHorizontalThumbDrawable="@color/zxing_transparent"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -141,6 +143,43 @@
                 tools:layout_editor_absoluteX="58dp"
                 tools:layout_editor_absoluteY="187dp"
                 tools:listitem="@layout/item_home_shared_gifticon" />
+
+            <LinearLayout
+                android:id="@+id/ll_no_team"
+                android:layout_width="match_parent"
+                android:layout_height="158dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:elevation="5dp"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:background="@drawable/background_home_shared_gifticon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/view">
+
+                <TextView
+                    android:id="@+id/tv_no_team"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:gravity="center"
+                    android:text="공유방이 없습니다."
+                    android:textColor="@color/moa_gray_500"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tv_offer_team_registration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:text="공유방을 추가해보세요!"
+                    android:textColor="@color/moa_gray_400"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
 
             <!--<FrameLayout
                 android:layout_width="match_parent"

@@ -9,6 +9,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup.LayoutParams
 import androidx.activity.result.contract.ActivityResultContracts
@@ -28,6 +29,8 @@ import com.example.giftmoa.Adapter.ShareRoomGifticonAdapter
 import com.example.giftmoa.BottomMenu.ShareRoomFragment
 import com.example.giftmoa.Data.*
 import com.example.giftmoa.databinding.ActivityShareRoomReadBinding
+import com.example.giftmoa.utils.LeftMarginItemDecoration
+import com.example.giftmoa.utils.RightMarginItemDecoration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
@@ -92,7 +95,7 @@ class ShareRoomReadActivity : AppCompatActivity() {
                 .centerCrop() // 또는 .fitCenter()
                 .override(1800, 1300) // 원하는 크기로 조절
 
-            Glide.with(this@ShareRoomReadActivity)
+            /*Glide.with(this@ShareRoomReadActivity)
                 .load(shareRoomReadData?.teamImage)
                 .error(R.drawable.image)
                 .apply(requestOptions)
@@ -119,6 +122,12 @@ class ShareRoomReadActivity : AppCompatActivity() {
                         return false
                     }
                 })
+                .into(sBinding.shareBackgroundImageview)*/
+
+            Glide.with(sBinding.root.context)
+                .load(shareRoomReadData?.teamImage?.toUri())
+                .centerCrop()
+                .error(R.drawable.image)
                 .into(sBinding.shareBackgroundImageview)
 
             if (shareRoomReadData?.teamLeaderNickname == identification) {
@@ -209,6 +218,10 @@ class ShareRoomReadActivity : AppCompatActivity() {
         shareUsedGiftAdapter!!.usedGiftItemData = shareUsedGiftAllData
         sBinding.shareUsedRv.adapter = shareUsedGiftAdapter
         sBinding.shareUsedRv.setHasFixedSize(true)
+
+        val dp20 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20f, resources.displayMetrics).toInt()
+        sBinding.shareUsedRv.addItemDecoration(LeftMarginItemDecoration(dp20))
+        sBinding.shareUsedRv.addItemDecoration(RightMarginItemDecoration(dp20))
     }
 
     //여긴 공유된거
@@ -240,24 +253,32 @@ class ShareRoomReadActivity : AppCompatActivity() {
                     if (response.isSuccessful) {
                         shareUsedGiftAllData.clear()
 
-                        for (i in response.body()?.data?.dataList?.indices!!) {
-                            shareUsedGiftAllData.add(
-                                UsedGifticon(
-                                    response.body()?.data?.dataList!![i].id,
-                                    response.body()?.data?.dataList!![i].name,
-                                    response.body()?.data?.dataList!![i].gifticonImagePath,
-                                    response.body()?.data?.dataList!![i].exchangePlace,
-                                    response.body()?.data?.dataList!![i].dueDate,
-                                    response.body()?.data?.dataList!![i].gifticonType,
-                                    response.body()?.data?.dataList!![i].status,
-                                    response.body()?.data?.dataList!![i].usedDate,
-                                    response.body()?.data?.dataList!![i].author,
-                                    response.body()?.data?.dataList!![i].category,
-                                    response.body()?.data?.dataList!![i].gifticonHistories
-                                )
-                            )
+                        response.body()?.data?.dataList?.forEach { gifticon ->
+                            if (gifticon.gifticonType == "GENERAL") {
+                                shareUsedGiftAllData.add(gifticon)
+                            } else if (gifticon.gifticonType == "MONEY") {
+                                gifticon.gifticonHistories?.sortedByDescending { it.usedDate }?.forEach { history ->
+                                    shareUsedGiftAllData.add(
+                                        UsedGifticon(
+                                            id = gifticon.id,
+                                            name = gifticon.name,
+                                            gifticonImagePath = gifticon.gifticonImagePath,
+                                            exchangePlace = gifticon.exchangePlace,
+                                            dueDate = gifticon.dueDate,
+                                            gifticonType = gifticon.gifticonType,
+                                            status = gifticon.status,
+                                            usedDate = gifticon.usedDate,
+                                            author = gifticon.author,
+                                            category = gifticon.category,
+                                            gifticonHistories = listOf(history)
+                                        )
+                                    )
+                                }
+                            }
                         }
-                        shareUsedGiftAdapter!!.notifyDataSetChanged()
+
+                        Log.d(TAG, "shareUsedGiftAllData: $shareUsedGiftAllData")
+                        shareUsedGiftAdapter?.notifyDataSetChanged()
 
                     } else {
                         println("faafa")

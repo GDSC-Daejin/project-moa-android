@@ -111,10 +111,6 @@ class ShareRoomSettingActivity : AppCompatActivity() {
             sBinding.shareSettingRoomNumberOfPeople.text = shareRoomData!!.teamMembers?.size.toString()
             sBinding.shareSettingRoomGifticonCount.text = sharedGifticonAllData.size.toString()
 
-            sBinding.shareSettingRoomDelete.setOnClickListener {
-                deleteShareRoom(shareRoomData?.id?.toInt()!!)
-            }
-
         } else {
             sBinding.shareLl1.visibility = View.GONE
             sBinding.shareV1.visibility = View.GONE
@@ -126,6 +122,10 @@ class ShareRoomSettingActivity : AppCompatActivity() {
             sBinding.shareSettingRoomLeadername.text = shareRoomData!!.teamLeaderNickname
             sBinding.shareSettingRoomNumberOfPeople.text = shareRoomData!!.teamMembers?.size.toString()
             sBinding.shareSettingRoomGifticonCount.text = sharedGifticonAllData.size.toString()
+        }
+
+        sBinding.shareSettingRoomDelete.setOnClickListener {
+            deleteShareRoom(shareRoomData?.id?.toInt()!!)
         }
 
         sBinding.backArrow.setOnClickListener {
@@ -198,7 +198,7 @@ class ShareRoomSettingActivity : AppCompatActivity() {
     }
 
     private fun deleteShareRoom(teamId : Int) {
-        Retrofit2Generator.create(this@ShareRoomSettingActivity).deleteShareRoom(teamId).enqueue(object : Callback<ShareRoomResponseData> {
+        Retrofit2Generator.create(this).deleteShareRoom(teamId).enqueue(object : Callback<ShareRoomResponseData> {
             override fun onResponse(
                 call: Call<ShareRoomResponseData>,
                 response: Response<ShareRoomResponseData>

@@ -3,31 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:elevation="12dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="128dp"
         android:background="@drawable/post_round_drawable"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         android:orientation="horizontal"
-        >
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/used_coupon_iv"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            android:layout_marginEnd="20dp"
-            android:src="@drawable/image"
-            />
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="14dp"
+            android:layout_marginBottom="14dp"
+            android:src="@drawable/image" />
 
         <LinearLayout
             android:layout_width="210dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
@@ -44,7 +43,6 @@
                 android:id="@+id/used_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
                 android:fontFamily="@font/pretendard_bold"
                 android:text="아이스 아메리카노"
                 android:textColor="@color/moa_gray_800"
@@ -54,8 +52,8 @@
                 android:id="@+id/used_user"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="11dp"
-                android:layout_marginTop="20dp"
+                android:paddingStart="11dp"
+                android:layout_marginTop="16dp"
                 android:fontFamily="@font/pretendard_medium"
                 android:text="사용자 | 김송하"
                 android:textColor="@color/moa_gray_800"
@@ -65,6 +63,8 @@
                 android:id="@+id/used_cost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="invisible"
+                tools:visibility="visible"
                 android:fontFamily="@font/pretendard_medium"
                 android:text="사용금액 | 0"
                 android:textColor="@color/moa_gray_800"
@@ -76,6 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginEnd="20dp"
+                android:layout_marginBottom="10dp"
                 android:fontFamily="@font/pretendard_regular"
                 android:text="16분 전"
                 android:textColor="@color/moa_gray_400"

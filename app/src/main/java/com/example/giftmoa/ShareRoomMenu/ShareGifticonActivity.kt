@@ -41,10 +41,8 @@ class ShareGifticonActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         sBinding = ActivityShareGifticonBinding.inflate(layoutInflater)
         setContentView(sBinding.root)
-        initSharedRecyclerView()
-        getCategoryListFromServer()
-
         teamId = intent.getLongExtra("teamId", 0L).toInt()
+        initSharedRecyclerView()
 
         sBinding.shareGifticonTv.setOnClickListener {
             if (selectGifticonList.isNotEmpty()) {
@@ -110,15 +108,19 @@ class ShareGifticonActivity : AppCompatActivity() {
         (this * Resources.getSystem().displayMetrics.density).toInt()
 
     private fun getAllGifticonListFromServer(page: Int) {
-        Retrofit2Generator.create(this@ShareGifticonActivity).getShareGifticonList(size = 10, page = page).enqueue(object :
-            Callback<GetGifticonListResponse> {
-            override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {
+        Retrofit2Generator.create(this@ShareGifticonActivity).getNotShareTeamGifticonData(teamId,size = 20, page = page).enqueue(object :
+            Callback<GetUsedTeamGifticonResponseData> {
+            override fun onResponse(call: Call<GetUsedTeamGifticonResponseData>, response: Response<GetUsedTeamGifticonResponseData>) {
                 if (response.isSuccessful) {
                     val responseBody = response.body()
                     gifticonList.clear()
                     for (i in responseBody?.data?.dataList?.indices!!) {
                         println(responseBody?.data?.dataList)
                         // 새로운 데이터를 리스트에 추가합니다.
+
+                        if (responseBody.data.dataList[i].status == "UNAVAILABLE") {
+                            continue
+                        }
                         gifticonList.add(ShareRoomGifticon(
                             responseBody.data.dataList[i].id!!.toInt(),
                             responseBody.data.dataList[i].name!!,
@@ -135,7 +137,7 @@ class ShareGifticonActivity : AppCompatActivity() {
                             "null",
                             false
                         ))
-                        println(gifticonList)
+                        Log.d("Success", "gifticonList: ${gifticonList}")
                     }
                     giftAdapter!!.notifyDataSetChanged()
 
@@ -145,73 +147,11 @@ class ShareGifticonActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<GetGifticonListResponse>, t: Throwable) {
+            override fun onFailure(call: Call<GetUsedTeamGifticonResponseData>, t: Throwable) {
                 Log.e("ERROR", "Retrofit onFailure: ", t)
             }
         })
     }
-
-    private fun getCategoryListFromServer() {
-        Retrofit2Generator.create(this@ShareGifticonActivity).getCategoryList().enqueue(object : Callback<GetCategoryListResponse> {
-            override fun onResponse(call: Call<GetCategoryListResponse>, response: Response<GetCategoryListResponse>) {
-                if (response.isSuccessful) {
-                    Log.d("Success", "Retrofit onResponse: ${response.body()}")
-                    val responseBody = response.body()
-                    if (responseBody != null) {
-                        val resposeBody = responseBody.data
-
-                        if (resposeBody != null) {
-                            for (category in resposeBody) {
-                                if (category.categoryName == null) {
-                                    continue
-                                }
-                                if (category.categoryName == "미분류") {
-                                    // 항상 가장 마지막에 미분류 카테고리가 추가되도록
-                                    // categoryList의 맨 뒤에 추가
-                                    sBinding.chipUnclassified.visibility = View.VISIBLE
-                                    categoryList.add(category)
-                                    continue
-                                }
-                                val chip = category.categoryName!!.let { createNewChip(it) }
-
-                                // 마지막 Chip 뷰의 인덱스를 계산
-                                val lastChildIndex = sBinding.chipGroupCategory.childCount - 1
-
-                                // 마지막 Chip 뷰의 인덱스가 0보다 큰 경우에만
-                                // 현재 Chip을 바로 그 앞에 추가
-                                if (lastChildIndex >= 0) {
-                                    sBinding.chipGroupCategory.addView(chip, lastChildIndex)
-                                } else {
-                                    // ChipGroup에 자식이 없는 경우, 그냥 추가
-                                    sBinding.chipGroupCategory.addView(chip)
-                                }
-
-                                categoryList.add(category)
-                            }
-                        }
-                    }
-                } else {
-                    Log.e("ERROR", "Error: ${response.errorBody()?.string()}")
-                }
-            }
-
-            override fun onFailure(call: Call<GetCategoryListResponse>, t: Throwable) {
-                Log.e("ERROR", "Retrofit onFailure: ", t)
-            }
-        })
-    }
-
-    private fun createNewChip(text: String): Chip {
-        val chip = layoutInflater.inflate(R.layout.category_chip_layout, null, false) as Chip
-        chip.text = text
-        //chip.isCloseIconVisible = false
-        chip.setOnCloseIconClickListener {
-            // 닫기 아이콘 클릭 시 Chip 제거
-            (it.parent as? ViewGroup)?.removeView(it)
-        }
-        return chip
-    }
-
     override fun onResume() {
         super.onResume()
         giftAdapter!!.setItemClickListener(object : ShareRoomGifticonAdapter.ItemClickListener {

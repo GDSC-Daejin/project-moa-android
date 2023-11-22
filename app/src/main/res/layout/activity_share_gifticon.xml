@@ -55,64 +55,15 @@
         app:layout_constraintEnd_toEndOf="@+id/toolbar"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-    <HorizontalScrollView
-        android:id="@+id/sv_category"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:scrollbars="none"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar">
-
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chip_group_category"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:visibility="visible"
-            app:checkedChip="@id/chip_all"
-            app:chipSpacingHorizontal="11dp"
-            app:chipSpacingVertical="6dp"
-            app:selectionRequired="true"
-            app:singleLine="true"
-            app:singleSelection="true"
-            tools:visibility="visible">
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_all"
-                style="@style/CustomChipStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="전체"
-                android:textAlignment="center"
-                android:translationY="-2dp" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_unclassified"
-                style="@style/CustomChipStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="미분류"
-                android:textAlignment="center"
-                android:translationY="-2dp"
-                android:visibility="gone" />
-
-        </com.google.android.material.chip.ChipGroup>
-    </HorizontalScrollView>
-
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sv_category">
+        app:layout_constraintTop_toBottomOf="@id/share_gifticon_tv">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/share_gifticon_rv"

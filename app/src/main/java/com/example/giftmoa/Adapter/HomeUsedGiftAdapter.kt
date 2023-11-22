@@ -38,8 +38,10 @@ class HomeUsedGiftAdapter : RecyclerView.Adapter<HomeUsedGiftAdapter.HomeUsedGif
         private var usedName = binding.usedName
         private var usedDays = binding.usedDays
         private var usedCost = binding.usedCost
-        private var usedImage = binding.usedCouponIv
         private var usedUser = binding.usedUser
+
+        val sharedPref = context.getSharedPreferences("profile_nickname", Context.MODE_PRIVATE)
+        val userName = sharedPref.getString("profileNickname", null) // 기본값은 null
 
 
         fun bind(itemData: UsedGifticon, position : Int) {
@@ -55,70 +57,32 @@ class HomeUsedGiftAdapter : RecyclerView.Adapter<HomeUsedGiftAdapter.HomeUsedGif
 
 
             //binding.usedCost.text = "사용금액 | ${itemData.gifticonHistories?.get(0)?.usedPrice.toString()}"
-            binding.usedUser.text = "사용자 | ${itemData.author?.nickname.toString()}"
 
             if (itemData.gifticonImagePath != null) {
                 Glide.with(context)
                     .load(itemData.gifticonImagePath)
-                    .error(R.drawable.image)
-                    .centerCrop()
-                    .override(200, 200)
-                    .listener(object : RequestListener<Drawable> {
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: com.bumptech.glide.request.target.Target<Drawable>?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            Log.d("Glide", "Image load failed: ${e?.message}")
-                            println(e?.message.toString())
-                            return false
-                        }
-
-                        override fun onResourceReady(
-                            resource: Drawable?,
-                            model: Any?,
-                            target: com.bumptech.glide.request.target.Target<Drawable>?,
-                            dataSource: DataSource?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            println("glide")
-                            return false
-                        }
-                    })
                     .into(binding.usedCouponIv)
             } else {
                 Glide.with(context)
-                    .load(R.drawable.image)
-                    .error(R.drawable.image)
-                    .centerCrop()
-                    .override(200, 200)
-                    .listener(object : RequestListener<Drawable> {
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: com.bumptech.glide.request.target.Target<Drawable>?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            Log.d("Glide", "Image load failed: ${e?.message}")
-                            println(e?.message.toString())
-                            return false
-                        }
-
-                        override fun onResourceReady(
-                            resource: Drawable?,
-                            model: Any?,
-                            target: com.bumptech.glide.request.target.Target<Drawable>?,
-                            dataSource: DataSource?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            println("glide")
-                            return false
-                        }
-                    })
+                    .load(R.drawable.icon_gifticon_null)
                     .into(binding.usedCouponIv)
             }
 
+            if (itemData.gifticonType == "MONEY") {
+                binding.usedCost.apply {
+                    visibility = View.VISIBLE
+                    text = "사용금액 | ${itemData.gifticonHistories?.get(0)?.usedPrice.toString()}"
+                }
+                binding.usedUser.apply {
+                    text = "사용자 | ${userName.toString()}"
+                }
+            } else {
+                binding.usedCost.visibility = View.GONE
+                binding.usedUser.apply {
+                    text = "사용자 | ${userName.toString()}"
+                    setPadding(0, 0, 0, 0)
+                }
+            }
 
             if (itemData.usedDate != null ) {
                 val now = System.currentTimeMillis()

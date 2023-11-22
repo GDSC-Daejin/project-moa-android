@@ -65,34 +65,12 @@ class MemberListAdapter : RecyclerView.Adapter<MemberListAdapter.MemberViewHolde
                     .centerCrop() // 또는 .fitCenter()
                     .override(300, 300) // 원하는 크기로 조절
 
-                Glide.with(context)
+                Glide.with(binding.memberProfile.context)
                     .load(itemData.profileImageUrl)
                     .error(R.drawable.member_profile_default_icon)
-                    .apply(requestOptions)
-                    .listener(object : RequestListener<Drawable> {
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: com.bumptech.glide.request.target.Target<Drawable>?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            Log.d("Glide", "Image load failed: ${e?.message}")
-                            println(e?.message.toString())
-                            return false
-                        }
-
-                        override fun onResourceReady(
-                            resource: Drawable?,
-                            model: Any?,
-                            target: com.bumptech.glide.request.target.Target<Drawable>?,
-                            dataSource: DataSource?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            println("glide")
-                            return false
-                        }
-                    })
+                    .circleCrop()
                     .into(binding.memberProfile)
+
             } else {
                 name.text = itemData.nickname
 
@@ -103,33 +81,10 @@ class MemberListAdapter : RecyclerView.Adapter<MemberListAdapter.MemberViewHolde
                 .centerCrop() // 또는 .fitCenter()
                 .override(300, 100) // 원하는 크기로 조절
 
-            Glide.with(context)
+            Glide.with(binding.memberProfile.context)
                 .load(itemData.profileImageUrl)
-                .error(R.drawable.image)
-                .apply(requestOptions)
-                .listener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any?,
-                        target: com.bumptech.glide.request.target.Target<Drawable>?,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        Log.d("Glide", "Image load failed: ${e?.message}")
-                        println(e?.message.toString())
-                        return false
-                    }
-
-                    override fun onResourceReady(
-                        resource: Drawable?,
-                        model: Any?,
-                        target: com.bumptech.glide.request.target.Target<Drawable>?,
-                        dataSource: DataSource?,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        println("glide")
-                        return false
-                    }
-                })
+                .error(R.drawable.member_profile_default_icon)
+                .circleCrop()
                 .into(binding.memberProfile)
 
         }

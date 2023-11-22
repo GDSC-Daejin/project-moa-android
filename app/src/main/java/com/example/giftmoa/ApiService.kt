@@ -157,6 +157,12 @@ interface ApiService {
                                       @Query("size") size : Int) : Call<GetUsedTeamGifticonResponseData>
 
     //팀에서 공유안된 자기 기프티콘 리스트
+    @GET("/api/v1/team/gifticon/not_share/{teamId}")
+    fun getNotShareTeamGifticonData(@Path("teamId") teamId : Int,
+                                    @Query("page") page : Int,
+                                    @Query("size") size : Int) : Call<GetUsedTeamGifticonResponseData>
+
+
 
     // user-controller-----------------------------------------------------------------------------
     // 유저 정보 수정

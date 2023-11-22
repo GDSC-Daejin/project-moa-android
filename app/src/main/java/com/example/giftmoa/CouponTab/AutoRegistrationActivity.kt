@@ -98,14 +98,14 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener, Categ
             if (parsedGifticon.platform == "toss") {
                 uploadCroppedImageToFirebase(this, Uri.parse(parsedGifticon?.image), 335, 210, 314, 314, {
                     imageUrl = it
-                    Toast.makeText(this, "이미지 업로드에 성공했습니다.", Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(this, "이미지 업로드에 성공했습니다.", Toast.LENGTH_SHORT).show()
                 }, {
                     //Toast.makeText(this, "이미지 업로드에 실패했습니다.", Toast.LENGTH_SHORT).show()
                 })
             } else {
                 uploadCroppedImageToFirebase(this, Uri.parse(parsedGifticon.image), 50, 60, 700, 650, {
                     imageUrl = it
-                    Toast.makeText(this, "이미지 업로드에 성공했습니다.", Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(this, "이미지 업로드에 성공했습니다.", Toast.LENGTH_SHORT).show()
                 }, {
                     //Toast.makeText(this, "이미지 업로드에 실패했습니다.", Toast.LENGTH_SHORT).show()
                 })
@@ -210,9 +210,18 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener, Categ
                             for (category in resposeBody) {
                                 if (category.categoryName == null) continue
                                 categoryList.add(category)
-                                val chip = category.categoryName?.let { createNewChip(it) }
+
+                                if (category.categoryName == "미분류") {
+                                    continue
+                                } else {
+                                    // categoryList에 추가
+                                    val chip = category.categoryName?.let { createNewChip(it) }
+                                    val positionToInsert = binding.chipGroupCategory.childCount - 1
+                                    binding.chipGroupCategory.addView(chip, positionToInsert)
+                                }
+                                /*val chip = category.categoryName?.let { createNewChip(it) }
                                 val positionToInsert = binding.chipGroupCategory.childCount - 1
-                                binding.chipGroupCategory.addView(chip, positionToInsert)
+                                binding.chipGroupCategory.addView(chip, positionToInsert)*/
                             }
                         }
                     }
@@ -260,6 +269,9 @@ class AutoRegistrationActivity: AppCompatActivity(), GifticonInfoListener, Categ
     }
 
     override fun onGifticonInfoUpdated(gifticon: ParsedGifticon) {
+
+        Log.d(TAG, "onGifticonInfoUpdated: $gifticon")
+
         // 바텀시트에서 받은 데이터 처리
         binding.llRegisterCoupon.visibility = ViewGroup.VISIBLE
         binding.llCouponDueDate.visibility = ViewGroup.VISIBLE

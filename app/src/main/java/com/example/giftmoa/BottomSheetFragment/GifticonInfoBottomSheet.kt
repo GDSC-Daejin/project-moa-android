@@ -75,7 +75,7 @@ class GifticonInfoBottomSheet(private var gifticon: ParsedGifticon, private val 
             val updatedGifticon = gifticon.copy(
                 name = binding.etCouponName.text.toString(),
                 barcodeNumber = binding.etBarcodeNumber.text.toString(),
-                dueDate = formattedDueDate,
+                dueDate = binding.etDueDate.text.toString(),
             )
             listener.onGifticonInfoUpdated(updatedGifticon)
             dismiss()

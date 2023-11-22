@@ -301,6 +301,15 @@ class HomeFragment : Fragment() {
                     }
                 } else {
                     Log.e(TAG, "Error: ${response.errorBody()?.string()}")
+                    val dp214 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 214f, resources.displayMetrics).toInt()
+                    hBinding.cardView.layoutParams.height = dp214
+                    //hBinding.cardView.requestLayout()
+                    hBinding.viewAlpha?.visibility = View.GONE
+                    Glide.with(requireActivity())
+                        .load(R.drawable.icon_team_null)
+                        .into(hBinding.ivShareRoomImage)
+
+                    hBinding.llNoTeam?.visibility = View.VISIBLE
                 }
             }
 
@@ -323,6 +332,8 @@ class HomeFragment : Fragment() {
 
                         if (newList.isNotEmpty()) {
                             val currentPosition = teamGifticonList.size
+                            hBinding.usedRv.visibility = View.VISIBLE
+                            hBinding.llNoTeam?.visibility = View.GONE
                             // dueDate를 기준으로 정렬합니다.
                             teamGifticonList.addAll(newList.sortedBy { it.dueDate })
 
@@ -335,8 +346,12 @@ class HomeFragment : Fragment() {
                             // DiffUtil을 사용하지 않는 경우
                             //giftAdapter.notifyItemRangeInserted(currentPosition, newList.size)
                         } else {
-                            teamGifticonList.add(TeamGifticon(0, "", "", "", "", "", "", "", "", null, null, ""))
-                            homeSharedGifticonAdapter.submitList(teamGifticonList.toList())
+                            /*teamGifticonList.add(TeamGifticon(0, "", "", "", "", "", "", "", "", null, null, ""))
+                            homeSharedGifticonAdapter.submitList(teamGifticonList.toList())*/
+                            hBinding.usedRv.visibility = View.GONE
+                            hBinding.llNoTeam?.visibility = View.VISIBLE
+                            hBinding.tvNoTeam?.text = "쿠폰이 없습니다."
+                            hBinding.tvOfferTeamRegistration?.text = "쿠폰을 추가해보세요!"
                         }
                     }
                 } else {

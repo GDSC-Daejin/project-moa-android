@@ -185,12 +185,15 @@ class CouponFragment : Fragment(), CategoryListener {
                         gifticonViewModel.sortCouponList("최신 등록순")
                         updatedGifticon?.let { it1 -> gifticonViewModel.addCoupon(it1) }
                     }
+                    getAllGifticonListFromServer(0)
                 }
             }
 
         autoAddGifticonResult =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 if (it.resultCode == RESULT_OK) {
+                    binding.tvSort.text = "최신 등록순"
+                    gifticonViewModel.sortCouponList("최신 등록순")
                     val uploadedGifticon = if (Build.VERSION.SDK_INT >= 33) {
                         it.data?.getParcelableExtra(
                             "uploadedGifticon",
@@ -200,9 +203,10 @@ class CouponFragment : Fragment(), CategoryListener {
                         it.data?.getParcelableExtra<Gifticon>("uploadedGifticon")
                     }
                     Log.d(TAG, "uploadedGifticon: $uploadedGifticon")
-                    binding.tvSort.text = "최신순"
-                    gifticonViewModel.sortCouponList("최신순")
                     uploadedGifticon?.let { it1 -> gifticonViewModel.addCoupon(it1) }
+
+                    // 새로 고침 기능
+                    getAllGifticonListFromServer(0)
                 }
             }
 
@@ -538,7 +542,8 @@ class CouponFragment : Fragment(), CategoryListener {
         }
     }
 
-    private fun getAllGifticonListFromServer(page: Int) {
+   private fun getAllGifticonListFromServer(page: Int) {
+        gifticonViewModel.clearCouponList()
         Retrofit2Generator.create(requireActivity()).getAllGifticonList(size = 30, page = page).enqueue(object :
             Callback<GetGifticonListResponse> {
             override fun onResponse(call: Call<GetGifticonListResponse>, response: Response<GetGifticonListResponse>) {

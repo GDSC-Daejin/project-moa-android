@@ -118,10 +118,14 @@ class ShareRoomAdapter : RecyclerView.Adapter<ShareRoomAdapter.ShareViewHolder>(
                     if (itemData.teamMembers?.size!! > 2) {
                         binding.tvShareRoomCount.visibility = ViewGroup.VISIBLE
                         "+${itemData.teamMembers?.size!! - 2}".also { binding.tvShareRoomCount.text = it }
+                        Glide.with(binding.ivShareRoomUserImage02.context)
+                            .load(itemData.teamMembers[2].profileImageUrl)
+                            .into(binding.ivShareRoomUserImage02)
+                    } else {
+                        Glide.with(binding.ivShareRoomUserImage02.context)
+                            .load(itemData.teamMembers[1].profileImageUrl)
+                            .into(binding.ivShareRoomUserImage02)
                     }
-                    Glide.with(binding.ivShareRoomUserImage02.context)
-                        .load(itemData.teamMembers?.get(2)?.profileImageUrl)
-                        .into(binding.ivShareRoomUserImage02)
                 }
             } else {
                 binding.ivShareRoomUserImage02.visibility = ViewGroup.GONE

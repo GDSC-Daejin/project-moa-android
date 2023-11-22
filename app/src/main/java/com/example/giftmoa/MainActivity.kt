@@ -14,13 +14,18 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import com.bumptech.glide.Glide
 import com.example.giftmoa.BottomMenu.AccountFragment
 import com.example.giftmoa.BottomMenu.CouponFragment
 import com.example.giftmoa.BottomMenu.HomeFragment
 import com.example.giftmoa.BottomMenu.ShareRoomFragment
+import com.example.giftmoa.Data.GetMyProfileResponse
 import com.example.giftmoa.Data.SaveSharedPreference
 import com.example.giftmoa.FCM.MyFirebaseMessagingService
 import com.example.giftmoa.databinding.ActivityMainBinding
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mBinding : ActivityMainBinding
@@ -54,6 +59,7 @@ class MainActivity : AppCompatActivity() {
 
 
         checkPostNotificationPermission()
+        getMyProfile()
         setFragment(TAG_HOME, HomeFragment())
         initNavigationBar()
     }
@@ -152,6 +158,28 @@ class MainActivity : AppCompatActivity() {
         } else {
             finish()
         }
+    }
+
+    private fun getMyProfile() {
+        Retrofit2Generator.create(this).getMyProfile().enqueue(object :
+            Callback<GetMyProfileResponse> {
+            override fun onResponse(
+                call: Call<GetMyProfileResponse>,
+                response: Response<GetMyProfileResponse>
+            ) {
+                if (response.isSuccessful) {
+                    val sharedPref = getSharedPreferences("profile_nickname", Context.MODE_PRIVATE)
+                    with(sharedPref.edit()) {
+                        putString("profileNickname", response.body()?.data?.nickname)
+                        apply() // 비동기적으로 데이터를 저장
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<GetMyProfileResponse>, t: Throwable) {
+                Log.d("MainActivity", "onFailure: ${t.message}")
+            }
+        })
     }
 
 
