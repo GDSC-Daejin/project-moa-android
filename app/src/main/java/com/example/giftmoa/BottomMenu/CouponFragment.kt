@@ -37,9 +37,7 @@ import com.example.giftmoa.Data.GetCategoryListResponse
 import com.example.giftmoa.Data.GetGifticonListResponse
 import com.example.giftmoa.Data.Gifticon
 import com.example.giftmoa.Data.LogoutUserResponse
-import com.example.giftmoa.Data.UpdateGifticonRequest
 import com.example.giftmoa.HomeTab.GifticonViewModel
-import com.example.giftmoa.HomeTab.HomeEntireFragment
 import com.example.giftmoa.R
 import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.FragmentCouponBinding
@@ -154,8 +152,6 @@ class CouponFragment : Fragment(), CategoryListener {
 
         TabLayoutMediator(tabLayout, viewPager) { tab, pos ->
             tab.text = tabTextList[pos]
-            //val typeface = resources.getFont(com.example.mio.R.font.pretendard_medium)
-            //tab.setIcon(tabIconList[pos])
         }.attach()
 
         getAllGifticonListFromServer(0)
@@ -185,7 +181,7 @@ class CouponFragment : Fragment(), CategoryListener {
                         gifticonViewModel.sortCouponList("최신 등록순")
                         updatedGifticon?.let { it1 -> gifticonViewModel.addCoupon(it1) }
                     }
-                    getAllGifticonListFromServer(0)
+                    //getAllGifticonListFromServer(0)
                 }
             }
 
@@ -206,7 +202,7 @@ class CouponFragment : Fragment(), CategoryListener {
                     uploadedGifticon?.let { it1 -> gifticonViewModel.addCoupon(it1) }
 
                     // 새로 고침 기능
-                    getAllGifticonListFromServer(0)
+                    //getAllGifticonListFromServer(0)
                 }
             }
 
@@ -556,11 +552,6 @@ class CouponFragment : Fragment(), CategoryListener {
                             gifticonViewModel.addCoupon(gifticon)
                         }
                         gifticonViewModel.sortCouponList(binding.tvSort.text.toString())
-
-                        val allCouponList = gifticonViewModel.allCouponList.value
-                        val availableCouponList = gifticonViewModel.availableCouponList.value
-                        val usedCouponList = gifticonViewModel.usedCouponList.value
-
                     }
                 } else {
                     Log.e(TAG, "Error: ${response.errorBody()?.string()}")

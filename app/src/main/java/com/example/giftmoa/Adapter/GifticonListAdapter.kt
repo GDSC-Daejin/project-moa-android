@@ -35,24 +35,11 @@ class GifticonListAdapter(private val onClick: (Gifticon) -> Unit, var Gifticons
 
         fun bind(gifticon: Gifticon) {
             if (gifticon.gifticonImagePath != null) {
-                // 자르고 싶은 위치와 크기 지정
-                val cropX = 30 // X 시작 위치
-                val cropY = 30 // Y 시작 위치
-                val cropWidth = 415 // 잘라낼 너비
-                val cropHeight = 390 // 잘라낼 높이
-
-                /*Glide.with(binding.ivCouponImage.context)
-                    .load(gifticon.gifticonImagePath)
-                    .transform(CustomCropTransformation(cropX, cropY, cropWidth, cropHeight))
-                    .into(binding.ivCouponImage)*/
-
                 Glide.with(binding.ivCouponImage.context)
                     .load(gifticon.gifticonImagePath)
                     .into(binding.ivCouponImage)
 
             } else {
-                //binding.ivCouponImage.setPadding(100, 100, 100, 100)
-                //binding.ivCouponImage.setBackgroundColor(binding.ivCouponImage.context.getColor(R.color.moa_gray_200))
                 binding.ivCouponImage.setImageResource(R.drawable.icon_gifticon_null)
             }
 
@@ -88,7 +75,6 @@ class GifticonListAdapter(private val onClick: (Gifticon) -> Unit, var Gifticons
                     binding.viewAlpha.visibility = android.view.View.VISIBLE
                 }
             } catch (e: Exception) {
-                // 날짜 파싱에 실패한 경우나 예외 처리
                 binding.tvDDay.text = "날짜 형식 오류"
             }
 
@@ -105,10 +91,6 @@ class GifticonListAdapter(private val onClick: (Gifticon) -> Unit, var Gifticons
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(currentList[position])
     }
-
-    /*fun setOnItemLongClickListener(listener: OnItemLongClickListener) {
-        this.itemLongClickListener = listener
-    }*/
 
     companion object {
         val diffUtil = object : DiffUtil.ItemCallback<Gifticon>() {

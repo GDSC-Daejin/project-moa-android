@@ -23,7 +23,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class HomeUsedGiftAdapter : RecyclerView.Adapter<HomeUsedGiftAdapter.HomeUsedGiftViewHolder>(){
+class HomeUsedGiftAdapter(private val onClick: (UsedGifticon) -> Unit) : RecyclerView.Adapter<HomeUsedGiftAdapter.HomeUsedGiftViewHolder>(){
     private lateinit var binding : HomeUsedCouponItemBinding
     var usedGiftItemData = ArrayList<UsedGifticon>()
     private lateinit var context : Context
@@ -127,7 +127,10 @@ class HomeUsedGiftAdapter : RecyclerView.Adapter<HomeUsedGiftAdapter.HomeUsedGif
                         //usedDays.text = itemData.usedDate.toString() + "분 전"
                     }
                 }
+            }
 
+            binding.root.setOnClickListener {
+                onClick(itemData)
             }
         }
     }
@@ -141,9 +144,9 @@ class HomeUsedGiftAdapter : RecyclerView.Adapter<HomeUsedGiftAdapter.HomeUsedGif
     override fun onBindViewHolder(holder: HomeUsedGiftViewHolder, position: Int) {
         holder.bind(usedGiftItemData[holder.adapterPosition], position)
 
-        holder.itemView.setOnClickListener {
+        /*holder.itemView.setOnClickListener {
             itemClickListener.onClick(it, holder.adapterPosition, usedGiftItemData[holder.adapterPosition].name)
-        }
+        }*/
     }
 
     override fun getItemCount(): Int {

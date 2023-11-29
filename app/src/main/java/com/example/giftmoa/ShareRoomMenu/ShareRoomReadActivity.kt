@@ -214,7 +214,11 @@ class ShareRoomReadActivity : AppCompatActivity() {
 
     //여긴 공유된것을 사용한거
     private fun initUsedRecyclerView() {
-        shareUsedGiftAdapter = HomeUsedGiftAdapter()
+        shareUsedGiftAdapter = HomeUsedGiftAdapter { usedGifticon ->
+            val intent = Intent(this, GifticonDetailActivity::class.java)
+            intent.putExtra("gifticonId", usedGifticon.id)
+            startActivity(intent)
+        }
         shareUsedGiftAdapter!!.usedGiftItemData = shareUsedGiftAllData
         sBinding.shareUsedRv.adapter = shareUsedGiftAdapter
         sBinding.shareUsedRv.setHasFixedSize(true)

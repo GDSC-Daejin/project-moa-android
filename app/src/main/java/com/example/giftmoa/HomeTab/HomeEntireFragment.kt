@@ -205,7 +205,7 @@ class HomeEntireFragment : Fragment() {
                         // 기프티콘 추가
                         updatedGifticon?.let { it1 -> gifticonViewModel.addCoupon(it1) }
                     }
-                    getAllGifticonListFromServer(0)
+                    //getAllGifticonListFromServer(0)
                 }
             }
 
