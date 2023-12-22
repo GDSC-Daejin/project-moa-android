@@ -85,7 +85,7 @@
             android:textColor="@color/moa_gray_900"
             android:textSize="16sp"
             />
-        <Space
+        <androidx.legacy.widget.Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
@@ -130,7 +130,7 @@
             android:textColor="@color/moa_gray_900"
             android:textSize="16sp"
             />
-        <Space
+        <androidx.legacy.widget.Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
@@ -181,7 +181,8 @@
             android:textColor="@color/moa_gray_900"
             android:textSize="16sp"
             />
-        <Space
+
+        <androidx.legacy.widget.Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
@@ -242,7 +243,7 @@
             android:textColor="@color/moa_gray_900"
             android:textSize="16sp"
             />
-        <Space
+        <androidx.legacy.widget.Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
@@ -290,7 +291,7 @@
             android:textColor="@color/moa_gray_900"
             android:textSize="16sp"
             />
-        <Space
+        <androidx.legacy.widget.Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
@@ -349,7 +350,7 @@
             android:textColor="@color/moa_gray_900"
             android:textSize="16sp"
             />
-        <Space
+        <androidx.legacy.widget.Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" />

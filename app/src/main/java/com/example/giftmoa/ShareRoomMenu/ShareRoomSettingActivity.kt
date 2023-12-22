@@ -1,7 +1,10 @@
 package com.example.giftmoa.ShareRoomMenu
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
@@ -105,6 +108,8 @@ class ShareRoomSettingActivity : AppCompatActivity() {
                 })
                 .into(sBinding.shareSettingIv)
 
+            //밑줄긋기
+            sBinding.shareSettingRoomCode.paintFlags = Paint.UNDERLINE_TEXT_FLAG
             sBinding.shareSettingRoomCode.text = shareRoomData!!.teamCode
             sBinding.shareSettingRoomName.text = shareRoomData!!.teamName
             sBinding.shareSettingRoomLeadername.text = shareRoomData?.teamLeaderNickname
@@ -145,6 +150,12 @@ class ShareRoomSettingActivity : AppCompatActivity() {
             }
             println("temtemtemetmetmetmte"+shareRoomData?.teamMembers)
             startActivity(intent)
+        }
+
+        sBinding.shareSettingRoomCode.setOnClickListener {
+            if (shareRoomData != null) {
+                createClipData(shareRoomData?.teamCode)
+            }
         }
     }
 
@@ -283,6 +294,17 @@ class ShareRoomSettingActivity : AppCompatActivity() {
         }
     }
 
+    //클립보드에 복사하기
+    private fun createClipData(message : String?) {
+        val clipManager = this@ShareRoomSettingActivity.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+
+        val clipData = ClipData.newPlainText("message", message)
+
+        clipManager.setPrimaryClip(clipData)
+
+        Toast.makeText(this@ShareRoomSettingActivity, "복사되었습니다.", Toast.LENGTH_SHORT).show()
+    }
+
     override fun onBackPressed() {
         if (isEdit) {
             val intent = Intent(this@ShareRoomSettingActivity, ShareRoomReadActivity::class.java).apply {
@@ -293,4 +315,6 @@ class ShareRoomSettingActivity : AppCompatActivity() {
         }
         this@ShareRoomSettingActivity.finish()
     }
+
+
 }

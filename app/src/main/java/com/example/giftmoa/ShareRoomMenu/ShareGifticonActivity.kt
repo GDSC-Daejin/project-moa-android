@@ -66,7 +66,6 @@ class ShareGifticonActivity : AppCompatActivity() {
                                 } else {
                                     println("faafa")
                                     Log.d("test", response.errorBody()?.string()!!)
-                                    Log.d("message", call.request().toString())
                                     println(response.code())
                                 }
                             }

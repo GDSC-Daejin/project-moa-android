@@ -6,20 +6,11 @@ import android.os.Bundle
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.giftmoa.Adapter.MemberListAdapter
-import com.example.giftmoa.Adapter.ShareRoomAdapter
-import com.example.giftmoa.BuildConfig
 import com.example.giftmoa.Data.*
 import com.example.giftmoa.MoaInterface
 import com.example.giftmoa.R
 import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.ActivityShareRoomFriendListBinding
-import com.kakao.sdk.common.KakaoSdk.type
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -44,7 +35,6 @@ class ShareRoomFriendListActivity : AppCompatActivity() {
         roomId = intent.getLongExtra("RoomId", 0L).toInt()
 
         initRecyclerView()
-        setMemberList()
 
         sBinding.backArrow.setOnClickListener {
             this.finish()
@@ -105,5 +95,10 @@ class ShareRoomFriendListActivity : AppCompatActivity() {
                 Timber.tag("ERROR").e(t.message.toString())
             }
         })
+    }
+
+    override fun onStart() {
+        super.onStart()
+        setMemberList()
     }
 }
