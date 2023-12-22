@@ -21,6 +21,7 @@ import com.example.giftmoa.databinding.ActivityLockScreenBinding
 import java.util.concurrent.Executor
 
 //지문 인증 사용 시 계정에서 인증 사용 여부 동의여부를 표시하도록함 Todo
+//아직 만들고 앱에 추가는 안했습니다
 class LockScreenActivity : AppCompatActivity() {
     companion object {
         const val TAG : String = "LockScreenActivity"
