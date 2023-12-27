@@ -35,16 +35,16 @@ import java.util.concurrent.TimeUnit
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var mBinding : ActivityLoginBinding
-    private val kakaoAppKey = BuildConfig.kakao_app_key
-    private val sharedPreference = SaveSharedPreference()
+    //private val kakaoAppKey = BuildConfig.kakao_app_key
+    //private val sharedPreference = SaveSharedPreference()
     //데이터 받아오기 준비
     private var isReady = false
 
-    private val SERVER_URL = BuildConfig.server_URL
-    private val retrofit = Retrofit.Builder().baseUrl(SERVER_URL)
+    //private val SERVER_URL = BuildConfig.server_URL
+    /*private val retrofit = Retrofit.Builder().baseUrl(SERVER_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-    val service: MoaInterface = retrofit.create(MoaInterface::class.java)
+    val service: MoaInterface = retrofit.create(MoaInterface::class.java)*/
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +54,7 @@ class LoginActivity : AppCompatActivity() {
 
         setContentView(mBinding.root)
         mBinding.loginBtn.setOnClickListener {
-            kakaoLogin() //로그인
+            //kakaoLogin() //로그인
         }
 
         /* KakaoSdk.init(this, kakaoAppKey)
@@ -69,7 +69,7 @@ class LoginActivity : AppCompatActivity() {
 
 
 
-    private fun kakaoLogin() {
+    /*private fun kakaoLogin() {
         // 카카오계정으로 로그인 공통 callback 구성
         // 카카오톡으로 로그인 할 수 없어 카카오계정으로 로그인할 경우 사용됨
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
@@ -154,7 +154,7 @@ class LoginActivity : AppCompatActivity() {
         } else {
             UserApiClient.instance.loginWithKakaoAccount(this@LoginActivity, callback = callback)
         }
-    }
+    }*/
 
     private fun TextMsg(act: Activity, msg : String){
         mBinding.tv.text = msg

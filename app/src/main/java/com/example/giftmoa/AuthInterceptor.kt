@@ -23,11 +23,11 @@ class AuthInterceptor(context: Context) : Interceptor {
             .build()
         val response = chain.proceed(request)
         //Error opening kernel wakelock stats for: wakeup34: Permission denied 오류 수정
-        if (expiredException <= System.currentTimeMillis()) {
+        if (expiredException <= System.currentTimeMillis()) { //나중에 401처리나 그런거 나오면 다시 수정 Todo
             /*val intent = Intent(parentContext, Login2Activity::class.java)
             parentContext.startActivity(intent)
             Toast.makeText(parentContext, "사용자 정보가 유효하지 않습니다. 다시 로그인해주세요.", Toast.LENGTH_SHORT).show()*/
-            refreshToken(parentContext)
+            //refreshToken(parentContext)
         }
         return response
     }
