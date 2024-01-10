@@ -34,7 +34,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         editor.apply()
         Log.i(TAG, "토큰 저장 완료")
         sendRegistrationToServer(token)
-        //여기서 서버에 토큰 저장시키기 Todo
     }
 
     override fun onMessageReceived(message: RemoteMessage) {

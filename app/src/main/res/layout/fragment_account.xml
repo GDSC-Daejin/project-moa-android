@@ -327,6 +327,53 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ll_push_notification_time" />
 
+            <LinearLayout
+                android:id="@+id/ll_set_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_divider_push_notification">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:paddingTop="21dp"
+                    android:paddingBottom="21dp"
+                    android:text="화면 비밀번호 설정"
+                    android:textColor="@color/moa_gray_900"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <Switch
+                    android:id="@+id/switch_set_password"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:thumb="@drawable/switch_thumb"
+                    android:track="@drawable/switch_track_ex"
+                    tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/view_divider_set_password"
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:background="@color/moa_gray_100"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ll_set_password" />
+
             <TextView
                 android:id="@+id/tv_customer_center"
                 android:layout_width="0dp"
@@ -341,7 +388,7 @@
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/view_divider_push_notification" />
+                app:layout_constraintTop_toBottomOf="@id/view_divider_set_password" />
 
             <View
                 android:id="@+id/view_divider_customer_center"

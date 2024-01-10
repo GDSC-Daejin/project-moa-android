@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.giftmoa.Data.Data1
 import com.example.giftmoa.Data.GetKakaoLoginResponse
+import com.example.giftmoa.Data.RefreshTokenRequest
 import com.example.giftmoa.Data.SaveSharedPreference
 import com.example.giftmoa.FCM.MyFirebaseMessagingService
 import com.example.giftmoa.databinding.ActivityLoginBinding
@@ -62,9 +63,6 @@ class Login2Activity: AppCompatActivity() {
                     }
                 }
             }
-
-
-
             sendAccessTokenToServer(token.accessToken)
         }
     }
@@ -72,9 +70,9 @@ class Login2Activity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         initSplashScreen()
         super.onCreate(savedInstanceState)
-
         binding  = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        //refreshToken(this@Login2Activity)
 
         //KakaoSdk.init(this, "ddf76b216d0d2c4c13a9f777aac121a5")
 
@@ -110,6 +108,19 @@ class Login2Activity: AppCompatActivity() {
 
     }
 
+    private suspend fun checkLoginStatus(): Boolean {
+        // 로그인 여부 확인 로직을 구현
+        // 예시: SharedPreferences나 서버 API를 통해 로그인 상태 확인
+        return try {
+            // 예시: SharedPreferences에 저장된 토큰이 있는지 여부를 확인
+            val sharedPreferences = getSharedPreferences("TokenData", Context.MODE_PRIVATE)
+            val refreshToken = sharedPreferences.getString("refreshToken", null)
+            refreshToken != null
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     private fun sendAccessTokenToServer(accessToken: String) {
         //FCM 설정 및 token값 가져오기
         val fcmToken = MyFirebaseMessagingService().getFirebaseToken()
@@ -122,9 +133,20 @@ class Login2Activity: AppCompatActivity() {
                     response.body()?.data?.let { data ->
                         saveLoginData(data)
                     }
-                    // 메인 액티비티로 이동
-                    startActivity(Intent(this@Login2Activity, MainActivity::class.java))
-                    finish()
+                    // 만약 비밀번호 화면이 설정되어있다면 비밀번호 액티비티로
+                    val sharedPref2 = this@Login2Activity.getSharedPreferences("SavedPassword", Context.MODE_PRIVATE)
+                    val type = sharedPref2.getString("type", null)
+                    if (type == "SetupComplete") {
+                        val intent = Intent(this@Login2Activity, LockScreen2Activity::class.java).apply {
+                            putExtra("type", "use")
+                        }
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        // 메인 액티비티로 이동
+                        startActivity(Intent(this@Login2Activity, MainActivity::class.java))
+                        finish()
+                    }
                 } else {
                     Log.e("LoginActivity", "Error: ${response.errorBody()?.string()}")
                 }
@@ -151,9 +173,18 @@ class Login2Activity: AppCompatActivity() {
         // 별도의 데이터 처리가 없기 때문에 3초의 딜레이를 줌.
         // 선행되어야 하는 작업이 있는 경우, 이곳에서 처리 후 isReady를 변경.
         CoroutineScope(Dispatchers.IO).launch {
-            delay(1000)
+            // 로그인 여부 확인 및 refreshToken을 통한 자동 로그인 시도
+            val isLoggedIn = checkLoginStatus()
+            if (isLoggedIn) {
+                // 자동 로그인 성공
+                val intent = Intent(this@Login2Activity, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+            // 별도의 데이터 처리가 없기 때문에 3초의 딜레이를 줌.
+            delay(3000L)
+            isReady = true
         }
-        isReady = true
     }
     private fun initSplashScreen() {
         initData()
@@ -164,7 +195,6 @@ class Login2Activity: AppCompatActivity() {
             object : ViewTreeObserver.OnPreDrawListener {
                 override fun onPreDraw(): Boolean {
                     return if (isReady) {
-                        // 3초 후 Splash Screen 제거
                         content.viewTreeObserver.removeOnPreDrawListener(this)
                         true
                     } else {
@@ -174,5 +204,32 @@ class Login2Activity: AppCompatActivity() {
                 }
             }
         )
+    }
+
+    private fun refreshToken(context : Context) {
+        val sharedPreferences = context.getSharedPreferences("TokenData", Context.MODE_PRIVATE)
+        val refreshToken = sharedPreferences.getString("refreshToken", "") ?: ""
+        val temp = RefreshTokenRequest(refreshToken)
+        Retrofit2Generator.create(context).refreshToken(temp).enqueue(object :
+            retrofit2.Callback<GetKakaoLoginResponse> {
+            override fun onResponse(call: Call<GetKakaoLoginResponse>, response: retrofit2.Response<GetKakaoLoginResponse>) {
+                if (response.isSuccessful) { //refreshToken이 성공적으로 입력됨
+                    // 로그인 데이터 저장
+                    response.body()?.data?.let { data ->
+                        saveLoginData(data)
+                    }
+                    isReady = true
+                    // 메인 액티비티로 이동
+                    startActivity(Intent(this@Login2Activity, MainActivity::class.java))
+                    finish()
+                } else { //refreshToken 오류 또는 기간만료
+                    isReady = true //false?
+                }
+            }
+
+            override fun onFailure(call: Call<GetKakaoLoginResponse>, t: Throwable) {
+                Log.e("Intercept", "Retrofit onFailure: ", t)
+            }
+        })
     }
 }

@@ -1,6 +1,7 @@
 package com.example.giftmoa
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import com.example.giftmoa.Data.Data1
 import com.example.giftmoa.Data.GetKakaoLoginResponse
@@ -17,17 +18,29 @@ class AuthInterceptor(context: Context) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val accessToken = sharedPreferences.getString("accessToken", "") ?: ""
         val expiredException = sharedPreferences.getLong("accessTokenExpiresIn", 0L)
-        println("expired $expiredException")
         val request = chain.request().newBuilder()
             .addHeader("Authorization", "Bearer $accessToken")
             .build()
         val response = chain.proceed(request)
         //Error opening kernel wakelock stats for: wakeup34: Permission denied 오류 수정
-        if (expiredException <= System.currentTimeMillis()) { //나중에 401처리나 그런거 나오면 다시 수정 Todo
+        if (expiredException <= System.currentTimeMillis() && expiredException != 0L) { //나중에 401처리나 그런거 나오면 다시 수정 Todo
             /*val intent = Intent(parentContext, Login2Activity::class.java)
             parentContext.startActivity(intent)
             Toast.makeText(parentContext, "사용자 정보가 유효하지 않습니다. 다시 로그인해주세요.", Toast.LENGTH_SHORT).show()*/
-            //refreshToken(parentContext)
+            /*do {
+                refreshToken(parentContext)
+            } while (false)*/
+            refreshToken(parentContext)
+
+            // 이후에 새로 갱신된 accessToken을 사용하여 요청을 재시도할 수 있도록
+            // request에 새로운 accessToken을 설정하고 다시 호출하면 됩니다.
+            val newAccessToken = sharedPreferences.getString("accessToken", "") ?: ""
+            val newRequest = request.newBuilder()
+                .header("Authorization", "Bearer $newAccessToken")
+                .build()
+
+            // 재시도
+            return chain.proceed(newRequest)
         }
         return response
     }
@@ -44,8 +57,12 @@ class AuthInterceptor(context: Context) : Interceptor {
                     response.body()?.data?.let { data ->
                         saveLoginData(data, context)
                     }
-                } else {
-                    Log.e("Intercept", "Error: ${response.errorBody()?.string()}")
+                } else if (response.code() == 404) {
+                    val intent = Intent(context, Login2Activity::class.java)
+                    context.startActivity(intent)
+                } else if (response.code() == 401) {
+                    val intent = Intent(context, Login2Activity::class.java)
+                    context.startActivity(intent)
                 }
             }
 

@@ -22,7 +22,7 @@ import java.util.concurrent.Executor
 
 //지문 인증 사용 시 계정에서 인증 사용 여부 동의여부를 표시하도록함 Todo
 //아직 만들고 앱에 추가는 안했습니다
-class LockScreenActivity : AppCompatActivity() {
+class LockScreenActivity : AppCompatActivity() { //지문인증
     companion object {
         const val TAG : String = "LockScreenActivity"
     }
@@ -128,6 +128,9 @@ class LockScreenActivity : AppCompatActivity() {
                 super.onAuthenticationSucceeded(result)
                 Toast.makeText(this@LockScreenActivity, "지문 인식 성공", Toast.LENGTH_SHORT).show()
                 //성공했을 때 값 설정해놓기 바로 main으로 이동?
+                val intent = Intent(this@LockScreenActivity, MainActivity::class.java)
+                startActivity(intent)
+                finish()
             }
 
             override fun onAuthenticationFailed() {

@@ -14,17 +14,13 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.example.giftmoa.*
 import com.example.giftmoa.Data.GetMyProfileResponse
 import com.example.giftmoa.Data.LogoutUserResponse
 import com.example.giftmoa.Data.MyProfileData
 import com.example.giftmoa.Data.RefreshTokenRequest
 import com.example.giftmoa.Data.UpdateUserResponse
 import com.example.giftmoa.HomeTab.GifticonViewModel
-import com.example.giftmoa.Login2Activity
-import com.example.giftmoa.LoginActivity
-import com.example.giftmoa.MyProfileActivity
-import com.example.giftmoa.R
-import com.example.giftmoa.Retrofit2Generator
 import com.example.giftmoa.databinding.FragmentAccountBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -96,6 +92,22 @@ class AccountFragment : Fragment() {
             } else {
                 binding.tvPushNotificationDate.setTextColor(ContextCompat.getColor(requireActivity(), R.color.moa_gray_400))
                 binding.tvPushNotificationTime.setTextColor(ContextCompat.getColor(requireActivity(), R.color.moa_gray_400))
+            }
+        }
+
+        // 비밀번호 스위치 버튼 클릭 시
+        binding.switchSetPassword.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                val sharedPref2 = requireActivity().getSharedPreferences("SavedPassword", Context.MODE_PRIVATE)
+                with(sharedPref2.edit()) {
+                    putString("type", "SetupComplete")
+                    apply()
+                }
+
+                val intent = Intent(requireActivity(), LockScreen2Activity::class.java).apply {
+                    putExtra("type", "create")
+                }
+                startActivity(intent)
             }
         }
 

@@ -11,10 +11,8 @@
     -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <!-- 지문 인식 권한 -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> <!-- 지문 인식 권한 -->
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
-
 
     <application
         android:name=".GlobalApplication"
@@ -28,6 +26,9 @@
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize"
         tools:targetApi="31">
+        <activity
+            android:name=".LockScreen2Activity"
+            android:exported="false" />
         <activity
             android:name=".LockScreenActivity"
             android:exported="false" />
